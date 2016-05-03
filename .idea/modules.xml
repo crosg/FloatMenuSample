@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/FloatMenu/FloatMenu.iml" filepath="$PROJECT_DIR$/FloatMenu/FloatMenu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FloatMenuDemo/FloatMenuDemo.iml" filepath="$PROJECT_DIR$/FloatMenuDemo/FloatMenuDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FloatMenuSample.iml" filepath="$PROJECT_DIR$/FloatMenuSample.iml" />
+    </modules>
+  </component>
+</project>
