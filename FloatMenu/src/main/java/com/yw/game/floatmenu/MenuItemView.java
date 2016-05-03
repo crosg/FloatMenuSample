@@ -12,15 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/**
- * 项目名称：qdgamesdkplugin.demo
- * 类描述：
- * 创建人：wengyiming
- * 创建时间：2016/4/29 16:05
- * 修改人：wengyiming
- * 修改时间：2016/4/29 16:05
- * 修改备注：
- */
 public class MenuItemView extends LinearLayout implements OnMenuActionListener {
     private static final String TAG = "MIV";
     private ImageView mBtn;

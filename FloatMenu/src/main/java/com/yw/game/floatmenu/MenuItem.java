@@ -3,16 +3,6 @@ package com.yw.game.floatmenu;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.view.View;
-
-/**
- * 项目名称：qdgamesdkplugin.demo
- * 类描述：
- * 创建人：wengyiming
- * 创建时间：2016/4/29 15:18
- * 修改人：wengyiming
- * 修改时间：2016/4/29 15:18
- * 修改备注：
- */
 public class MenuItem {
     @ColorRes
     private int bgColor;

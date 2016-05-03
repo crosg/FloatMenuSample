@@ -50,8 +50,8 @@ import java.util.TimerTask;
  */
 public class FloatMenu extends FrameLayout implements OnTouchListener {
     private final static String TAG = "FloatView";
-    private final int HANDLER_TYPE_HIDE_LOGO = 100;//隐藏LOGO
-    private final int HANDLER_TYPE_CANCEL_ANIM = 101;//退出动画
+    private final int HANDLER_TYPE_HIDE_LOGO = 100;
+    private final int HANDLER_TYPE_CANCEL_ANIM = 101;
 
 
     private
@@ -80,8 +80,8 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     private ArrayList<MenuItemView> mMenuItemViews;
     private ArrayList<OnMenuActionListener> mActionListeners;
 
-    private boolean mIsRight;//logo是否在右边
-    private boolean isInitingLoader;//是否允许隐藏
+    private boolean mIsRight;
+    private boolean isInitingLoader;
     private boolean isActionLoading;
     private float mTouchStartX;
     private float mTouchStartY;
@@ -97,7 +97,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == HANDLER_TYPE_HIDE_LOGO) {
-                // 缩小悬浮球大小 减小透明度使其更透明
                 if (isInitingLoader) {
                     isInitingLoader = false;
                     mShowLoader = false;
@@ -106,13 +105,13 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
                     int padding30 = 30;
                     if (mIsRight) {
                         if (params.rightMargin <= 0) {
-                            params.setMargins(0, 0, -padding30, 0);//右移
-                            mFloatLogoImv.setPadding(16, 16, 0, 16);//间隙调大，图片变小
+                            params.setMargins(0, 0, -padding30, 0);
+                            mFloatLogoImv.setPadding(16, 16, 0, 16);
                         }
                     } else {
                         if (params.leftMargin >= 0) {
-                            params.setMargins(-padding30, 0, 0, 0);//左移
-                            mFloatLogoImv.setPadding(0, 16, 16, 16);//间隙调大，图片变小
+                            params.setMargins(-padding30, 0, 0, 0);
+                            mFloatLogoImv.setPadding(0, 16, 16, 16);
                         }
                     }
                     mWmParams.alpha = 0.7f;
@@ -222,19 +221,16 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     }
 
     /**
-     * 创建Float view
-     *
      * @param mContext mContext
      * @return return
      */
     private View createView(final Context mContext) {
         FrameLayout rootFloatView = new FrameLayout(mContext);
-        LayoutParams params = Utils.createLayoutParams(LayoutParams.MATCH_PARENT, Utils.dp2Px(50, mContext));//高度设置为logo像素对应的像素密度
+        LayoutParams params = Utils.createLayoutParams(LayoutParams.MATCH_PARENT, Utils.dp2Px(50, mContext));
         params.gravity = Gravity.CENTER;
         rootFloatView.setLayoutParams(params);
         mFloatMenuLine = new LinearLayout(mContext);
-        LinearLayout.LayoutParams lineLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, Utils.dp2Px(50, mContext));//高度设置为logo像素高度的一半对应的像素密度
-        lineLp.gravity = Gravity.CENTER;
+        LinearLayout.LayoutParams lineLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, Utils.dp2Px(50, mContext));
         mFloatMenuLine.setLayoutParams(lineLp);
         mFloatMenuLine.setOrientation(LinearLayout.HORIZONTAL);
         mFloatMenuLine.setBackgroundResource((menuBgId == -1) ? R.drawable.yw_menu_bg : menuBgId);
@@ -331,33 +327,23 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     private void init(Context mContext) {
         this.mContext = mContext;
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        // 更新浮动窗口位置参数 靠边
         DisplayMetrics dm = new DisplayMetrics();
-        // 获取屏幕信息
         mWindowManager.getDefaultDisplay().getMetrics(dm);
         mScreenWidth = dm.widthPixels;
         mScreenHeight = dm.heightPixels;
         this.mWmParams = new WindowManager.LayoutParams();
-        // 设置window type
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             mWmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
         } else {
             mWmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         }
-        // 设置图片格式，效果为背景透明
         mWmParams.format = PixelFormat.RGBA_8888;
-        // 设置浮动窗口不可聚焦（实现操作除浮动窗口外的其他可见窗口的操作）
         mWmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        // 调整悬浮窗显示的停靠位置为左侧置
         mWmParams.gravity = Gravity.LEFT | Gravity.TOP;
 
         mScreenHeight = mWindowManager.getDefaultDisplay().getHeight();
-
-        // 以屏幕左上角为原点，设置x、y初始值，相对于gravity
         mWmParams.x = 0;
         mWmParams.y = mScreenHeight / 10;
-
-        // 设置悬浮窗口长宽数据
         mWmParams.width = LayoutParams.WRAP_CONTENT;
         mWmParams.height = LayoutParams.WRAP_CONTENT;
         addView(createView(mContext));
@@ -365,7 +351,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         mWindowManager.addView(this, mWmParams);
         mTimer = new Timer();
         mShowLoader = true;
-//        hide();
         refreshFloatMenu(mIsRight);
         mFloatMenuLine.setVisibility(View.GONE);
     }
@@ -376,9 +361,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         if (getVisibility() == View.GONE) {
             return;
         }
-        // 更新浮动窗口位置参数 靠边
         DisplayMetrics dm = new DisplayMetrics();
-        // 获取屏幕信息
         mWindowManager.getDefaultDisplay().getMetrics(dm);
         mScreenWidth = dm.widthPixels;
         mScreenHeight = dm.heightPixels;
@@ -411,7 +394,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         removeTimerTask();
-        // 获取相对屏幕的坐标，即以屏幕左上角为原点
         int x = (int) event.getRawX();
         int y = (int) event.getRawY();
 
@@ -422,7 +404,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
                 isInitingLoader = true;
                 LayoutParams imgLp = getImageViewLayoutParams(mContext);
                 imgLp.setMargins(0, 0, 0, 0);
-                mFloatLogoImv.setPadding(0, 0, 0, 0);//恢复原始大小
                 mFloatLogoImv.setLayoutParams(imgLp);
                 mFloatLoaderImv.setPadding(0, 0, 0, 0);
                 mFloatLoaderImv.setLayoutParams(imgLp);
@@ -434,11 +415,9 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
             case MotionEvent.ACTION_MOVE:
                 float mMoveStartX = event.getX();
                 float mMoveStartY = event.getY();
-                // 如果移动量大于3才移动
                 if (Math.abs(mTouchStartX - mMoveStartX) > 3
                         && Math.abs(mTouchStartY - mMoveStartY) > 3) {
                     mDraging = true;
-                    // 更新浮动窗口位置参数
                     mWmParams.x = (int) (x - mTouchStartX);
                     mWmParams.y = (int) (y - mTouchStartY);
                     mWindowManager.updateViewLayout(this, mWmParams);
@@ -456,13 +435,10 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
                 } else if (mWmParams.x < mScreenWidth / 2) {
                     mIsRight = false;
                     mWmParams.x = 0;
-                }
-               /* mIvFloatLogo.setImageResource(ResFinder.getDrawableId(
-                        mContext, "qd_image_float_logo"));*/
+        }
                 refreshFloatMenu(mIsRight);
                 timerForHide();
                 mWindowManager.updateViewLayout(this, mWmParams);
-                // 初始化
                 mTouchStartX = mTouchStartY = 0;
                 break;
         }
@@ -483,10 +459,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         }
     }
 
-
-    /**
-     * 隐藏悬浮窗
-     */
     public void hide() {
         try {
             setVisibility(View.GONE);
@@ -499,14 +471,10 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         }
     }
 
-    /**
-     * 显示悬浮窗
-     */
     public void show() {
         setVisibility(View.VISIBLE);
         isInitingLoader = true;
 
-        //恢复初始大小和透明度
         LayoutParams imgLp = getImageViewLayoutParams(mContext);
         imgLp.setMargins(0, 0, 0, 0);
         mFloatLogoImv.setPadding(0, 0, 0, 0);
@@ -593,10 +561,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
      */
     @SuppressLint("RtlHardcoded")
     private void refreshFloatMenu(boolean right) {
-        int padding = Utils.dp2Px(4, mContext);
-//        ()int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, mContext.getResources().getDisplayMetrics());
-        int padding52 = Utils.dp2Px(50, mContext);
-//        ()int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 52, mContext.getResources().getDisplayMetrics());
+        int padding = Utils.dp2Px(4, mContext); int padding52 = Utils.dp2Px(50, mContext);
         int count = mMenuItemViews.size();
         if (right) {
             LayoutParams paramsFloatImage = (LayoutParams) mFloatLogoImv.getLayoutParams();
@@ -660,7 +625,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     }
 
     /**
-     * 定时隐藏float view
      */
     private void timerForHide() {
         if (isActionLoading) {
@@ -691,10 +655,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         }
     }
 
-
-    /**
-     * 是否Float view
-     */
     public void destroy() {
         hide();
         removeFloatView();
