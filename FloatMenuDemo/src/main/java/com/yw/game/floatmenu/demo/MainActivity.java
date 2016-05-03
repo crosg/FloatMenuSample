@@ -3,8 +3,8 @@ package com.yw.game.floatmenu.demo;
 import com.yw.game.floatmenu.FloatMenu;
 import com.yw.game.floatmenu.MenuItemView;
 import com.yw.game.floatmenu.OnMenuActionListener;
-import com.yw.sclib.Sc;
-import com.yw.sclib.ScCreateResultCallback;
+import com.yw.game.sclib.Sc;
+import com.yw.game.sclib.ScCreateResultCallback;
 
 import android.content.Intent;
 import android.os.Bundle;
