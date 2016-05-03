@@ -24,6 +24,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.yw.game.sclib:shortCutLib:0.0.2'
-    compile 'com.yw.game.floatmenu:FloatMenu:0.0.1'
-//    compile project(':FloatMenu')
+//    compile 'com.yw.game.floatmenu:FloatMenu:0.0.1'
+    compile project(':FloatMenu')
 }

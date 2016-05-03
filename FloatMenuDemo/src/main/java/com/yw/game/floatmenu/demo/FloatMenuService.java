@@ -38,6 +38,7 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
     @Override
     public void onCreate() {
         super.onCreate();
+
         mFloatMenu = new FloatMenu.Builder(this)
                 .floatLoader(R.drawable.yw_anim_background)
                 .floatLogo(R.drawable.yw_image_float_logo)
@@ -49,6 +50,8 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
                 .menuBackground(R.drawable.yw_menu_bg)
                 .onMenuActionListner(this)
                 .build();
+
+
         mFloatMenu.show();
     }
 
@@ -86,6 +89,8 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
                     createSc();
                     break;
                 case Const.FEEDBACK:
+
+                    mFloatMenu.removeMenuItenView(Const.MENU_ITEMS.length - 1);
                     break;
                 case Const.CLOSE:
                     this.onDestroy();

@@ -248,13 +248,13 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         mFloatLogoImv = new ImageView(mContext);
 
 
-        LayoutParams imgLp = getImageViewLayoutParams(mContext);
+        LayoutParams imgLp = getImageViewLayoutParams();
         mFloatLogoImv.setLayoutParams(imgLp);
         mFloatLogoImv.setScaleType(ImageView.ScaleType.FIT_CENTER);
         mFloatLogoImv.setImageResource((floatLogo == -1) ? R.drawable.yw_image_float_logo : floatLogo);
 
 
-        LayoutParams layoutParams = getImageViewLayoutParams(mContext);
+        LayoutParams layoutParams = getImageViewLayoutParams();
         mFloatLoaderImv = new ImageView(mContext);
         mFloatLoaderImv.setLayoutParams(layoutParams);
         mFloatLoaderImv.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -300,7 +300,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     }
 
     @NonNull
-    private LayoutParams getImageViewLayoutParams(Context mContext) {
+    private LayoutParams getImageViewLayoutParams() {
         LayoutParams imgLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         imgLp.gravity = Gravity.LEFT;
         return imgLp;
@@ -313,13 +313,13 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     private ArrayList<MenuItemView> generateMenuItemViews() {
         ArrayList<MenuItemView> menuItemViews = new ArrayList<>(mMenuItems.size());
         for (MenuItem item : mMenuItems) {
-            MenuItemView textView = new MenuItemView(mContext, item);
+            MenuItemView menuItemView = new MenuItemView(mContext, item);
             LinearLayout.LayoutParams lineLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             lineLp.gravity = Gravity.CENTER;
-            textView.setLayoutParams(lineLp);
-            textView.setBackgroundColor(Color.TRANSPARENT);
-            textView.setOnClickListener(item.getOnClickListener());
-            menuItemViews.add(textView);
+            menuItemView.setLayoutParams(lineLp);
+            menuItemView.setBackgroundColor(Color.TRANSPARENT);
+            menuItemView.setOnClickListener(item.getOnClickListener());
+            menuItemViews.add(menuItemView);
         }
         return menuItemViews;
     }
@@ -402,7 +402,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
                 mTouchStartX = event.getX();
                 mTouchStartY = event.getY();
                 isInitingLoader = true;
-                LayoutParams imgLp = getImageViewLayoutParams(mContext);
+                LayoutParams imgLp = getImageViewLayoutParams();
                 imgLp.setMargins(0, 0, 0, 0);
                 mFloatLogoImv.setLayoutParams(imgLp);
                 mFloatLoaderImv.setPadding(0, 0, 0, 0);
@@ -435,7 +435,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
                 } else if (mWmParams.x < mScreenWidth / 2) {
                     mIsRight = false;
                     mWmParams.x = 0;
-        }
+                }
                 refreshFloatMenu(mIsRight);
                 timerForHide();
                 mWindowManager.updateViewLayout(this, mWmParams);
@@ -475,7 +475,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         setVisibility(View.VISIBLE);
         isInitingLoader = true;
 
-        LayoutParams imgLp = getImageViewLayoutParams(mContext);
+        LayoutParams imgLp = getImageViewLayoutParams();
         imgLp.setMargins(0, 0, 0, 0);
         mFloatLogoImv.setPadding(0, 0, 0, 0);
         mFloatLogoImv.setLayoutParams(imgLp);
@@ -536,6 +536,21 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
 
     }
 
+    public void removeMenuItenView(int position) {
+        MenuItemView menuItemView = null;
+        int count = mMenuItemViews.size();
+        for (int i = 0; i < count; i++) {
+            if(position == i){
+                menuItemView = mMenuItemViews.get(i);
+            }
+        }
+        if(menuItemView !=null) {
+            mFloatMenuLine.removeView(menuItemView);
+            mFloatMenuLine.requestLayout();
+            refreshFloatMenu(mIsRight);
+        }
+    }
+
     public void stopLoaderAnim() {
         isActionLoading = false;
         mFloatLoaderImv.clearAnimation();
@@ -561,7 +576,8 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
      */
     @SuppressLint("RtlHardcoded")
     private void refreshFloatMenu(boolean right) {
-        int padding = Utils.dp2Px(4, mContext); int padding52 = Utils.dp2Px(50, mContext);
+        int padding = Utils.dp2Px(4, mContext);
+        int padding52 = Utils.dp2Px(50, mContext);
         int count = mMenuItemViews.size();
         if (right) {
             LayoutParams paramsFloatImage = (LayoutParams) mFloatLogoImv.getLayoutParams();
@@ -628,7 +644,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
      */
     private void timerForHide() {
         if (isActionLoading) {
-            Log.e("","加载动画正在执行,不能启动隐藏悬浮的定时器");
+            Log.e("", "加载动画正在执行,不能启动隐藏悬浮的定时器");
             return;
         }
         isInitingLoader = true;
