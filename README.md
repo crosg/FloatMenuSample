@@ -1,4 +1,13 @@
 # FloatMenuSample
+[ ![Download](https://api.bintray.com/packages/fanofdemo/maven/FloatMenu/images/download.svg) ](https://bintray.com/fanofdemo/maven/FloatMenu/_latestVersion)
+
+
+##使用
+
+引用库
+
+	compile 'com.yw.game.floatmenu:FloatMenu:0.0.1'
+
 a float menu in game
 
 android桌面悬浮球
@@ -12,11 +21,7 @@ api level <19 需要权限:
 
 api level >=19 无需权限
 
-##使用
 
-引用库
-
-	compile 'com.yw.game.floatmenu:FloatMenu:0.0.1'
 
 调用：
 
@@ -71,4 +76,21 @@ api level >=19 无需权限
  [http://www.jianshu.com/p/634cd056b90c](http://www.jianshu.com/p/634cd056b90c) 
 
  [http://www.liaohuqiu.net/cn/posts/android-windows-manager/](http://www.liaohuqiu.net/cn/posts/android-windows-manager/) 
+
+
+
+
+##License
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
 
