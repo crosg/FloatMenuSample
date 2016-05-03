@@ -68,6 +68,8 @@ api level >=19 无需权限
 
 <img src="pickture/20160503125603.png" width="320" />
 
+<img src="pickture/201605031543.gif" width="320" />
+
 
 ##参考
 
