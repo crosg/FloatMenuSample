@@ -3,6 +3,7 @@ package com.yw.game.floatmenu;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.view.View;
+
 public class MenuItem {
     @ColorRes
     private int bgColor;
@@ -14,7 +15,7 @@ public class MenuItem {
     private int diameter = 50;
     private View.OnClickListener onClickListener;
 
-    public MenuItem(int bgColor, int icon, String label, int textColor,View.OnClickListener onClickListener) {
+    public MenuItem(int bgColor, int icon, String label, int textColor, View.OnClickListener onClickListener) {
         this.bgColor = bgColor;
         this.icon = icon;
         this.label = label;
@@ -22,7 +23,7 @@ public class MenuItem {
         this.onClickListener = onClickListener;
     }
 
-    public MenuItem(int bgColor, int icon, String label, int textColor, int diameter,View.OnClickListener onClickListener) {
+    public MenuItem(int bgColor, int icon, String label, int textColor, int diameter, View.OnClickListener onClickListener) {
         this.bgColor = bgColor;
         this.icon = icon;
         this.label = label;

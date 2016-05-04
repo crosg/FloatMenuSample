@@ -503,8 +503,8 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     mFloatLoaderImv.setVisibility(VISIBLE);
-                    Animation rotaAnimation = new RotateAnimation(0f, +360f, Animation.RELATIVE_TO_SELF,
-                            0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                    Animation rotaAnimation = new RotateAnimation(0f, +360f, Animation.RELATIVE_TO_PARENT,
+                            0.5f, Animation.RELATIVE_TO_PARENT, 0.5f);
                     rotaAnimation.setInterpolator(new LinearInterpolator());
                     rotaAnimation.setRepeatCount(Animation.INFINITE);
                     rotaAnimation.setDuration(800);
@@ -526,8 +526,8 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     public void startLoaderAnim() {
         isActionLoading = true;
         removeTimerTask();
-        Animation rotaAnimation = new RotateAnimation(0f, +360f, Animation.RELATIVE_TO_SELF,
-                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        Animation rotaAnimation = new RotateAnimation(0f, +360f, Animation.RELATIVE_TO_PARENT,
+                0.5f, Animation.RELATIVE_TO_PARENT, 0.5f);
         rotaAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
         rotaAnimation.setRepeatCount(Animation.INFINITE);
         rotaAnimation.setDuration(800);
@@ -536,15 +536,21 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
 
     }
 
+    public void changeLogo(int logoDrawableRes, int msgDrawableRes, int menuItemPosition) {
+        mFloatLogoImv.setImageResource(logoDrawableRes);
+        mMenuItemViews.get(menuItemPosition).setImageView(msgDrawableRes);
+    }
+
+
     public void removeMenuItenView(int position) {
         MenuItemView menuItemView = null;
         int count = mMenuItemViews.size();
         for (int i = 0; i < count; i++) {
-            if(position == i){
+            if (position == i) {
                 menuItemView = mMenuItemViews.get(i);
             }
         }
-        if(menuItemView !=null) {
+        if (menuItemView != null) {
             mFloatMenuLine.removeView(menuItemView);
             mFloatMenuLine.requestLayout();
             refreshFloatMenu(mIsRight);

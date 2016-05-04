@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.support.annotation.DrawableRes;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ public class MenuItemView extends LinearLayout implements OnMenuActionListener {
 
     private MenuItem mMenuItem;
     private static int mGapSize = 4;
-    private static int mTextSize = 14;
+    private static int mTextSize = 12;
 
     public MenuItemView(Context context, MenuItem menuItem) {
         super(context);
@@ -35,12 +36,18 @@ public class MenuItemView extends LinearLayout implements OnMenuActionListener {
         init(context);
     }
 
+    public void setImageView(@DrawableRes int drawableRes){
+        mBtn.setImageResource(drawableRes);
+    }
+
     private void init(Context context) {
         Resources resources = getResources();
         mBtn = new ImageView(context);
         LayoutParams btnLp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         btnLp.gravity = Gravity.CENTER;
-        btnLp.bottomMargin = Utils.dp2Px(mGapSize, context);
+        btnLp.leftMargin = Utils.dp2Px(mGapSize, context);
+        btnLp.rightMargin = Utils.dp2Px(mGapSize, context);
+        btnLp.bottomMargin = Utils.dp2Px(1,context);
         mBtn.setLayoutParams(btnLp);
         mBtn.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         OvalShape ovalShape = new OvalShape();

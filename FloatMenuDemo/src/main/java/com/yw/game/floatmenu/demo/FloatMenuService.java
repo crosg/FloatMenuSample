@@ -92,10 +92,28 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
 
                     mFloatMenu.removeMenuItenView(Const.MENU_ITEMS.length - 1);
                     break;
+                case Const.MESSAGE:
+                    if (hasNewMsg) {
+                        hasNewMsg = false;
+                    } else {
+                        hasNewMsg = true;
+                    }
+                    showRed();
+                    break;
                 case Const.CLOSE:
-                    this.onDestroy();
+                    hideFloat();
                     break;
             }
+        }
+    }
+
+    private boolean hasNewMsg = false;
+
+    private void showRed() {
+        if (!hasNewMsg) {
+            mFloatMenu.changeLogo(R.drawable.yw_image_float_logo, R.drawable.yw_menu_msg, 3);
+        } else {
+            mFloatMenu.changeLogo(R.drawable.yw_image_float_logo_red, R.drawable.yw_menu_msg_red, 3);
         }
     }
 

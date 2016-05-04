@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-version = "0.0.1"
+version = "0.0.2"
 
 android {
     compileSdkVersion 23
@@ -11,8 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 0
+        versionName "0.2"
     }
     buildTypes {
         release {
@@ -20,6 +20,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    lintOptions{
+        // This seems to be firing due to okio referencing java.nio.File
+        // which is harmless for us.
+        warning 'InvalidPackage',
+                // don't need parcel creator for the sub-class of MessageSnapshot.
+                'ParcelCreator'
+    }
+
 }
 
 dependencies {
