@@ -2,28 +2,26 @@
 [ ![Download](https://api.bintray.com/packages/fanofdemo/maven/FloatMenu/images/download.svg) ](https://bintray.com/fanofdemo/maven/FloatMenu/_latestVersion)
 
 
-##使用
-
-引用库
+## to use
 
 	compile 'com.yw.game.floatmenu:FloatMenu:0.0.2'
 
 a float menu in game
 
-android桌面悬浮球
+android float menu in app or launcher
 
-##兼容性与权限：
+##compatibility & permissions
  api 9 - api 23
 
-api level <19 需要权限:
+api level <19 need permissions:
 
 	 <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
-api level >=19 无需权限
+api level >=19 no permissions
 
 
 
-调用：
+for use：
 
 	@Override
     public void onCreate() {
@@ -73,14 +71,14 @@ api level >=19 无需权限
 
 ###see sample [FloatMenuService](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo%2Fsrc%2Fmain%2Fjava%2Fcom%2Fyw%2Fgame%2Ffloatmenu%2Fdemo%2FFloatMenuService.java)
 
-##效果
+##demo
 
 <img src="pickture/20160503125603.png" width="320" />
 
 <img src="pickture/201605031543.gif" width="320" />
+<img src="pickture/201605041543.gif" width="320" />
 
-
-##参考
+##reference 
 
  [http://www.jianshu.com/p/167fd5f47d5c](http://www.jianshu.com/p/167fd5f47d5c) 
 
