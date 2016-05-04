@@ -52,8 +52,8 @@ install {
                 // Set your license
                 licenses {
                     license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        name 'The BSD 3-Clause License'
+                        url 'http://www.linfo.org/bsdlicense.html'
                     }
                 }
                 developers {
