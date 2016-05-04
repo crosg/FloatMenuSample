@@ -1,8 +1,10 @@
+
+
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-version = "0.0.3"
+version = "0.0.4"
 
 android {
     compileSdkVersion 23
@@ -12,7 +14,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 23
         versionCode 0
-        versionName "0.3"
+        versionName "0.4"
     }
     buildTypes {
         release {
@@ -37,7 +39,7 @@ dependencies {
 }
 
 
-def siteUrl = 'https://github.com/fanOfDemo/FloatMenuSample'      // 项目的主页
+def siteUrl = 'https://github.com/fanOfDemo/FloatMenuSample'            // 项目的主页
 def gitUrl = 'https://github.com/fanOfDemo/FloatMenuSample.git'   // Git仓库的url
 group = "com.yw.game.floatmenu" // Maven Group ID for the artifact，一般填你唯一的包名
 install {
