@@ -1,3 +1,28 @@
+/*
+ *
+ *  Copyright (c) 2015,2016, yuewen and/or its affiliates. All rights reserved.
+ *  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ *  This code is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License version 3 only, as
+ *  published by the Free Software Foundation.  yuewen designates this
+ *  particular file as subject to the "Classpath" exception as provided
+ *  by yuewen in the LICENSE file that accompanied this code.
+ *
+ *  This code is distributed in the hope that it will be useful, but WITHOUT
+ *  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ *  version 3 for more details (a copy is included in the LICENSE file that
+ *  * accompanied this code).
+ *
+ *  You should have received a copy of the GNU General Public License version
+ *  * 3 along with this work; if not, write to the Free Software Foundation,
+ *  Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+ *  Please contact yuewen, then mailto opensource@yuewen.com
+ *  if you need additional information or have any questions.
+ * /
+ */
+
 package com.yw.game.floatmenu.demo;
 
 import com.yw.game.floatmenu.FloatMenu;
@@ -21,7 +46,6 @@ import android.widget.Toast;
 
 /**
  * Created by wengyiming on 2015/12/20.
- * 浮动窗口服务
  */
 public class FloatMenuService extends Service implements View.OnClickListener, OnMenuActionListener {
     private FloatMenu mFloatMenu;
@@ -29,12 +53,21 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
 
     private Handler mHandler = new Handler();
 
+    /**
+     * On bind binder.
+     *
+     * @param intent the intent
+     * @return the binder
+     */
     @Override
     public IBinder onBind(Intent intent) {
         return new FloatViewServiceBinder();
     }
 
 
+    /**
+     * On create.
+     */
     @Override
     public void onCreate() {
         super.onCreate();
@@ -55,6 +88,11 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
         mFloatMenu.show();
     }
 
+    /**
+     * On click.
+     *
+     * @param v the v
+     */
     @Override
     public void onClick(View v) {
         if (v instanceof MenuItemView) {
@@ -144,17 +182,26 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
     }
 
 
+    /**
+     * Show float.
+     */
     public void showFloat() {
         if (mFloatMenu != null)
             mFloatMenu.show();
     }
 
+    /**
+     * Hide float.
+     */
     public void hideFloat() {
         if (mFloatMenu != null) {
             mFloatMenu.hide();
         }
     }
 
+    /**
+     * Destroy float.
+     */
     public void destroyFloat() {
         hideFloat();
         if (mFloatMenu != null) {
@@ -163,23 +210,40 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
         mFloatMenu = null;
     }
 
+    /**
+     * On destroy.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         destroyFloat();
     }
 
+    /**
+     * On menu open.
+     */
     @Override
     public void onMenuOpen() {
 
     }
 
+    /**
+     * On menu close.
+     */
     @Override
     public void onMenuClose() {
 
     }
 
+    /**
+     * The type Float view service binder.
+     */
     public class FloatViewServiceBinder extends Binder {
+        /**
+         * Gets service.
+         *
+         * @return the service
+         */
         public FloatMenuService getService() {
             return FloatMenuService.this;
         }
