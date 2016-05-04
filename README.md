@@ -6,7 +6,7 @@
 
 引用库
 
-	compile 'com.yw.game.floatmenu:FloatMenu:0.0.1'
+	compile 'com.yw.game.floatmenu:FloatMenu:0.0.2'
 
 a float menu in game
 
@@ -61,6 +61,15 @@ api level >=19 无需权限
         }
         mFloatMenu = null;
     }
+
+	 private void showRed() {
+        if (!hasNewMsg) {
+            mFloatMenu.changeLogo(R.drawable.yw_image_float_logo, R.drawable.yw_menu_msg, 3);
+        } else {
+            mFloatMenu.changeLogo(R.drawable.yw_image_float_logo_red, R.drawable.yw_menu_msg_red, 3);
+        }
+    }
+
 
 ###see sample [FloatMenuService](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo%2Fsrc%2Fmain%2Fjava%2Fcom%2Fyw%2Fgame%2Ffloatmenu%2Fdemo%2FFloatMenuService.java)
 
