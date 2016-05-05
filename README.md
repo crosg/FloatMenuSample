@@ -6,6 +6,9 @@
 ##项目已转移到 阅文集团 
 [该项目在阅文集团游戏产品中持续更新，欢迎关注： https://github.com/crosg ](https://github.com/crosg)	
 
+[crosg/FloatMenuSample](https://github.com/crosg/FloatMenuSample)
+
+
 ## to use
 
 	compile 'com.yw.game.floatmenu:FloatMenu:0.0.4'
