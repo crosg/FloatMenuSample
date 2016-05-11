@@ -23,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 
 public class FloatMenuInServiceActivity extends AppCompatActivity {
     private FloatMenuService mFloatMenuService;
+    private Intent intent = null;
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -49,7 +50,7 @@ public class FloatMenuInServiceActivity extends AppCompatActivity {
     public boolean startFloatMenu(Context context) {
         boolean startFloatMenuSuccessed;
         try {
-            Intent intent = new Intent(context, FloatMenuService.class);
+            intent = new Intent(context, FloatMenuService.class);
             context.startService(intent);
             context.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
             startFloatMenuSuccessed = true;
@@ -77,6 +78,7 @@ public class FloatMenuInServiceActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mFloatMenuService.destroyFloat();
+        stopService(intent);
         unbindService(mServiceConnection);
     }
 }

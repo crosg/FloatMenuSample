@@ -532,6 +532,11 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     }
 
     public void startLoaderAnim() {
+        LayoutParams params = (LayoutParams) mFloatLogoImv.getLayoutParams();
+        params.setMargins(0, 0, 0, 0);
+        mFloatLogoImv.setPadding(0, 0, 0, 0);
+
+
         isActionLoading = true;
         removeTimerTask();
         Animation rotaAnimation = new RotateAnimation(0f, +360f, Animation.RELATIVE_TO_PARENT,
