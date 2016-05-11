@@ -3,6 +3,7 @@
 
 
 
+
 ##项目已转移到 阅文集团 
 [该项目在阅文集团游戏产品中持续更新，欢迎关注： https://github.com/crosg ](https://github.com/crosg)	
 
@@ -11,9 +12,31 @@
 
 ## to use
 
-	compile 'com.yw.game.floatmenu:FloatMenu:0.0.4'
+Maven:
 
-a float menu in game
+	<dependency>
+	  <groupId>com.yw.game.floatmenu</groupId>
+	  <artifactId>FloatMenu</artifactId>
+	  <version>0.0.5</version>
+	  <type>pom</type>
+	</dependency>
+
+
+Gradle:
+
+	compile 'com.yw.game.floatmenu:FloatMenu:0.0.5'
+
+lvy:
+
+	<dependency org='com.yw.game.floatmenu' name='FloatMenu' rev='0.0.5'>
+	  	<artifact name='$AID' ext='pom'></artifact>
+	</dependency>
+
+
+Download [aar](https://dl.bintray.com/fanofdemo/maven/com/yw/game/floatmenu/FloatMenu/0.0.5/FloatMenu-0.0.5.aar)	
+
+Download [jar](https://bintray.com/fanofdemo/maven/download_file?file_path=com%2Fyw%2Fgame%2Ffloatmenu%2FFloatMenu%2F0.0.5%2FFloatMenu-0.0.5-sources.jar)
+
 
 android float menu in app or launcher
 
