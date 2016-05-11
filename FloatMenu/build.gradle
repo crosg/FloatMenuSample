@@ -4,7 +4,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-version = "0.0.4"
+version = "0.0.5"
 
 android {
     compileSdkVersion 23
@@ -14,7 +14,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 23
         versionCode 0
-        versionName "0.4"
+        versionName "0.5"
     }
     buildTypes {
         release {
@@ -109,7 +109,7 @@ bintray {
         name = "FloatMenu"
         websiteUrl = siteUrl
         vcsUrl = gitUrl
-        licenses = ["Apache-2.0"]
+        licenses = ["The BSD 3-Clause License"]
         publish = true
     }
 }

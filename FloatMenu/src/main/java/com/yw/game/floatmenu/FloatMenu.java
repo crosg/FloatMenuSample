@@ -51,13 +51,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
-/**
- * Created by wengyiming on 2015/12/20.
- * 浮动窗口服务
- */
 public class FloatMenu extends FrameLayout implements OnTouchListener {
-    private final static String TAG = "FloatView";
+    private final static String TAG = "FloatMenu";
     private final int HANDLER_TYPE_HIDE_LOGO = 100;
     private final int HANDLER_TYPE_CANCEL_ANIM = 101;
 
@@ -532,6 +527,11 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     }
 
     public void startLoaderAnim() {
+        LayoutParams params = (LayoutParams) mFloatLogoImv.getLayoutParams();
+        params.setMargins(0, 0, 0, 0);
+        mFloatLogoImv.setPadding(0, 0, 0, 0);
+
+
         isActionLoading = true;
         removeTimerTask();
         Animation rotaAnimation = new RotateAnimation(0f, +360f, Animation.RELATIVE_TO_PARENT,
