@@ -16,7 +16,8 @@
 	0.0.2 fix a initLoading Logo Animation bug， add Logo startLoadingAnimation
 	0.0.3 add change Logo and MenuItem Drawable
 	0.0.4 fix logo size when startLoadingAnimation
-	0.0.5 add method:
+	0.0.5 modify copyright
+	0.0.6 add method:
 				addMenuIten(position:int,menuItem);
 				removeMenuItem(positon:int);
 			set MenuItem Animation:
