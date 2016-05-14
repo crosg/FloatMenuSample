@@ -26,7 +26,7 @@
 
 Gradle:
 
-	compile 'com.yw.game.floatmenu:FloatMenu:0.0.5'
+	compile 'com.yw.game.floatmenu:FloatMenu:@lastVersion'
 
 
 Download [aar](https://dl.bintray.com/fanofdemo/maven/com/yw/game/floatmenu/FloatMenu/0.0.5/FloatMenu-0.0.5.aar)	
