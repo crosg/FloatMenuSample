@@ -81,7 +81,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
 
 
     private ArrayList<MenuItemView> mMenuItemViews;
-    private ArrayList<OnMenuActionListener> mActionListeners;
 
     private boolean mIsRight;
     private boolean isInitingLoader;
@@ -147,8 +146,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         int menuBgId;
 
 
-        private ArrayList<OnMenuActionListener> actionListeners = new ArrayList<>();
-
         public Builder(Context context) {
             this.mContext = context;
         }
@@ -188,12 +185,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
             return this;
         }
 
-
-        public Builder onMenuActionListner(OnMenuActionListener listener) {
-            actionListeners.add(listener);
-            return this;
-        }
-
         public FloatMenu build() {
             return new FloatMenu(this);
         }
@@ -204,7 +195,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         this.floatLogo = builder.floatLogoRes;
         this.floatLoader = builder.floatLoaderRes;
         this.mMenuItems = builder.menuItems;
-        this.mActionListeners = builder.actionListeners;
         this.mContext = builder.mContext;
         this.menuBgId = builder.menuBgId;
         Log.e(TAG, (mContext == null) + "");
@@ -223,6 +213,10 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         super(context, attrs, defStyleAttr);
     }
 
+    public ArrayList<MenuItem> getMenuItems() {
+        return mMenuItems;
+    }
+
     /**
      * @param mContext mContext
      * @return return
@@ -238,10 +232,8 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         mFloatMenuLine.setOrientation(LinearLayout.HORIZONTAL);
         mFloatMenuLine.setBackgroundResource((menuBgId == -1) ? R.drawable.yw_menu_bg : menuBgId);
         mMenuItemViews = generateMenuItemViews();
-        for (MenuItemView menuItemView : mMenuItemViews) {
-            mFloatMenuLine.addView(menuItemView);
-            addOnMenuActionListener(menuItemView);
-        }
+        addMenuItemViews();
+
         rootFloatView.addView(mFloatMenuLine);
 
         mFloatLogoFra = new FrameLayout(mContext);
@@ -284,14 +276,9 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
                 if (!mDraging) {
                     if (mFloatMenuLine.getVisibility() == View.VISIBLE) {
                         mFloatMenuLine.setVisibility(View.GONE);
-                        for (OnMenuActionListener listener : mActionListeners) {
-                            listener.onMenuClose();
-                        }
                     } else {
                         mFloatMenuLine.setVisibility(View.VISIBLE);
-                        for (OnMenuActionListener listener : mActionListeners) {
-                            listener.onMenuOpen();
-                        }
+                        showMenuItenViewAnimotion();
                     }
                 }
             }
@@ -309,20 +296,11 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         return imgLp;
     }
 
-    private void addOnMenuActionListener(OnMenuActionListener listener) {
-        this.mActionListeners.add(listener);
-    }
 
     private ArrayList<MenuItemView> generateMenuItemViews() {
         ArrayList<MenuItemView> menuItemViews = new ArrayList<>(mMenuItems.size());
         for (MenuItem item : mMenuItems) {
-            MenuItemView menuItemView = new MenuItemView(mContext, item);
-            LinearLayout.LayoutParams lineLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            lineLp.gravity = Gravity.CENTER;
-            menuItemView.setLayoutParams(lineLp);
-            menuItemView.setBackgroundColor(Color.TRANSPARENT);
-            menuItemView.setOnClickListener(item.getOnClickListener());
-            menuItemViews.add(menuItemView);
+            menuItemViews.add(generateMenuItemView(item));
         }
         return menuItemViews;
     }
@@ -448,6 +426,103 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         return false;
     }
 
+    public void updateMenuItem(ArrayList<MenuItem> mMenuItems) {
+        this.mMenuItems = mMenuItems;
+        mMenuItemViews.clear();
+        mFloatMenuLine.removeAllViews();
+        mMenuItemViews = generateMenuItemViews();
+        addMenuItemViews();
+    }
+
+    public void addMenuItem(@ColorRes int bgColor, int icon, String label,
+                            @ColorRes int textColor, OnClickListener onClickListener) {
+        MenuItem mMenuItem = new MenuItem(bgColor, icon, label, textColor, onClickListener);
+        mMenuItems.add(mMenuItem);
+        MenuItemView menuItemView = generateMenuItemView(mMenuItem);
+        mMenuItemViews.add(menuItemView);
+        mFloatMenuLine.addView(menuItemView);
+        refreshFloatMenu(mIsRight);
+    }
+
+    public void addMenuItem(int position, @ColorRes int bgColor, int icon, String label,
+                            @ColorRes int textColor, OnClickListener onClickListener) {
+        MenuItem mMenuItem = new MenuItem(bgColor, icon, label, textColor, onClickListener);
+        mMenuItems.add(position, mMenuItem);
+        final MenuItemView menuItemView = generateMenuItemView(mMenuItem);
+        mMenuItemViews.add(position, menuItemView);
+        mFloatMenuLine.removeAllViews();
+        addMenuItemViews();
+        refreshFloatMenu(mIsRight);
+    }
+
+
+    public void removeMenuItem(int postion) {
+        MenuItem mMenuItem = mMenuItems.get(postion);
+        mMenuItems.remove(mMenuItem);
+        MenuItemView mMenuItemView = mMenuItemViews.get(postion);
+        mFloatMenuLine.removeView(mMenuItemView);
+        mMenuItemViews.remove(postion);
+        refreshFloatMenu(mIsRight);
+    }
+
+    private void addMenuItemViews() {
+        for (final MenuItemView menuItemView : mMenuItemViews) {
+            menuItemView.startAnimation(Utils.getScaleAlphaAnimation(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    menuItemView.setVisibility(VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            }));
+            mFloatMenuLine.addView(menuItemView);
+        }
+    }
+
+    private void showMenuItenViewAnimotion() {
+        for (final MenuItemView menuItemView : mMenuItemViews) {
+            if (mMenuItemViews.indexOf(menuItemView) == 0) {
+                mFloatMenuLine.setVisibility(VISIBLE);
+            }
+            menuItemView.startAnimation(Utils.getScaleAlphaAnimation(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    menuItemView.setVisibility(VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            }));
+        }
+    }
+
+    private MenuItemView generateMenuItemView(MenuItem item) {
+        MenuItemView menuItemView = new MenuItemView(mContext, item);
+        LinearLayout.LayoutParams lineLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lineLp.gravity = Gravity.CENTER;
+        menuItemView.setVisibility(GONE);
+        menuItemView.setLayoutParams(lineLp);
+        menuItemView.setBackgroundColor(Color.TRANSPARENT);
+        menuItemView.setOnClickListener(item.getOnClickListener());
+        return menuItemView;
+    }
+
+
     private void removeTimerTask() {
         if (mTimerTask != null) {
             mTimerTask.cancel();
@@ -550,20 +625,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     }
 
 
-    public void removeMenuItenView(int position) {
-        MenuItemView menuItemView = null;
-        int count = mMenuItemViews.size();
-        for (int i = 0; i < count; i++) {
-            if (position == i) {
-                menuItemView = mMenuItemViews.get(i);
-            }
-        }
-        if (menuItemView != null) {
-            mFloatMenuLine.removeView(menuItemView);
-            mFloatMenuLine.requestLayout();
-            refreshFloatMenu(mIsRight);
-        }
-    }
+
 
     public void stopLoaderAnim() {
         isActionLoading = false;

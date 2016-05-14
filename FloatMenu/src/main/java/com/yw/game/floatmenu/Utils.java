@@ -16,12 +16,58 @@ package com.yw.game.floatmenu;
 
 import android.content.Context;
 import android.support.annotation.DimenRes;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.TypedValue;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
+
 public class Utils {
 
     private static final String TAG = "Utils";
+
+    public static AnimationSet getExitScaleAlphaAnimation(Animation.AnimationListener mAnimationListener) {
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.addAnimation(new ScaleAnimation(1f, 0f, 1f, 0f, Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f));
+        animationSet.addAnimation(new AlphaAnimation(1f, 0f));
+        animationSet.setDuration(500);
+        animationSet.setInterpolator(new AccelerateInterpolator());
+        animationSet.setFillAfter(false);
+        animationSet.setAnimationListener(mAnimationListener);
+        return animationSet;
+    }
+
+    public static AnimationSet getScaleAlphaAnimation(int duration, Animation.AnimationListener mAnimationListener) {
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.addAnimation(new ScaleAnimation(0.5f, 1.0f, 0.5f, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f));
+        animationSet.addAnimation(new AlphaAnimation(0.5f, 1.0f));
+        animationSet.setDuration(duration);
+        animationSet.setInterpolator(new AccelerateInterpolator());
+        animationSet.setFillAfter(false);
+        animationSet.setAnimationListener(mAnimationListener);
+        return animationSet;
+    }
+
+    public static AnimationSet getScaleAlphaAnimation(Animation.AnimationListener mAnimationListener) {
+        ScaleAnimation mScaleAnimation = new ScaleAnimation(0.5f, 1.0f, 0.5f, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f);
+        mScaleAnimation.setInterpolator(new LinearOutSlowInInterpolator());
+        AlphaAnimation mAlphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+        mAlphaAnimation.setInterpolator(new LinearInterpolator());
+
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.addAnimation(mScaleAnimation);
+        animationSet.addAnimation(mAlphaAnimation);
+        animationSet.setDuration(200);
+        animationSet.setInterpolator(new AccelerateInterpolator());
+        animationSet.setFillAfter(false);
+        animationSet.setAnimationListener(mAnimationListener);
+        return animationSet;
+    }
 
     public static int getDimension(Context context, @DimenRes int id) {
         return context.getResources().getDimensionPixelSize(id);
@@ -66,24 +112,24 @@ public class Utils {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
-//    public static void setInsets(Activity context, View view) {
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return;
-//        SystemBarTintManager tintManager = new SystemBarTintManager(context);
-//        SystemBarTintManager.SystemBarConfig config = tintManager.getConfig();
-//        view.setPadding(0, config.getPixelInsetTop(false), config.getPixelInsetRight(), config.getPixelInsetBottom());
-//    }
-//
-//    public static int getInsetsTop(Activity context, View view) {
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return 0;
-//        SystemBarTintManager tintManager = new SystemBarTintManager(context);
-//        SystemBarTintManager.SystemBarConfig config = tintManager.getConfig();
-//        return config.getPixelInsetTop(false);
-//    }
-//
-//    public static int getInsetsBottom(Activity context, View view) {
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return 0;
-//        SystemBarTintManager tintManager = new SystemBarTintManager(context);
-//        SystemBarTintManager.SystemBarConfig config = tintManager.getConfig();
-//        return config.getPixelInsetBottom();
-//    }
+    //    public static void setInsets(Activity context, View view) {
+    //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return;
+    //        SystemBarTintManager tintManager = new SystemBarTintManager(context);
+    //        SystemBarTintManager.SystemBarConfig config = tintManager.getConfig();
+    //        view.setPadding(0, config.getPixelInsetTop(false), config.getPixelInsetRight(), config.getPixelInsetBottom());
+    //    }
+    //
+    //    public static int getInsetsTop(Activity context, View view) {
+    //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return 0;
+    //        SystemBarTintManager tintManager = new SystemBarTintManager(context);
+    //        SystemBarTintManager.SystemBarConfig config = tintManager.getConfig();
+    //        return config.getPixelInsetTop(false);
+    //    }
+    //
+    //    public static int getInsetsBottom(Activity context, View view) {
+    //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return 0;
+    //        SystemBarTintManager tintManager = new SystemBarTintManager(context);
+    //        SystemBarTintManager.SystemBarConfig config = tintManager.getConfig();
+    //        return config.getPixelInsetBottom();
+    //    }
 }
