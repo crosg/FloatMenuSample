@@ -515,7 +515,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         MenuItemView menuItemView = new MenuItemView(mContext, item);
         LinearLayout.LayoutParams lineLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lineLp.gravity = Gravity.CENTER;
-        menuItemView.setVisibility(GONE);
+        menuItemView.setVisibility(VISIBLE);
         menuItemView.setLayoutParams(lineLp);
         menuItemView.setBackgroundColor(Color.TRANSPARENT);
         menuItemView.setOnClickListener(item.getOnClickListener());
