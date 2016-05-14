@@ -26,7 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MenuItemView extends LinearLayout implements OnMenuActionListener {
+public class MenuItemView extends LinearLayout   {
     private static final String TAG = "MIV";
     private ImageView mBtn;
     private TextView mLabel;
@@ -86,7 +86,6 @@ public class MenuItemView extends LinearLayout implements OnMenuActionListener {
             @Override
             public void onGlobalLayout() {
                 getViewTreeObserver().removeGlobalOnLayoutListener(this);
-//                applyPressAnimation();
                 ViewGroup parent = (ViewGroup) getParent();
                 parent.setClipChildren(false);
                 parent.setClipToPadding(false);
@@ -98,14 +97,4 @@ public class MenuItemView extends LinearLayout implements OnMenuActionListener {
 
     }
 
-
-    @Override
-    public void onMenuOpen() {
-
-    }
-
-    @Override
-    public void onMenuClose() {
-
-    }
 }

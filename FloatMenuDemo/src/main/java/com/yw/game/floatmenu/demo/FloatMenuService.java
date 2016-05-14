@@ -13,12 +13,6 @@
 
 package com.yw.game.floatmenu.demo;
 
-import com.yw.game.floatmenu.FloatMenu;
-import com.yw.game.floatmenu.MenuItemView;
-import com.yw.game.floatmenu.OnMenuActionListener;
-import com.yw.game.sclib.Sc;
-import com.yw.game.sclib.ScCreateResultCallback;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -32,10 +26,15 @@ import android.os.IBinder;
 import android.view.View;
 import android.widget.Toast;
 
+import com.yw.game.floatmenu.FloatMenu;
+import com.yw.game.floatmenu.MenuItemView;
+import com.yw.game.sclib.Sc;
+import com.yw.game.sclib.ScCreateResultCallback;
+
 /**
  * Created by wengyiming on 2015/12/20.
  */
-public class FloatMenuService extends Service implements View.OnClickListener, OnMenuActionListener {
+public class FloatMenuService extends Service implements View.OnClickListener {
     private FloatMenu mFloatMenu;
     private final static String TAG = FloatMenuService.class.getSimpleName();
 
@@ -49,7 +48,7 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
      */
     @Override
     public IBinder onBind(Intent intent) {
-        return new FloatViewServiceBinder();
+        return new FloatMenuServiceBinder();
     }
 
 
@@ -69,7 +68,6 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
                 .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_msg, Const.MENU_ITEMS[3], android.R.color.black, this)
                 .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this)
                 .menuBackground(R.drawable.yw_menu_bg)
-                .onMenuActionListner(this)
                 .build();
 
 
@@ -91,7 +89,6 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
                 case Const.HOME:
                     // TODO WHAT U WANT 此处模拟联网操作
                     mFloatMenu.startLoaderAnim();
-
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -113,10 +110,10 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
                     break;
                 case Const.FAVOUR:
                     createSc();
+                    addCloseMenuItem(2);
                     break;
                 case Const.FEEDBACK:
-
-                    mFloatMenu.removeMenuItenView(Const.MENU_ITEMS.length - 1);
+                    mFloatMenu.removeMenuItem(0);
                     break;
                 case Const.MESSAGE:
                     if (hasNewMsg) {
@@ -125,6 +122,7 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
                         hasNewMsg = true;
                     }
                     showRed();
+
                     break;
                 case Const.CLOSE:
                     hideFloat();
@@ -142,6 +140,23 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
             mFloatMenu.changeLogo(R.drawable.yw_image_float_logo_red, R.drawable.yw_menu_msg_red, 3);
         }
     }
+
+    public void addCloseMenuItem(int position) {
+        if (mFloatMenu == null)
+            return;
+        mFloatMenu.addMenuItem(position, android.R.color.transparent, R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this);
+    }
+
+
+    public void removeMenuItem() {
+        if (mFloatMenu == null)
+            return;
+        int size = mFloatMenu.getMenuItems().size();
+        if (size >= 6) {
+            mFloatMenu.removeMenuItem(5);
+        }
+    }
+
 
     private void createSc() {
         //在service中的使用场景
@@ -207,31 +222,8 @@ public class FloatMenuService extends Service implements View.OnClickListener, O
         destroyFloat();
     }
 
-    /**
-     * On menu open.
-     */
-    @Override
-    public void onMenuOpen() {
 
-    }
-
-    /**
-     * On menu close.
-     */
-    @Override
-    public void onMenuClose() {
-
-    }
-
-    /**
-     * The type Float view service binder.
-     */
-    public class FloatViewServiceBinder extends Binder {
-        /**
-         * Gets service.
-         *
-         * @return the service
-         */
+    public class FloatMenuServiceBinder extends Binder {
         public FloatMenuService getService() {
             return FloatMenuService.this;
         }

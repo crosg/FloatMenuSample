@@ -10,27 +10,23 @@
 [crosg/FloatMenuSample](https://github.com/crosg/FloatMenuSample)
 
 
+##update log:
+	
+	0.0.1 init lib
+	0.0.2 fix a initLoading Logo Animation bug， add Logo startLoadingAnimation
+	0.0.3 add change Logo and MenuItem Drawable
+	0.0.4 fix logo size when startLoadingAnimation
+	0.0.5 add method:
+				addMenuIten(position:int,menuItem);
+				removeMenuItem(positon:int);
+			set MenuItem Animation:
+				show with animation(alpha/scale);
+
 ## to use
-
-Maven:
-
-	<dependency>
-	  <groupId>com.yw.game.floatmenu</groupId>
-	  <artifactId>FloatMenu</artifactId>
-	  <version>0.0.5</version>
-	  <type>pom</type>
-	</dependency>
-
 
 Gradle:
 
 	compile 'com.yw.game.floatmenu:FloatMenu:0.0.5'
-
-lvy:
-
-	<dependency org='com.yw.game.floatmenu' name='FloatMenu' rev='0.0.5'>
-	  	<artifact name='$AID' ext='pom'></artifact>
-	</dependency>
 
 
 Download [aar](https://dl.bintray.com/fanofdemo/maven/com/yw/game/floatmenu/FloatMenu/0.0.5/FloatMenu-0.0.5.aar)	
@@ -68,6 +64,8 @@ for use：
                 .onMenuActionListner(this)
                 .build();
         mFloatMenu.show();
+
+
     }
 
 
@@ -88,6 +86,17 @@ for use：
             mFloatMenu.destroy();
         }
         mFloatMenu = null;
+    }
+
+	//移除一个菜单
+   	mFloatMenu.removeMenuItem(0);
+
+
+	//添加一个菜单
+	public void addCloseMenuItem(int position) {
+        if (mFloatMenu == null)
+            return;
+        mFloatMenu.addMenuItem(position, android.R.color.transparent, R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this);
     }
 
 	 private void showRed() {

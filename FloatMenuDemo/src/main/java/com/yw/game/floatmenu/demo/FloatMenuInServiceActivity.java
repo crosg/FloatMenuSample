@@ -15,29 +15,13 @@ package com.yw.game.floatmenu.demo;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 
-public class FloatMenuInServiceActivity extends AppCompatActivity {
+public class FloatMenuInServiceActivity extends AppCompatActivity implements ServiceConnectionManager.QdServiceConnection {
     private FloatMenuService mFloatMenuService;
-    private Intent intent = null;
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mFloatMenuService = ((FloatMenuService.FloatViewServiceBinder) iBinder).getService();
-            if (mFloatMenuService != null) {
-                mFloatMenuService.showFloat();
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mFloatMenuService = null;
-        }
-    };
+    private ServiceConnectionManager mServiceConnectionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,17 +31,15 @@ public class FloatMenuInServiceActivity extends AppCompatActivity {
 
     }
 
-    public boolean startFloatMenu(Context context) {
-        boolean startFloatMenuSuccessed;
-        try {
-            intent = new Intent(context, FloatMenuService.class);
-            context.startService(intent);
-            context.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
-            startFloatMenuSuccessed = true;
-        } catch (Exception ignored) {
-            startFloatMenuSuccessed = false;
+    public void startFloatMenu(Context context) {
+        if (mFloatMenuService != null) {
+            mFloatMenuService.showFloat();
+            return;
         }
-        return startFloatMenuSuccessed;
+        if (mServiceConnectionManager == null) {
+            mServiceConnectionManager = new ServiceConnectionManager(context, FloatMenuService.class, this);
+            mServiceConnectionManager.bindToService();
+        }
     }
 
 
@@ -77,8 +59,24 @@ public class FloatMenuInServiceActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mFloatMenuService.destroyFloat();
-        stopService(intent);
-        unbindService(mServiceConnection);
+        if (mFloatMenuService != null) {
+            mFloatMenuService.hideFloat();
+            mFloatMenuService.destroyFloat();
+        }
+        if (mServiceConnectionManager != null)
+            mServiceConnectionManager.unbindFromService();
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        mFloatMenuService = ((FloatMenuService.FloatMenuServiceBinder) service).getService();
+        if (mFloatMenuService != null) {
+            mFloatMenuService.showFloat();
+        }
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        mFloatMenuService = null;
     }
 }
