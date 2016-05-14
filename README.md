@@ -8,6 +8,7 @@
 [该项目在阅文集团游戏产品中持续更新，欢迎关注： https://github.com/crosg ](https://github.com/crosg)	
 
 [crosg/FloatMenuSample](https://github.com/crosg/FloatMenuSample)
+transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSample)
 
 
 ##update log:
@@ -62,7 +63,6 @@ for use：
                 .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_msg, Const.MENU_ITEMS[3], android.R.color.black, this)
                 .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this)
                 .menuBackground(R.drawable.yw_menu_bg)
-                .onMenuActionListner(this)
                 .build();
         mFloatMenu.show();
 
