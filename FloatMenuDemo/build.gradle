@@ -9,7 +9,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 23
         versionCode 0
-        versionName "0.7"
+        versionName "0.8"
     }
     buildTypes {
         release {
@@ -24,6 +24,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.yw.game.sclib:shortCutLib:0.0.3'
-//    compile 'com.yw.game.floatmenu:FloatMenu:0.0.1'
+//    compile 'com.yw.game.floatmenu:FloatMenu:0.0.8'
     compile project(':FloatMenu')
 }
