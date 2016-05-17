@@ -16,7 +16,6 @@ package com.yw.game.floatmenu;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Build;
@@ -102,18 +101,19 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
                 if (isInitingLoader) {
                     isInitingLoader = false;
                     mShowLoader = false;
-
-                    LayoutParams params = (LayoutParams) mFloatLogoImv.getLayoutParams();
-                    int padding30 = 30;
+                    LayoutParams params = (LayoutParams) mFloatLogoFra.getLayoutParams();
+                    int padding75 = (params.width ) /3;
                     if (mIsRight) {
                         if (params.rightMargin <= 0) {
-                            params.setMargins(0, 0, -padding30, 0);
-                            mFloatLogoImv.setPadding(16, 16, 0, 16);
+                            params.setMargins(0, 0, -padding75, 0);
+                            mFloatLogoFra.setLayoutParams(params);
+                            mFloatLogoFra.setPadding(16, 16, 0, 16);
                         }
                     } else {
                         if (params.leftMargin >= 0) {
-                            params.setMargins(-padding30, 0, 0, 0);
-                            mFloatLogoImv.setPadding(0, 16, 16, 16);
+                            params.setMargins(-padding75, 0, 0, 0);
+                            mFloatLogoFra.setLayoutParams(params);
+                            mFloatLogoFra.setPadding(0, 16, 16, 16);
                         }
                     }
                     mWmParams.alpha = 0.7f;
@@ -122,6 +122,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
                     mFloatMenuLine.setVisibility(View.GONE);
                 }
             } else if (msg.what == HANDLER_TYPE_CANCEL_ANIM) {
+                resetLogoSize();
                 mFloatLoaderImv.clearAnimation();
                 mFloatLoaderImv.setVisibility(View.GONE);
                 mShowLoader = false;
@@ -130,6 +131,11 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         }
     };
 
+    private void resetLogoSize() {
+        LayoutParams floatLogoLayoutParams = Utils.createLayoutParams(Utils.dp2Px(50, mContext), Utils.dp2Px(50, mContext));
+        mFloatLogoFra.setLayoutParams(floatLogoLayoutParams);
+        mFloatLogoFra.setPadding(0, 0, 0, 0);
+    }
 
     public static class Builder {
 
@@ -336,40 +342,40 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         mFloatMenuLine.setVisibility(View.GONE);
     }
 
-    @Override
-    protected void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (getVisibility() == View.GONE) {
-            return;
-        }
-        DisplayMetrics dm = new DisplayMetrics();
-        mWindowManager.getDefaultDisplay().getMetrics(dm);
-        mScreenWidth = dm.widthPixels;
-        mScreenHeight = dm.heightPixels;
-        int oldX = mWmParams.x;
-        int oldY = mWmParams.y;
-        switch (newConfig.orientation) {
-            case Configuration.ORIENTATION_LANDSCAPE://横屏
-                if (mIsRight) {
-                    mWmParams.x = mScreenWidth;
-                    mWmParams.y = oldY;
-                } else {
-                    mWmParams.x = oldX;
-                    mWmParams.y = oldY;
-                }
-                break;
-            case Configuration.ORIENTATION_PORTRAIT://竖屏
-                if (mIsRight) {
-                    mWmParams.x = mScreenWidth;
-                    mWmParams.y = oldY;
-                } else {
-                    mWmParams.x = oldX;
-                    mWmParams.y = oldY;
-                }
-                break;
-        }
-        mWindowManager.updateViewLayout(this, mWmParams);
-    }
+//    @Override
+//    protected void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//        if (getVisibility() == View.GONE) {
+//            return;
+//        }
+//        DisplayMetrics dm = new DisplayMetrics();
+//        mWindowManager.getDefaultDisplay().getMetrics(dm);
+//        mScreenWidth = dm.widthPixels;
+//        mScreenHeight = dm.heightPixels;
+//        int oldX = mWmParams.x;
+//        int oldY = mWmParams.y;
+//        switch (newConfig.orientation) {
+//            case Configuration.ORIENTATION_LANDSCAPE://横屏
+//                if (mIsRight) {
+//                    mWmParams.x = mScreenWidth;
+//                    mWmParams.y = oldY;
+//                } else {
+//                    mWmParams.x = oldX;
+//                    mWmParams.y = oldY;
+//                }
+//                break;
+//            case Configuration.ORIENTATION_PORTRAIT://竖屏
+//                if (mIsRight) {
+//                    mWmParams.x = mScreenWidth;
+//                    mWmParams.y = oldY;
+//                } else {
+//                    mWmParams.x = oldX;
+//                    mWmParams.y = oldY;
+//                }
+//                break;
+//        }
+//        mWindowManager.updateViewLayout(this, mWmParams);
+//    }
 
 
     @Override
@@ -383,11 +389,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
                 mTouchStartX = event.getX();
                 mTouchStartY = event.getY();
                 isInitingLoader = true;
-                LayoutParams imgLp = getImageViewLayoutParams();
-                imgLp.setMargins(0, 0, 0, 0);
-                mFloatLogoImv.setLayoutParams(imgLp);
-                mFloatLoaderImv.setPadding(0, 0, 0, 0);
-                mFloatLoaderImv.setLayoutParams(imgLp);
+                resetLogoSize();
 
                 mWmParams.alpha = 1f;
                 mWindowManager.updateViewLayout(this, mWmParams);
@@ -552,14 +554,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     public void show() {
         setVisibility(View.VISIBLE);
         isInitingLoader = true;
-
-        LayoutParams imgLp = getImageViewLayoutParams();
-        imgLp.setMargins(0, 0, 0, 0);
-        mFloatLogoImv.setPadding(0, 0, 0, 0);
-        mFloatLogoImv.setLayoutParams(imgLp);
-        mFloatLoaderImv.setPadding(0, 0, 0, 0);
-        mFloatLoaderImv.setLayoutParams(imgLp);
-
+        resetLogoSize();
         mWmParams.alpha = 1f;
         mWindowManager.updateViewLayout(this, mWmParams);
 

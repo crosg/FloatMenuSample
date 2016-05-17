@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.yw.game.floatmenu.demo">
+<manifest package="com.yw.game.floatmenu.demo"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:allowBackup="true"
@@ -8,14 +8,18 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FloatMenuInServiceActivity">
+        <!--  android:configChanges="keyboardHidden|orientation|screenSize"
+            防止横竖屏切换时重新执行oncreate-->
+        <activity
+            android:name=".FloatMenuInServiceActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <service android:name=".FloatMenuService" />
+        <service android:name=".FloatMenuService"/>
     </application>
 
 </manifest>
