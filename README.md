@@ -4,14 +4,14 @@
 
 
 
-##项目已转移到 阅文集团 
+##项目已转移到 阅文集团(CHAINA READING) 
 [该项目在阅文集团游戏产品中持续更新，欢迎关注： https://github.com/crosg ](https://github.com/crosg)	
 
 [crosg/FloatMenuSample](https://github.com/crosg/FloatMenuSample)
 transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSample)
 
 
-##update log:
+##UPDATE LOG:
 	
 	0.0.1 init lib
 	0.0.2 fix a initLoading Logo Animation bug， add Logo startLoadingAnimation
@@ -23,17 +23,19 @@ transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSam
 				removeMenuItem(positon:int);
 			set MenuItem Animation:
 				show with animation(alpha/scale);
+	0.0.7	fix logo loader size
+	0.0.8	auto hide half logo by change LayoutParam Margin
+	0.0.9 	fix addMenuItem()&removeMenuItem() bugs
+	
 
-## to use
-
-Gradle:
+##  GRADLE:
 
 	compile 'com.yw.game.floatmenu:FloatMenu:@lastVersion'
 
 
-Download [aar](https://dl.bintray.com/fanofdemo/maven/com/yw/game/floatmenu/FloatMenu/0.0.5/FloatMenu-0.0.5.aar)	
+Download [aar](https://dl.bintray.com/fanofdemo/maven/com/yw/game/floatmenu/FloatMenu/0.0.5/FloatMenu-0.0.9.aar)	
 
-Download [jar](https://bintray.com/fanofdemo/maven/download_file?file_path=com%2Fyw%2Fgame%2Ffloatmenu%2FFloatMenu%2F0.0.5%2FFloatMenu-0.0.5-sources.jar)
+Download [jar](https://bintray.com/fanofdemo/maven/download_file?file_path=com%2Fyw%2Fgame%2Ffloatmenu%2FFloatMenu%2F0.0.5%2FFloatMenu-0.0.9-sources.jar)
 
 
 android float menu in app or launcher
@@ -54,14 +56,14 @@ for use：
 	@Override
     public void onCreate() {
         super.onCreate();
-        mFloatMenu = new FloatMenu.Builder(this)
+          mFloatMenu = new FloatMenu.Builder(this)
                 .floatLoader(R.drawable.yw_anim_background)
                 .floatLogo(R.drawable.yw_image_float_logo)
-                .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_account, Const.MENU_ITEMS[0], android.R.color.black, this)
-                .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_favour, Const.MENU_ITEMS[1], android.R.color.black, this)
-                .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_fb, Const.MENU_ITEMS[2], android.R.color.black, this)
-                .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_msg, Const.MENU_ITEMS[3], android.R.color.black, this)
-                .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this)
+                .addMenuItem( R.drawable.yw_menu_account, Const.MENU_ITEMS[0], android.R.color.black, this)
+                .addMenuItem(R.drawable.yw_menu_favour, Const.MENU_ITEMS[1], android.R.color.black, this)
+                .addMenuItem( R.drawable.yw_menu_fb, Const.MENU_ITEMS[2], android.R.color.black, this)
+                .addMenuItem(R.drawable.yw_menu_msg, Const.MENU_ITEMS[3], android.R.color.black, this)
+                .addMenuItem(R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this)
                 .menuBackground(R.drawable.yw_menu_bg)
                 .build();
         mFloatMenu.show();
@@ -117,15 +119,6 @@ for use：
 
 <img src="pickture/201605031543.gif" width="320" />
 <img src="pickture/201605041543.gif" width="320" />
-
-##reference 
-
- [http://www.jianshu.com/p/167fd5f47d5c](http://www.jianshu.com/p/167fd5f47d5c) 
-
- [http://www.jianshu.com/p/634cd056b90c](http://www.jianshu.com/p/634cd056b90c) 
-
- [http://www.liaohuqiu.net/cn/posts/android-windows-manager/](http://www.liaohuqiu.net/cn/posts/android-windows-manager/) 
-
 
 
 

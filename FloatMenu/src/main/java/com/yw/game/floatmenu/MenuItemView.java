@@ -17,7 +17,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-import android.support.annotation.DrawableRes;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -26,8 +25,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MenuItemView extends LinearLayout   {
-    private static final String TAG = "MIV";
+public class MenuItemView extends LinearLayout {
+    private static final String TAG = MenuItemView.class.getSimpleName();
     private ImageView mBtn;
     private TextView mLabel;
 
@@ -49,7 +48,7 @@ public class MenuItemView extends LinearLayout   {
         init(context);
     }
 
-    public void setImageView(@DrawableRes int drawableRes){
+    public void setImageView(int drawableRes) {
         mBtn.setImageResource(drawableRes);
     }
 
@@ -60,12 +59,12 @@ public class MenuItemView extends LinearLayout   {
         btnLp.gravity = Gravity.CENTER;
         btnLp.leftMargin = Utils.dp2Px(mGapSize, context);
         btnLp.rightMargin = Utils.dp2Px(mGapSize, context);
-        btnLp.bottomMargin = Utils.dp2Px(1,context);
+        btnLp.bottomMargin = Utils.dp2Px(1, context);
         mBtn.setLayoutParams(btnLp);
         mBtn.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         OvalShape ovalShape = new OvalShape();
         ShapeDrawable shapeDrawable = new ShapeDrawable(ovalShape);
-        shapeDrawable.getPaint().setColor(resources.getColor(mMenuItem.getBgColor()));
+        shapeDrawable.getPaint().setColor(resources.getColor(android.R.color.transparent));
         mBtn.setBackgroundDrawable(shapeDrawable);
         mBtn.setImageResource(mMenuItem.getIcon());
         mBtn.setClickable(false);

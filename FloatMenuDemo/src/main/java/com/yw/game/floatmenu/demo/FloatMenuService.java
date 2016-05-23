@@ -62,11 +62,11 @@ public class FloatMenuService extends Service implements View.OnClickListener {
         mFloatMenu = new FloatMenu.Builder(this)
                 .floatLoader(R.drawable.yw_anim_background)
                 .floatLogo(R.drawable.yw_image_float_logo)
-                .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_account, Const.MENU_ITEMS[0], android.R.color.black, this)
-                .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_favour, Const.MENU_ITEMS[1], android.R.color.black, this)
-                .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_fb, Const.MENU_ITEMS[2], android.R.color.black, this)
-                .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_msg, Const.MENU_ITEMS[3], android.R.color.black, this)
-                .addMenuItem(android.R.color.transparent, R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this)
+                .addMenuItem( R.drawable.yw_menu_account, Const.MENU_ITEMS[0], android.R.color.black, this)
+                .addMenuItem(R.drawable.yw_menu_favour, Const.MENU_ITEMS[1], android.R.color.black, this)
+                .addMenuItem( R.drawable.yw_menu_fb, Const.MENU_ITEMS[2], android.R.color.black, this)
+                .addMenuItem(R.drawable.yw_menu_msg, Const.MENU_ITEMS[3], android.R.color.black, this)
+                .addMenuItem(R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this)
                 .menuBackground(R.drawable.yw_menu_bg)
                 .build();
 
@@ -144,9 +144,8 @@ public class FloatMenuService extends Service implements View.OnClickListener {
     public void addCloseMenuItem(int position) {
         if (mFloatMenu == null)
             return;
-        mFloatMenu.addMenuItem(position, android.R.color.transparent, R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this);
+        mFloatMenu.addMenuItem(position, R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this);
     }
-
 
     public void removeMenuItem() {
         if (mFloatMenu == null)

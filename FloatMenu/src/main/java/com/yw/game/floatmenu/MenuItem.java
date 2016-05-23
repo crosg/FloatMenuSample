@@ -13,31 +13,23 @@
 
 package com.yw.game.floatmenu;
 
-import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
 import android.view.View;
 
 public class MenuItem {
-    @ColorRes
-    private int bgColor;
-    @DrawableRes
     private int icon;
     private String label;
-    @ColorRes
     private int textColor = android.R.color.white;
     private int diameter = 50;
     private View.OnClickListener onClickListener;
 
-    public MenuItem(int bgColor, int icon, String label, int textColor, View.OnClickListener onClickListener) {
-        this.bgColor = bgColor;
+    public MenuItem( int icon, String label, int textColor, View.OnClickListener onClickListener) {
         this.icon = icon;
         this.label = label;
         this.textColor = textColor;
         this.onClickListener = onClickListener;
     }
 
-    public MenuItem(int bgColor, int icon, String label, int textColor, int diameter, View.OnClickListener onClickListener) {
-        this.bgColor = bgColor;
+    public MenuItem(int icon, String label, int textColor, int diameter, View.OnClickListener onClickListener) {
         this.icon = icon;
         this.label = label;
         this.textColor = textColor;
@@ -45,25 +37,14 @@ public class MenuItem {
         this.onClickListener = onClickListener;
     }
 
-    public MenuItem(int bgColor) {
-        this.bgColor = bgColor;
-    }
 
-    public MenuItem(int bgColor, int icon, String label) {
-        this.bgColor = bgColor;
+    public MenuItem( int icon, String label) {
         this.icon = icon;
         this.label = label;
     }
 
-    public int getBgColor() {
-        return bgColor;
-    }
 
-    public void setBgColor(int bgColor) {
-        this.bgColor = bgColor;
-    }
 
-    @DrawableRes
     public int getIcon() {
         return  icon;
     }
