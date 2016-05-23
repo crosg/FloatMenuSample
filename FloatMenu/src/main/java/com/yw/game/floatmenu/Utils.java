@@ -15,7 +15,6 @@ package com.yw.game.floatmenu;
 
 
 import android.content.Context;
-import android.support.annotation.DimenRes;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.TypedValue;
 import android.view.ViewGroup;
@@ -69,7 +68,7 @@ public class Utils {
         return animationSet;
     }
 
-    public static int getDimension(Context context, @DimenRes int id) {
+    public static int getDimension(Context context,  int id) {
         return context.getResources().getDimensionPixelSize(id);
     }
 
