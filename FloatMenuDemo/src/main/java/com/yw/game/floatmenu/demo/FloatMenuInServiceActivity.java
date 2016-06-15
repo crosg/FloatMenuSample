@@ -13,70 +13,36 @@
 
 package com.yw.game.floatmenu.demo;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 
-public class FloatMenuInServiceActivity extends AppCompatActivity implements ServiceConnectionManager.QdServiceConnection {
-    private FloatMenuService mFloatMenuService;
-    private ServiceConnectionManager mServiceConnectionManager;
+public class FloatMenuInServiceActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_float_menu_in_service);
-        startFloatMenu(this);
+        FloatMenuManager.getInstance().startFloatView(this.getApplicationContext());
 
-    }
-
-    public void startFloatMenu(Context context) {
-        if (mFloatMenuService != null) {
-            mFloatMenuService.showFloat();
-            return;
-        }
-        if (mServiceConnectionManager == null) {
-            mServiceConnectionManager = new ServiceConnectionManager(context, FloatMenuService.class, this);
-            mServiceConnectionManager.bindToService();
-        }
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mFloatMenuService != null)
-            mFloatMenuService.showFloat();
+        FloatMenuManager.getInstance().showFloatingView();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mFloatMenuService.hideFloat();
+        FloatMenuManager.getInstance().hideFloatingView();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mFloatMenuService != null) {
-            mFloatMenuService.hideFloat();
-            mFloatMenuService.destroyFloat();
-        }
-        if (mServiceConnectionManager != null)
-            mServiceConnectionManager.unbindFromService();
+        FloatMenuManager.getInstance().destroy();
     }
 
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        mFloatMenuService = ((FloatMenuService.FloatMenuServiceBinder) service).getService();
-        if (mFloatMenuService != null) {
-            mFloatMenuService.showFloat();
-        }
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-        mFloatMenuService = null;
-    }
 }
