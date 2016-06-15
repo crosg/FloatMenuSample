@@ -13,21 +13,23 @@ transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSam
 
 ##UPDATE LOG:
 	
-	0.0.1 init lib
-	0.0.2 fix a initLoading Logo Animation bug， add Logo startLoadingAnimation
-	0.0.3 add change Logo and MenuItem Drawable
-	0.0.4 fix logo size when startLoadingAnimation
-	0.0.5 modify copyright
-	0.0.6 add method:
+* 0.0.1 init lib
+* 0.0.2 fix a initLoading Logo Animation bug， add Logo startLoadingAnimation
+* 0.0.3 add change Logo and MenuItem Drawable
+* 0.0.4 fix logo size when startLoadingAnimation
+* 0.0.5 modify copyright
+* 0.0.6 add method:
 				addMenuIten(position:int,menuItem);
 				removeMenuItem(positon:int);
 				set MenuItem Animation:
 				show with animation(alpha/scale);
-	0.0.7	fix logo loader size
-	0.0.8	auto hide half logo by change LayoutParam Margin
-	0.0.9 	fix addMenuItem()&removeMenuItem() bugs
-	1.0.0 	fix logoLoaderAnimation bugs when logo on the right
-	1.1.0   [add FloatMenuManager single sample](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuManager.java)
+*	0.0.7	fix logo loader size
+*	0.0.8	auto hide half logo by change LayoutParam Margin
+*	0.0.9 	fix addMenuItem()&removeMenuItem() bugs
+*	1.0.0 	[fix logoLoaderAnimation bugs when logo on the right](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/java/com/yw/game/floatmenu/FloatMenu.java)
+*	1.1.0   [add FloatMenuManager single sample](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuManager.java)
+
+
 	
 
 ##  GRADLE:
@@ -35,9 +37,9 @@ transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSam
 	compile 'com.yw.game.floatmenu:FloatMenu:@lastVersion'
 
 
-Download [aar](https://dl.bintray.com/fanofdemo/maven/com/yw/game/floatmenu/FloatMenu/0.0.5/FloatMenu-0.0.9.aar)	
+Download [aar](https://dl.bintray.com/fanofdemo/maven/com/yw/game/floatmenu/FloatMenu/0.0.5/FloatMenu-1.1.0.aar)	
 
-Download [jar](https://bintray.com/fanofdemo/maven/download_file?file_path=com%2Fyw%2Fgame%2Ffloatmenu%2FFloatMenu%2F0.0.5%2FFloatMenu-0.0.9-sources.jar)
+Download [jar](https://bintray.com/fanofdemo/maven/download_file?file_path=com%2Fyw%2Fgame%2Ffloatmenu%2FFloatMenu%2F1.1.0%2FFloatMenu-1.1.0-sources.jar)
 
 
 android float menu in app or launcher
