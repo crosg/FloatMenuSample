@@ -8,8 +8,8 @@ android {
         applicationId "com.yw.game.floatmenu.demo"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 0
-        versionName "0.9"
+        versionCode 1
+        versionName "0.0"
     }
     buildTypes {
         release {
