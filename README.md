@@ -21,11 +21,13 @@ transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSam
 	0.0.6 add method:
 				addMenuIten(position:int,menuItem);
 				removeMenuItem(positon:int);
-			set MenuItem Animation:
+				set MenuItem Animation:
 				show with animation(alpha/scale);
 	0.0.7	fix logo loader size
 	0.0.8	auto hide half logo by change LayoutParam Margin
 	0.0.9 	fix addMenuItem()&removeMenuItem() bugs
+	1.0.0 	fix logoLoaderAnimation bugs when logo on the right
+	1.1.0   [add FloatMenuManager single sample](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuManager.java)
 	
 
 ##  GRADLE:
@@ -99,7 +101,7 @@ for use：
 	public void addCloseMenuItem(int position) {
         if (mFloatMenu == null)
             return;
-        mFloatMenu.addMenuItem(position, android.R.color.transparent, R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this);
+        mFloatMenu.addMenuItem(position, R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this);
     }
 
 	 private void showRed() {
