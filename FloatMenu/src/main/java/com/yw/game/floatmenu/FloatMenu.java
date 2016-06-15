@@ -130,7 +130,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         LayoutParams floatLogoLayoutParams = Utils.createLayoutParams(Utils.dp2Px(50, mContext), Utils.dp2Px(50, mContext));
         mFloatLogoFra.setLayoutParams(floatLogoLayoutParams);
         mFloatLogoFra.setPadding(0, 0, 0, 0);
-        refreshFloatMenu(mIsRight);
     }
 
     public static class Builder {

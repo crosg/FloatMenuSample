@@ -15,7 +15,6 @@ package com.yw.game.floatmenu;
 
 
 import android.content.Context;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -54,7 +53,7 @@ public class Utils {
 
     public static AnimationSet getScaleAlphaAnimation(Animation.AnimationListener mAnimationListener) {
         ScaleAnimation mScaleAnimation = new ScaleAnimation(0.5f, 1.0f, 0.5f, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f);
-        mScaleAnimation.setInterpolator(new LinearOutSlowInInterpolator());
+        mScaleAnimation.setInterpolator(new LinearInterpolator());
         AlphaAnimation mAlphaAnimation = new AlphaAnimation(0.0f, 1.0f);
         mAlphaAnimation.setInterpolator(new LinearInterpolator());
 
