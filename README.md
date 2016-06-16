@@ -1,11 +1,11 @@
 # FloatMenuSample
-[ ![Download](https://api.bintray.com/packages/fanofdemo/maven/FloatMenu/images/download.svg) ](https://bintray.com/fanofdemo/maven/FloatMenu/_latestVersion)
+
+[ ![Download](https://api.bintray.com/packages/fanofdemo/maven/FloatMenu/images/download.svg) ](https://bintray.com/fanofdemo/maven/FloatMenu/_latestVersion)[<img src="pickture/chinareadlogo.png" width="64" />](http://www.yuewen.com/)
 
 
+[<img src="pickture/chinareadlogo.png" width="64" />游戏产品持续更新](http://xs.qidian.com/Home/Pc/Index/index)
 
-
-##项目已转移到 阅文集团(CHAINA READING) 
-[该项目在阅文集团游戏产品中持续更新，欢迎关注： https://github.com/crosg ](https://github.com/crosg)	
+欢迎关注 [https://github.com/crosg ](https://github.com/crosg)	
 
 [crosg/FloatMenuSample](https://github.com/crosg/FloatMenuSample)
 transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSample)
