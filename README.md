@@ -13,9 +13,9 @@ transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSam
 
 ##gif
 <img src="pickture/201606161036.gif" width="640" />
-<img src="pickture/20160503125603.png" width="210" />
-<img src="pickture/201605031543.gif" width="210" />
-<img src="pickture/201605041543.gif" width="210" />
+<img src="pickture/20160503125603.png" width="280" />
+<img src="pickture/201605031543.gif" width="280" />
+<img src="pickture/201605041543.gif" width="280" />
 	
 
 ##  GRADLE:
