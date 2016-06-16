@@ -100,9 +100,10 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
                     int padding75 = (params.width) / 3;
                     if (mIsRight) {
                         if (params.rightMargin <= 0) {
+                            mFloatLogoFra.setPadding(16, 16, 0, 16);
                             params.setMargins(0, 0, -padding75, 0);
                             mFloatLogoFra.setLayoutParams(params);
-                            mFloatLogoFra.setPadding(16, 16, 0, 16);
+
                         }
                     } else {
                         if (params.leftMargin >= 0) {
@@ -148,9 +149,9 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
             this.mContext = context;
         }
 
-        public Builder addMenuItem( int icon, String label,
-                                    int textColor, OnClickListener onClickListener) {
-            menuItems.add(new MenuItem( icon, label, textColor, onClickListener));
+        public Builder addMenuItem(int icon, String label,
+                                   int textColor, OnClickListener onClickListener) {
+            menuItems.add(new MenuItem(icon, label, textColor, onClickListener));
             return this;
         }
 
@@ -161,24 +162,24 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         }
 
 
-        public Builder menuBackground( int menuBgId) {
+        public Builder menuBackground(int menuBgId) {
             this.menuBgId = menuBgId;
             return this;
         }
 
 
-        public Builder addMenuItem(  int icon, String label,
-                                    int textColor, int diameter, OnClickListener onClickListener) {
-            menuItems.add(new MenuItem( icon, label, textColor, diameter, onClickListener));
+        public Builder addMenuItem(int icon, String label,
+                                   int textColor, int diameter, OnClickListener onClickListener) {
+            menuItems.add(new MenuItem(icon, label, textColor, diameter, onClickListener));
             return this;
         }
 
-        public Builder floatLogo( int FloatLogo) {
+        public Builder floatLogo(int FloatLogo) {
             this.floatLogoRes = FloatLogo;
             return this;
         }
 
-        public Builder floatLoader( int floatLoader) {
+        public Builder floatLoader(int floatLoader) {
             this.floatLoaderRes = floatLoader;
             return this;
         }
@@ -231,7 +232,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
 
     public void addMenuItem(int position, int icon, String label,
                             int textColor, OnClickListener onClickListener) {
-        MenuItem mMenuItem = new MenuItem( icon, label, textColor, onClickListener);
+        MenuItem mMenuItem = new MenuItem(icon, label, textColor, onClickListener);
         mMenuItems.add(position, mMenuItem);
         final MenuItemView menuItemView = generateMenuItemView(mMenuItem);
         mMenuItemViews.add(position, menuItemView);
@@ -388,10 +389,9 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
             mWmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         }
         mWmParams.format = PixelFormat.RGBA_8888;
-        mWmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        mWmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
         mWmParams.gravity = Gravity.LEFT | Gravity.TOP;
 
-        mScreenHeight = mWindowManager.getDefaultDisplay().getHeight();
         mWmParams.x = 0;
         mWmParams.y = mScreenHeight / 10;
         mWmParams.width = LayoutParams.WRAP_CONTENT;

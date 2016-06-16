@@ -13,23 +13,42 @@
 
 package com.yw.game.floatmenu.demo;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
-public class FloatMenuInServiceActivity extends AppCompatActivity {
+public class FloatMenuInServiceActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideBothNavigationBarAndStatusBar();
         setContentView(R.layout.activity_float_menu_in_service);
         FloatMenuManager.getInstance().startFloatView(this.getApplicationContext());
+        findViewById(R.id.hideStatuBarNaviBar).setOnClickListener(this);
 
     }
 
+    /**
+     * // Hide both the navigation bar and the status bar.
+     * // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
+     * // a general rule, you should design your app to hide the status bar whenever you
+     * // hide the navigation bar.
+     */
+    private void hideBothNavigationBarAndStatusBar() {
+        View decorView = getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
+        hideBothNavigationBarAndStatusBar();
         FloatMenuManager.getInstance().showFloatingView();
     }
 
@@ -45,4 +64,12 @@ public class FloatMenuInServiceActivity extends AppCompatActivity {
         FloatMenuManager.getInstance().destroy();
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.hideStatuBarNaviBar:
+                hideBothNavigationBarAndStatusBar();
+                break;
+        }
+    }
 }
