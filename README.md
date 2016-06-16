@@ -11,26 +11,11 @@
 transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSample)
 
 
-##UPDATE LOG:
-	
-* 0.0.1 init lib
-* 0.0.2 fix a initLoading Logo Animation bug， add Logo startLoadingAnimation
-* 0.0.3 add change Logo and MenuItem Drawable
-* 0.0.4 fix logo size when startLoadingAnimation
-* 0.0.5 modify copyright
-* 0.0.6 add method:
-				addMenuIten(position:int,menuItem);
-				removeMenuItem(positon:int);
-				set MenuItem Animation:
-				show with animation(alpha/scale);
-*	0.0.7	fix logo loader size
-*	0.0.8	auto hide half logo by change LayoutParam Margin
-*	0.0.9 	fix addMenuItem()&removeMenuItem() bugs
-*	1.0.0 	[fix logoLoaderAnimation bugs when logo on the right](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/java/com/yw/game/floatmenu/FloatMenu.java)
-*	1.1.0   [add FloatMenuManager single sample](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuManager.java)
-
-*	1.1.1 [fix a bug  when logo local at screens`s right when sceen is fullsceen,click here see demo](https://github.com/crosg/FloatMenuSample/blob/master/pickture/201606161036.gif)
-
+##gif
+<img src="pickture/201606161036.gif" width="640" />
+<img src="pickture/20160503125603.png" width="210" />
+<img src="pickture/201605031543.gif" width="210" />
+<img src="pickture/201605041543.gif" width="210" />
 	
 
 ##  GRADLE:
@@ -115,15 +100,13 @@ for use：
         }
     }
 
-
-###see sample 
+see sample 
 
 [FloatMenuService](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo%2Fsrc%2Fmain%2Fjava%2Fcom%2Fyw%2Fgame%2Ffloatmenu%2Fdemo%2FFloatMenuService.java)
 
 [FloatMenuInServiceActivity](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuInServiceActivity.java)
 
 ###设计思路
-
 
 * 设计图：
 
@@ -133,12 +116,27 @@ for use：
 
    		mWmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
 
-##demo
-<img src="pickture/201606161036.gif" width="640" />
-<img src="pickture/20160503125603.png" width="320" />
+##UPDATE LOG:
+	
+* 0.0.1 init lib
+* 0.0.2 fix a initLoading Logo Animation bug， add Logo startLoadingAnimation
+* 0.0.3 add change Logo and MenuItem Drawable
+* 0.0.4 fix logo size when startLoadingAnimation
+* 0.0.5 modify copyright
+* 0.0.6 add method:
+				addMenuIten(position:int,menuItem);
+				removeMenuItem(positon:int);
+				set MenuItem Animation:
+				show with animation(alpha/scale);
+*	0.0.7	fix logo loader size
+*	0.0.8	auto hide half logo by change LayoutParam Margin
+*	0.0.9 	fix addMenuItem()&removeMenuItem() bugs
+*	1.0.0 	[fix logoLoaderAnimation bugs when logo on the right](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/java/com/yw/game/floatmenu/FloatMenu.java)
+*	1.1.0   [add FloatMenuManager single sample](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuManager.java)
 
-<img src="pickture/201605031543.gif" width="320" />
-<img src="pickture/201605041543.gif" width="320" />
+*	1.1.1 [fix a bug  when logo local at screens`s right when sceen is fullsceen,click here see demo](https://github.com/crosg/FloatMenuSample/blob/master/pickture/201606161036.gif)
+
+
 
 
 
