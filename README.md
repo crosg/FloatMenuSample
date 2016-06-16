@@ -29,6 +29,7 @@ transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSam
 *	1.0.0 	[fix logoLoaderAnimation bugs when logo on the right](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/java/com/yw/game/floatmenu/FloatMenu.java)
 *	1.1.0   [add FloatMenuManager single sample](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuManager.java)
 
+*	1.1.1 [fix a bug  when logo local at screens`s right when sceen is fullsceen,click here see demo](https://github.com/crosg/FloatMenuSample/blob/master/pickture/201606161036.gif)
 
 	
 
@@ -124,7 +125,7 @@ for use：
 <img src="pickture/201605031543.gif" width="320" />
 <img src="pickture/201605041543.gif" width="320" />
 
-
+<img src="pickture/201606161036.gif" width="320" />
 
 ##License
 
