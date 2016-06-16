@@ -119,7 +119,7 @@ for use：
 ###see sample [FloatMenuService](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo%2Fsrc%2Fmain%2Fjava%2Fcom%2Fyw%2Fgame%2Ffloatmenu%2Fdemo%2FFloatMenuService.java)
 
 ##demo
-<img src="pickture/201606161036.gif" width="320" />
+<img src="pickture/201606161036.gif" width="640" />
 <img src="pickture/20160503125603.png" width="320" />
 
 <img src="pickture/201605031543.gif" width="320" />
