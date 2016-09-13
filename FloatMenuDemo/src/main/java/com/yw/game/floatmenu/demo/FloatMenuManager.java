@@ -56,7 +56,7 @@ public class FloatMenuManager implements ServiceConnectionManager.QdServiceConne
      */
     public void addFloatMenuItem() {
         if (mFloatViewService != null) {
-            mFloatViewService.addCloseMenuItem(0);
+//            mFloatViewService.addCloseMenuItem(0);
         }
     }
 
@@ -65,7 +65,7 @@ public class FloatMenuManager implements ServiceConnectionManager.QdServiceConne
      */
     public void removeMenuItem() {
         if (mFloatViewService != null) {
-            mFloatViewService.removeMenuItem();
+//            mFloatViewService.removeMenuItem();
         }
     }
 

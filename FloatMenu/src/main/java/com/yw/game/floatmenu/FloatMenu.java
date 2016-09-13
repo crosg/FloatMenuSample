@@ -17,7 +17,6 @@ package com.yw.game.floatmenu;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Handler;
@@ -30,7 +29,6 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
@@ -53,42 +51,38 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     private final int HANDLER_TYPE_HIDE_LOGO = 100;
     private final int HANDLER_TYPE_CANCEL_ANIM = 101;
 
-
-    private
-    int floatLogo = -1;
-    private
-    int floatLoader = -1;
-
-    private
-    int menuBgId = -1;
-
+    //WindowMananger的params，控制这个值可以将自定义的view设置到窗口管理器中
     private WindowManager.LayoutParams mWmParams;
-    private WindowManager mWindowManager;
-    private Context mContext;
+    private WindowManager mWindowManager;//当前view的窗口管理器
+    private Context mContext;//一个全局上下文，demo使用的service的上下文
 
 
-    private ImageView mFloatLogoImv;
-    private ImageView mFloatLoaderImv;
-    private LinearLayout mFloatMenuLine;
-    private FrameLayout mFloatLogoFra;
-    private ArrayList<MenuItem> mMenuItems;
+    private ImageView mFloatLogoImv;//悬浮球的logo
+    private ImageView mFloatLoaderImv;//围绕悬浮球的动画背景图，可用于做旋转或其它动画，看具体的设计
+    private LinearLayout mFloatMenuLine;//悬浮菜单的载体，横向线性布局
+    private FrameLayout mFloatLogoFra;//悬浮球的logo和动画背景图的载体
 
+    private ArrayList<MenuItem> mMenuItems; //菜单对象的集合
+    private ArrayList<MenuItemView> mMenuItemViews; //菜单中的Item对应的view集合
 
-    private ArrayList<MenuItemView> mMenuItemViews;
+    private boolean mIsRight;//当前悬浮球是否悬停在右边
+    private boolean isInitingLoader;//当前悬浮球的动画是否首次加载
+    private boolean isActionLoading;//当前悬浮球动画是否是点击事件触发的动画
 
-    private boolean mIsRight;
-    private boolean isInitingLoader;
-    private boolean isActionLoading;
-    private float mTouchStartX;
-    private float mTouchStartY;
-    private int mScreenWidth;
-    private int mScreenHeight;
-    private boolean mDraging;
-    private boolean mShowLoader = true;
+    private float mTouchStartX;//记录首次按下的位置x
+    private float mTouchStartY;//记录首次按下的位置y
 
-    private Timer mTimer;
-    private TimerTask mTimerTask;
+    private int mScreenWidth;//屏幕宽度
+    private int mScreenHeight;//屏幕高度
+    private boolean mDraging;//是否拖动中
+    private boolean mShowLoader = true;//是否显示加载动画
 
+    private Timer mTimer;//一段时间没有操作 定时隐藏菜单，缩小悬浮球 的定时器，定时器可以设置一个对应的定时任务
+    private TimerTask mTimerTask;//配合定时器的定时任务，本质是一个runnable,包装了定时相关业务方法
+
+    /**
+     * 用于接收隐藏缩小悬浮球、悬浮菜单，取消悬浮球的加载动画
+     */
     final Handler mTimerHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -127,60 +121,28 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         }
     };
 
+    /**
+     * 悬浮球缩小后下次恢复原始大小
+     */
     private void resetLogoSize() {
         LayoutParams floatLogoLayoutParams = Utils.createLayoutParams(Utils.dp2Px(50, mContext), Utils.dp2Px(50, mContext));
         mFloatLogoFra.setLayoutParams(floatLogoLayoutParams);
         mFloatLogoFra.setPadding(0, 0, 0, 0);
     }
 
+    /**
+     * 悬浮球构造器
+     */
     public static class Builder {
-
         private Context mContext;
         private ArrayList<MenuItem> menuItems = new ArrayList<>();
-        private
-        int floatLogoRes;
-        private
-        int floatLoaderRes;
-        private
-        int menuBgId;
-
 
         public Builder(Context context) {
             this.mContext = context;
         }
 
-        public Builder addMenuItem(int icon, String label,
-                                   int textColor, OnClickListener onClickListener) {
-            menuItems.add(new MenuItem(icon, label, textColor, onClickListener));
-            return this;
-        }
-
         public Builder menuItems(ArrayList<MenuItem> menuItems) {
-            menuItems.clear();
             this.menuItems = menuItems;
-            return this;
-        }
-
-
-        public Builder menuBackground(int menuBgId) {
-            this.menuBgId = menuBgId;
-            return this;
-        }
-
-
-        public Builder addMenuItem(int icon, String label,
-                                   int textColor, int diameter, OnClickListener onClickListener) {
-            menuItems.add(new MenuItem(icon, label, textColor, diameter, onClickListener));
-            return this;
-        }
-
-        public Builder floatLogo(int FloatLogo) {
-            this.floatLogoRes = FloatLogo;
-            return this;
-        }
-
-        public Builder floatLoader(int floatLoader) {
-            this.floatLoaderRes = floatLoader;
             return this;
         }
 
@@ -189,16 +151,16 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         }
     }
 
+    /**
+     * 悬浮球构造方法，用于创建悬浮菜单实例
+     */
     public FloatMenu(Builder builder) {
         super(builder.mContext);
-        this.floatLogo = builder.floatLogoRes;
-        this.floatLoader = builder.floatLoaderRes;
         this.mMenuItems = builder.menuItems;
         this.mContext = builder.mContext;
-        this.menuBgId = builder.menuBgId;
-        Log.e(TAG, (mContext == null) + "");
         init(this.mContext);
     }
+
 
     public FloatMenu(Context context) {
         this(context, null, 0);
@@ -212,46 +174,6 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         super(context, attrs, defStyleAttr);
     }
 
-    public void updateMenuItem(ArrayList<MenuItem> mMenuItems) {
-        this.mMenuItems = mMenuItems;
-        mMenuItemViews.clear();
-        mFloatMenuLine.removeAllViews();
-        mMenuItemViews = generateMenuItemViews();
-        addMenuItemViews();
-    }
-
-    public void addMenuItem(int icon, String label,
-                            int textColor, OnClickListener onClickListener) {
-        MenuItem mMenuItem = new MenuItem(icon, label, textColor, onClickListener);
-        mMenuItems.add(mMenuItem);
-        MenuItemView menuItemView = generateMenuItemView(mMenuItem);
-        mMenuItemViews.add(menuItemView);
-        mFloatMenuLine.addView(menuItemView);
-        refreshFloatMenu(mIsRight);
-    }
-
-    public void addMenuItem(int position, int icon, String label,
-                            int textColor, OnClickListener onClickListener) {
-        MenuItem mMenuItem = new MenuItem(icon, label, textColor, onClickListener);
-        mMenuItems.add(position, mMenuItem);
-        final MenuItemView menuItemView = generateMenuItemView(mMenuItem);
-        mMenuItemViews.add(position, menuItemView);
-        mFloatMenuLine.removeAllViews();
-        addMenuItemViews();
-        refreshFloatMenu(mIsRight);
-    }
-
-
-    public void removeMenuItem(int postion) {
-        MenuItem mMenuItem = mMenuItems.get(postion);
-        mMenuItems.remove(mMenuItem);
-        MenuItemView mMenuItemView = mMenuItemViews.get(postion);
-        mFloatMenuLine.removeView(mMenuItemView);
-        mMenuItemViews.remove(postion);
-        refreshFloatMenu(mIsRight);
-    }
-
-
     public ArrayList<MenuItem> getMenuItems() {
         return mMenuItems;
     }
@@ -259,57 +181,34 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
     /**
      * @param mContext mContext
      * @return return
+     * 创建悬浮球，先从xml导入悬浮球的资源样板
+     * 根据每个菜单item内容创建对应的MenuItemView
      */
     private View createView(final Context mContext) {
-        FrameLayout rootFloatView = new FrameLayout(mContext);
-        LayoutParams params = Utils.createLayoutParams(LayoutParams.MATCH_PARENT, Utils.dp2Px(50, mContext));
-        params.gravity = Gravity.CENTER;
-        rootFloatView.setLayoutParams(params);
-        mFloatMenuLine = new LinearLayout(mContext);
-        LinearLayout.LayoutParams lineLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, Utils.dp2Px(50, mContext));
-        mFloatMenuLine.setLayoutParams(lineLp);
-        mFloatMenuLine.setOrientation(LinearLayout.HORIZONTAL);
-        mFloatMenuLine.setBackgroundResource((menuBgId == -1) ? R.drawable.yw_menu_bg : menuBgId);
-        mMenuItemViews = generateMenuItemViews();
-        addMenuItemViews();
+        View rootView = View.inflate(mContext, R.layout.layout_yw_float_menu, null);//将xml布局导入当前View
+        FrameLayout rootFloatView = (FrameLayout) rootView.findViewById(R.id.ywGameMenu);
+        mFloatMenuLine = (LinearLayout) rootView.findViewById(R.id.ywGameMenuLine);
+        mFloatLogoFra = (FrameLayout) rootView.findViewById(R.id.ywGameFra);
+        mFloatLogoImv = (ImageView) rootView.findViewById(R.id.ywGameLogo);
+        mFloatLoaderImv = (ImageView) rootView.findViewById(R.id.ywGameLoader);
 
-        rootFloatView.addView(mFloatMenuLine);
-
-        mFloatLogoFra = new FrameLayout(mContext);
-        LayoutParams floatLogoLayoutParams = Utils.createLayoutParams(Utils.dp2Px(50, mContext), Utils.dp2Px(50, mContext));
-        mFloatLogoFra.setLayoutParams(floatLogoLayoutParams);
-        floatLogoLayoutParams.gravity = Gravity.CENTER;
-        mFloatLogoImv = new ImageView(mContext);
+        mMenuItemViews = generateMenuItemViews();//创建悬浮菜单Item
+        addMenuItemViews();//将创建的menuItemView加入线性布局
 
 
-        LayoutParams imgLp = getImageViewLayoutParams();
-        mFloatLogoImv.setLayoutParams(imgLp);
-        mFloatLogoImv.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        mFloatLogoImv.setImageResource((floatLogo == -1) ? R.drawable.yw_image_float_logo : floatLogo);
-
-
-        LayoutParams layoutParams = getImageViewLayoutParams();
-        mFloatLoaderImv = new ImageView(mContext);
-        mFloatLoaderImv.setLayoutParams(layoutParams);
-        mFloatLoaderImv.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        mFloatLoaderImv.setImageResource((floatLoader == -1) ? R.drawable.yw_anim_background : floatLoader);
-        mFloatLoaderImv.setVisibility(INVISIBLE);
-
-
+        //使悬浮球和加速球可以超出父容器之外
         mFloatLogoFra.setClipChildren(false);
         mFloatLogoFra.setClipToPadding(false);
-
         rootFloatView.setClipChildren(false);
         rootFloatView.setClipToPadding(false);
 
 
-        mFloatLogoFra.addView(mFloatLogoImv);
-        mFloatLogoFra.addView(mFloatLoaderImv);
-        rootFloatView.addView(mFloatLogoFra);
+        mFloatMenuLine.setClipChildren(false);
+        mFloatMenuLine.setClipToPadding(false);
 
-
-        rootFloatView.setOnTouchListener(this);
-        rootFloatView.setOnClickListener(new OnClickListener() {
+        //设置当前悬浮球的touchListener事件，此listerner设置后，ontouchevent方法失效
+        rootView.setOnTouchListener(this);
+        rootView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!mDraging) {
@@ -321,82 +220,92 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
                 }
             }
         });
-        rootFloatView.measure(MeasureSpec.makeMeasureSpec(0,
+        //悬浮菜单的父容器设置的测量模式为大小完全不能确定
+        rootView.measure(MeasureSpec.makeMeasureSpec(0,
                 MeasureSpec.UNSPECIFIED), MeasureSpec
                 .makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-        return rootFloatView;
+        return rootView;
     }
 
+    //首次弹出菜单时，item会从透明到不透明，从小到大的动画效果
     private void addMenuItemViews() {
         for (final MenuItemView menuItemView : mMenuItemViews) {
-            menuItemView.startAnimation(Utils.getScaleAlphaAnimation(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    menuItemView.setVisibility(VISIBLE);
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            }));
+            menuItemView.setVisibility(VISIBLE);
             mFloatMenuLine.addView(menuItemView);
         }
     }
 
-    private LayoutParams getImageViewLayoutParams() {
-        LayoutParams imgLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        imgLp.gravity = Gravity.CENTER;
-        return imgLp;
-    }
-
     private ArrayList<MenuItemView> generateMenuItemViews() {
-        ArrayList<MenuItemView> menuItemViews = new ArrayList<>(mMenuItems.size());
-        for (MenuItem item : mMenuItems) {
+        int menuSize = mMenuItems.size();
+        Log.e(TAG, "menuSize:" + menuSize);
+        ArrayList<MenuItemView> menuItemViews = new ArrayList<>();
+        for (int i = 0; i < mMenuItems.size(); i++) {
+            MenuItem item = mMenuItems.get(i);
+            item.showDivider = i != mMenuItems.size() - 1;
             menuItemViews.add(generateMenuItemView(item));
         }
         return menuItemViews;
     }
 
-
     private MenuItemView generateMenuItemView(MenuItem item) {
         MenuItemView menuItemView = new MenuItemView(mContext, item);
-        LinearLayout.LayoutParams lineLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lineLp.gravity = Gravity.CENTER;
-        menuItemView.setVisibility(VISIBLE);
-        menuItemView.setLayoutParams(lineLp);
-        menuItemView.setBackgroundColor(Color.TRANSPARENT);
-        menuItemView.setOnClickListener(item.getOnClickListener());
+        setMenuItemOnClickListener(menuItemView, item.getOnClickListener());
         return menuItemView;
+    }
+
+
+    //中间先代理一次menuitem的点击事件，增加每次点击前先隐藏悬浮的菜单
+    private void setMenuItemOnClickListener(final MenuItemView menuItemView, final View.OnClickListener onClickListener) {
+        menuItemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, "onClick");
+                if (mFloatMenuLine.getVisibility() == VISIBLE) {
+                    mFloatMenuLine.setVisibility(GONE);
+                }
+                onClickListener.onClick(menuItemView);
+            }
+        });
     }
 
     private void init(Context mContext) {
         this.mContext = mContext;
-        mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);//获取系统的窗口服务
         DisplayMetrics dm = new DisplayMetrics();
         mWindowManager.getDefaultDisplay().getMetrics(dm);
-        mScreenWidth = dm.widthPixels;
+        mScreenWidth = dm.widthPixels;//根据当前屏幕信息拿到屏幕的宽高
         mScreenHeight = dm.heightPixels;
-        this.mWmParams = new WindowManager.LayoutParams();
+
+        this.mWmParams = new WindowManager.LayoutParams();//获取窗口参数
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            mWmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+            mWmParams.type = WindowManager.LayoutParams.TYPE_TOAST;//等于API19或API19以下需要指定窗口参数type值为TYPE_TOAST才可以作为悬浮控件显示出来
         } else {
-            mWmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+            mWmParams.type = WindowManager.LayoutParams.TYPE_PHONE;//API19以上侧只需指定为TYPE_PHONE即可
         }
-        mWmParams.format = PixelFormat.RGBA_8888;
+        mWmParams.format = PixelFormat.RGBA_8888;//当前窗口的像素格式为RGBA_8888,即为最高质量
+
+
+        //NOT_FOCUSABLE可以是悬浮控件可以响应事件，LAYOUT_IN_SCREEN可以指定悬浮球指定在屏幕内，部分虚拟按键的手机，虚拟按键隐藏时，虚拟按键的位置则属于屏幕内，此时悬浮球会出现在原虚拟按键的位置
         mWmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+
+        //默认指定位置在屏幕的左上方，可以根据需要自己修改
         mWmParams.gravity = Gravity.LEFT | Gravity.TOP;
 
+        //默认指定的横坐标为屏幕最左边
         mWmParams.x = 0;
+
+        //默认指定的纵坐标为屏幕高度的10分之一，这里只是大概约束，因为上的flags参数限制，悬浮球不会出现在屏幕外
         mWmParams.y = mScreenHeight / 10;
+
+        //宽度指定为内容自适应
         mWmParams.width = LayoutParams.WRAP_CONTENT;
         mWmParams.height = LayoutParams.WRAP_CONTENT;
+//        addView();
+        //导入xml的子布局
         addView(createView(mContext));
+
+        //将当前view设置为前置窗口
         bringToFront();
         mWindowManager.addView(this, mWmParams);
         mTimer = new Timer();
@@ -498,6 +407,9 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         }
     }
 
+    /**
+     * 部分中兴手机 直接从窗口管理器中移除会产生崩溃，此处try catch结束悬浮球
+     */
     private void removeFloatView() {
         try {
             mWindowManager.removeView(this);
@@ -505,6 +417,7 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         }
     }
 
+    //部分手机，隐藏时当前view的成员变量可能会为空
     public void hide() {
         try {
             setVisibility(View.GONE);
@@ -604,6 +517,9 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
      * 刷新float view menu
      *
      * @param right right
+     *
+     *              左边时：悬浮球logo的大小是50dp，所有当左右切换时，需要将菜单中的第一个item对应悬浮的位置右移50dp，其它则在第一个基础上再移4dp的间距
+     *              右侧同理
      */
     @SuppressLint("RtlHardcoded")
     private void refreshFloatMenu(boolean right) {

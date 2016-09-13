@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:orientation="vertical"
+             android:id="@+id/ywGameMenu"
+             android:layout_width="match_parent"
+             android:layout_height="50dp">
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:id="@+id/ywGameMenuLine"
+            android:background="@drawable/yw_menu_bg"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp">
+    </LinearLayout>
+
+
+    <FrameLayout
+            android:id="@+id/ywGameFra"
+            android:layout_width="50dp"
+            android:layout_height="50dp">
+
+        <ImageView
+                android:id="@+id/ywGameLogo"
+                android:layout_width="50dp" android:layout_height="50dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/yw_image_float_logo"
+        />
+
+        <ImageView
+                android:id="@+id/ywGameLoader"
+                android:layout_width="50dp" android:layout_height="50dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/yw_anim_background"
+        />
+
+    </FrameLayout>
+
+</FrameLayout>

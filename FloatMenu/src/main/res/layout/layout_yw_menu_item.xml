@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:gravity="center"
+              android:focusable="false"
+              android:background="@android:color/transparent"
+              android:layout_width="wrap_content"
+              android:layout_height="40dp">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:layout_height="40dp">
+        <ImageView
+                android:id="@+id/menuLogoImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/yw_menu_account"
+                android:scaleType="centerInside"
+        />
+
+        <TextView
+                android:id="@+id/menuItemTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="首页"/>
+
+    </LinearLayout>
+
+    <View
+            android:id="@+id/menuItemDivider"
+            android:layout_width="1dp"
+            android:visibility="gone"
+            android:layout_height="32dp"
+            android:background="#b0aeae"/>
+
+</LinearLayout>

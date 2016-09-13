@@ -29,5 +29,6 @@ public interface Const {
     String FEEDBACK = "客服";
     String MESSAGE = "消息";
     String CLOSE = "关闭";
+
     String[] MENU_ITEMS = {HOME, FAVOUR, FEEDBACK, MESSAGE, CLOSE};
 }
