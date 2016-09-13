@@ -29,7 +29,6 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -74,9 +73,6 @@ public class FloatMenuService extends Service implements View.OnClickListener {
         for (int i = 0; i < menuIcons.length; i++) {
             mMenuItems.add(new MenuItem(menuIcons[i], Const.MENU_ITEMS[i], android.R.color.black, this));
         }
-
-        Log.e(TAG, "menuSize:" + mMenuItems.size());
-
         mFloatMenu = new FloatMenu.Builder(this).menuItems(mMenuItems).build();
         mFloatMenu.show();
     }

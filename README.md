@@ -11,7 +11,7 @@
 transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSample)
 
 
-##gif
+##GIF
 <img src="pickture/201606161036.gif" width="640" />
 <img src="pickture/20160503125603.png" width="280" />
 <img src="pickture/201605031543.gif" width="280" />
@@ -30,8 +30,10 @@ Download [jar](https://bintray.com/fanofdemo/maven/download_file?file_path=com%2
 
 android float menu in app or launcher
 
-##compatibility & permissions
- api 9 - api 23
+##权限 compatibility & permissions 
+
+兼容android2.3到android7.0（7.0已测）
+ api 9 - api 24
 
 api level <19 need permissions:
 
@@ -46,18 +48,12 @@ for use：
 	@Override
     public void onCreate() {
         super.onCreate();
-          mFloatMenu = new FloatMenu.Builder(this)
-                .floatLoader(R.drawable.yw_anim_background)
-                .floatLogo(R.drawable.yw_image_float_logo)
-                .addMenuItem( R.drawable.yw_menu_account, Const.MENU_ITEMS[0], android.R.color.black, this)
-                .addMenuItem(R.drawable.yw_menu_favour, Const.MENU_ITEMS[1], android.R.color.black, this)
-                .addMenuItem( R.drawable.yw_menu_fb, Const.MENU_ITEMS[2], android.R.color.black, this)
-                .addMenuItem(R.drawable.yw_menu_msg, Const.MENU_ITEMS[3], android.R.color.black, this)
-                .addMenuItem(R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this)
-                .menuBackground(R.drawable.yw_menu_bg)
-                .build();
+        ArrayList<MenuItem> mMenuItems = new ArrayList<>();
+        for (int i = 0; i < menuIcons.length; i++) {
+            mMenuItems.add(new MenuItem(menuIcons[i], Const.MENU_ITEMS[i], android.R.color.black, this));
+        }
+        mFloatMenu = new FloatMenu.Builder(this).menuItems(mMenuItems).build();
         mFloatMenu.show();
-
 
     }
 
@@ -81,17 +77,6 @@ for use：
         mFloatMenu = null;
     }
 
-	//移除一个菜单
-   	mFloatMenu.removeMenuItem(0);
-
-
-	//添加一个菜单
-	public void addCloseMenuItem(int position) {
-        if (mFloatMenu == null)
-            return;
-        mFloatMenu.addMenuItem(position, R.drawable.yw_menu_close, Const.MENU_ITEMS[4], android.R.color.black, this);
-    }
-
 	 private void showRed() {
         if (!hasNewMsg) {
             mFloatMenu.changeLogo(R.drawable.yw_image_float_logo, R.drawable.yw_menu_msg, 3);
@@ -100,11 +85,16 @@ for use：
         }
     }
 
+使用示例
 see sample 
 
 [FloatMenuService](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo%2Fsrc%2Fmain%2Fjava%2Fcom%2Fyw%2Fgame%2Ffloatmenu%2Fdemo%2FFloatMenuService.java)
 
 [FloatMenuInServiceActivity](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuInServiceActivity.java)
+
+
+
+修改菜单的样式，只需要更改[res/layout/layout_yw_menu_item.xml](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/res/layout/layout_yw_menu_item.xml) 对应的文字大小，图片大小，背景颜色等等
 
 ###设计思路
 
@@ -116,25 +106,23 @@ see sample
 
    		mWmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
 
-##UPDATE LOG:
+##更新日志
+UPDATE LOG:
 	
 * 0.0.1 init lib
-* 0.0.2 fix a initLoading Logo Animation bug， add Logo startLoadingAnimation
-* 0.0.3 add change Logo and MenuItem Drawable
-* 0.0.4 fix logo size when startLoadingAnimation
-* 0.0.5 modify copyright
-* 0.0.6 add method:
-				addMenuIten(position:int,menuItem);
-				removeMenuItem(positon:int);
-				set MenuItem Animation:
-				show with animation(alpha/scale);
-*	0.0.7	fix logo loader size
-*	0.0.8	auto hide half logo by change LayoutParam Margin
-*	0.0.9 	fix addMenuItem()&removeMenuItem() bugs
-*	1.0.0 	[fix logoLoaderAnimation bugs when logo on the right](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/java/com/yw/game/floatmenu/FloatMenu.java)
-*	1.1.0   [add FloatMenuManager single sample](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuManager.java)
+* 0.0.2 修复bug
+* 0.0.3 增加动态切换动画的接口
+* 0.0.4 解决加载动画时出现的bug
+* 0.0.5 修改开源协议
+* 0.0.6 增加首次启动悬浮球透明度和变大动画
+*	0.0.7	解决动画加载旋转不居中的问题
+*	0.0.8	通过设置margin自动缩小悬浮球logo的大小
+*	0.0.9 修复bug
+*	1.0.0 	[解决当悬浮球在右边时菜单位置错乱](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/java/com/yw/game/floatmenu/FloatMenu.java)
+*	1.1.0   [增加悬浮球所在service的代码样例](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuManager.java)
 
-*	1.1.1 [fix a bug  when logo local at screens`s right when sceen is fullsceen,click here see demo](https://github.com/crosg/FloatMenuSample/blob/master/pickture/201606161036.gif)
+*	1.1.1 [修复悬浮球不对虚拟按键占位问题](https://github.com/crosg/FloatMenuSample/blob/master/pickture/201606161036.gif)
+*	todo 1.1.2 [issues/22](https://github.com/crosg/FloatMenuSample/issues/22) ,[完善代码注释(部分)](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/java/com/yw/game/floatmenu/FloatMenu.java)，view构造全部使用xml,便于代码的易维护可扩展性，悬浮view使用xml导入，悬浮菜单使用xml导入，支持菜单item的功能扩展，颜色大小，分割线等都可以在xml布局中调整
 
 
 
