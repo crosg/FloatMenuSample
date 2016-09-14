@@ -120,7 +120,6 @@ UPDATE LOG:
 *	0.0.9 修复bug
 *	1.0.0 	[解决当悬浮球在右边时菜单位置错乱](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/java/com/yw/game/floatmenu/FloatMenu.java)
 *	1.1.0   [增加悬浮球所在service的代码样例](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuManager.java)
-
 *	1.1.1 [修复悬浮球不对虚拟按键占位问题](https://github.com/crosg/FloatMenuSample/blob/master/pickture/201606161036.gif)
 *	todo 1.1.2 [issues/22](https://github.com/crosg/FloatMenuSample/issues/22) ,[完善代码注释(部分)](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/java/com/yw/game/floatmenu/FloatMenu.java)，view构造全部使用xml,便于代码的易维护可扩展性，悬浮view使用xml导入，悬浮菜单使用xml导入，支持菜单item的功能扩展，颜色大小，分割线等都可以在xml布局中调整
 
