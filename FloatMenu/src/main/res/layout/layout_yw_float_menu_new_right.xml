@@ -10,9 +10,9 @@
         android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginRight="50dp"
-        android:visibility="gone"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="50dp"

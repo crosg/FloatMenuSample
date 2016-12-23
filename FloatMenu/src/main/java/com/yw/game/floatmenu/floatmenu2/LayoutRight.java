@@ -85,7 +85,7 @@ public class LayoutRight extends LinearLayout implements View.OnClickListener, V
     }
 
     private void refresh() {
-        int location = 2;
+        int location = 1;
         if (mParams.x >= Utils.getScreenWidth(getContext()) / 2) {
             mParams.x = Utils.getScreenWidth(getContext());
             location = 1;//右边

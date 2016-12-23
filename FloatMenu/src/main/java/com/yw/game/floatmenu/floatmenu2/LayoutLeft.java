@@ -84,10 +84,10 @@ public class LayoutLeft extends LinearLayout implements View.OnClickListener, Vi
     private void refresh() {
         boolean isRight = false;
         if (mParams.x >= Utils.getScreenWidth(getContext()) / 2) {
-//            mParams.x = Utils.getScreenWidth(getContext());
+            mParams.x = Utils.getScreenWidth(getContext());
             isRight = true;
         } else if (mParams.x < Utils.getScreenWidth(getContext()) / 2) {
-//            mParams.x = 0;
+            mParams.x = 0;
             isRight = false;
         }
 
