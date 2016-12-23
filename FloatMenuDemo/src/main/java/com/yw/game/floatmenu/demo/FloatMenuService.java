@@ -13,12 +13,6 @@
 
 package com.yw.game.floatmenu.demo;
 
-import com.yw.game.floatmenu.FloatMenu;
-import com.yw.game.floatmenu.MenuItem;
-import com.yw.game.floatmenu.MenuItemView;
-import com.yw.game.sclib.Sc;
-import com.yw.game.sclib.ScCreateResultCallback;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +25,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.view.View;
 import android.widget.Toast;
+
+import com.yw.game.floatmenu.FloatMenu;
+import com.yw.game.floatmenu.MenuItem;
+import com.yw.game.floatmenu.MenuItemView;
+import com.yw.game.floatmenu.floatmenu2.FloatWindowsManager;
+import com.yw.game.sclib.Sc;
+import com.yw.game.sclib.ScCreateResultCallback;
 
 import java.util.ArrayList;
 
@@ -45,10 +46,12 @@ import java.util.ArrayList;
  * 修改备注：
  */
 public class FloatMenuService extends Service implements View.OnClickListener {
-    private FloatMenu mFloatMenu;
+
     private final static String TAG = FloatMenuService.class.getSimpleName();
 
     private Handler mHandler = new Handler();
+
+    private FloatMenu mFloatMenu;
     private int[] menuIcons = new int[]{R.drawable.yw_menu_account, R.drawable.yw_menu_favour, R.drawable.yw_menu_fb, R.drawable.yw_menu_msg, R.drawable.yw_menu_close};
 
     /**
@@ -75,6 +78,10 @@ public class FloatMenuService extends Service implements View.OnClickListener {
         }
         mFloatMenu = new FloatMenu.Builder(this).menuItems(mMenuItems).build();
         mFloatMenu.show();
+
+
+        FloatWindowsManager.createLeftLayout(this);
+
     }
 
     /**

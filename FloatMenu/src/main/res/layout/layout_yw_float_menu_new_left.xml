@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ywGameMenuLine"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginLeft="50dp"
+        android:visibility="gone"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/yw_menu_account"
+            android:padding="4dp"
+            android:textColor="@android:color/background_dark"
+            android:text="首页1"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/yw_menu_account"
+            android:textColor="@android:color/background_dark"
+            android:padding="4dp"
+            android:text="首页2"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/yw_menu_account"
+            android:textColor="@android:color/background_dark"
+            android:padding="4dp"
+            android:text="首页3"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/yw_menu_account"
+            android:textColor="@android:color/background_dark"
+            android:padding="4dp"
+            android:text="首页4"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:id="@+id/ywGameFra"
+        android:layout_width="50dp"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/ywGameLogo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/yw_image_float_logo" />
+
+        <ImageView
+            android:id="@+id/ywGameLoader"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/yw_anim_background" />
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:padding="4dp"
+            android:text="左边"
+            android:textSize="16sp" />
+    </FrameLayout>
+</FrameLayout>
