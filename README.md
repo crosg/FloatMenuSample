@@ -11,7 +11,7 @@
 transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSample)
 
 
-##GIF
+## GIF
 <img src="pickture/201606161036.gif" width="640" />
 <img src="pickture/20160503125603.png" width="280" />
 <img src="pickture/201605031543.gif" width="280" />
@@ -30,7 +30,7 @@ Download [jar](https://bintray.com/fanofdemo/maven/download_file?file_path=com%2
 
 android float menu in app or launcher
 
-##权限 compatibility & permissions 
+## 权限 compatibility & permissions 
 
 兼容android2.3到android7.0（7.0已测）
  api 9 - api 24
@@ -96,7 +96,7 @@ see sample
 
 修改菜单的样式，只需要更改[res/layout/layout_yw_menu_item.xml](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/res/layout/layout_yw_menu_item.xml) 对应的文字大小，图片大小，背景颜色等等
 
-###设计思路
+### 设计思路
 
 * 设计图：
 
@@ -106,7 +106,7 @@ see sample
 
    		mWmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
 
-##更新日志
+## 更新日志
 UPDATE LOG:
 	
 * 0.0.1 init lib
@@ -127,7 +127,7 @@ UPDATE LOG:
 
 
 
-##License
+## License
 
 	
 	Copyright (c) 2016, Shanghai YUEWEN Information Technology Co., Ltd. 
