@@ -13,21 +13,67 @@
 
 package com.yw.game.floatmenu.demo;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 public class FloatMenuInServiceActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private static final int OVERLAY_PERMISSION_REQ_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         hideBothNavigationBarAndStatusBar();
         setContentView(R.layout.activity_float_menu_in_service);
-        FloatMenuManager.getInstance().startFloatView(this.getApplicationContext());
         findViewById(R.id.hideStatuBarNaviBar).setOnClickListener(this);
 
+        boolean canDrawOverlays = checkCanDrawOverlays(this);
+        if (canDrawOverlays) {
+            FloatMenuManager.getInstance().startFloatView(this.getApplicationContext());
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
+            if (Build.VERSION.SDK_INT <= 23) {
+                return;
+            }
+            if (!Settings.canDrawOverlays(this)) {
+                Toast.makeText(this, "悬浮权限被拒", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "权限授予成功", Toast.LENGTH_SHORT).show();
+                FloatMenuManager.getInstance().startFloatView(this.getApplicationContext());
+            }
+        }
+    }
+
+
+    /**
+     * 这个权限主要是为了配合window的phone类型，引导用户前往应用设置打开悬浮窗权限（出现在其他应用上）
+     *
+     * @param activity 这里必须是activity，否则引导的设置界面就不是当前应用的设置界面了，而是当前手机所有需要悬浮窗权限的app列表
+     * @return true/false false表示需要申请这个权限
+     */
+    public static boolean checkCanDrawOverlays(Activity activity) {
+        //理论上是23就需要申请这个权限，但测试返现，23仍然可以使用toast类型，避开用户权限引导。但7.1则会出现崩溃
+        if (Build.VERSION.SDK_INT > 23) {
+            if (!Settings.canDrawOverlays(activity)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + activity.getPackageName()));
+                activity.startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

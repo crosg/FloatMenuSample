@@ -279,9 +279,14 @@ public class FloatMenu extends FrameLayout implements OnTouchListener {
         this.mWmParams = new WindowManager.LayoutParams();//获取窗口参数
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            mWmParams.type = WindowManager.LayoutParams.TYPE_TOAST;//等于API19或API19以下需要指定窗口参数type值为TYPE_TOAST才可以作为悬浮控件显示出来
+            if (Build.VERSION.SDK_INT > 23) {
+                //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限才能正常显示悬浮窗,需要引导用户开启悬浮窗权限
+                mWmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+            } else {
+                mWmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+            }
         } else {
-            mWmParams.type = WindowManager.LayoutParams.TYPE_PHONE;//API19以上侧只需指定为TYPE_PHONE即可
+            mWmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         }
         mWmParams.format = PixelFormat.RGBA_8888;//当前窗口的像素格式为RGBA_8888,即为最高质量
 

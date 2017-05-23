@@ -29,7 +29,6 @@ import android.widget.Toast;
 import com.yw.game.floatmenu.FloatMenu;
 import com.yw.game.floatmenu.MenuItem;
 import com.yw.game.floatmenu.MenuItemView;
-import com.yw.game.floatmenu.floatmenu2.FloatWindowsManager;
 import com.yw.game.sclib.Sc;
 import com.yw.game.sclib.ScCreateResultCallback;
 
@@ -80,7 +79,6 @@ public class FloatMenuService extends Service implements View.OnClickListener {
         mFloatMenu.show();
 
 
-        FloatWindowsManager.createLeftLayout(this);
 
     }
 
