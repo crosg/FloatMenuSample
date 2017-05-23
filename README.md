@@ -32,15 +32,34 @@ android float menu in app or launcher
 
 ## 权限 compatibility & permissions 
 
-兼容android2.3到android7.0（7.0已测）
- api 9 - api 24
+兼容android2.3到android7.1（7.1已测）
+ api 9 ++
 
-api level <19 need permissions:
+
+
+API level <19 need permissions:
 
 	 <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
-api level >=19 no permissions
+API level >=19&&<=23 不需要权限
 
+API level >23 需要运行时权限
+canDrawOverlays
+
+`WindowManager.LayoutParams.Type`设置如下:
+
+	  //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限才能正常显示悬浮窗,需要引导用户开启悬浮窗权限
+	  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+	      if (Build.VERSION.SDK_INT > 23) {
+	          mWmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+	      } else {
+	         mWmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+	      }
+	  } else {
+	     	mWmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+	  }
+
+运行时权限引导参考（`Runtime Permission`）：[FloatMenuInServiceActivity](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuInServiceActivity.java)
 
 
 for use：
