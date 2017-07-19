@@ -10,7 +10,9 @@
 [crosg/FloatMenuSample](https://github.com/crosg/FloatMenuSample)
 transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSample)
 
-
+低调公告：近期将更新
+完全移除悬浮窗权限、增加3D动画
+ 
 ## GIF
 <img src="pickture/201606161036.gif" width="640" />
 <img src="pickture/20160503125603.png" width="280" />
