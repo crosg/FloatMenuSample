@@ -19,6 +19,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
@@ -29,7 +30,7 @@ import com.yw.game.floatmenu.FloatMenuView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     FloatLogoMenu mFloatMenu;
     FloatLogoMenu mFloatMenu1;
@@ -48,7 +49,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findViewById(R.id.hideStatuBarNaviBar).setOnClickListener(this);
 
 
         mActivity = this;
@@ -62,8 +62,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         if (mFloatMenu == null) {
-
-
             mFloatMenu = new FloatLogoMenu.Builder()
                     .withActivity(mActivity)
                     .logo(R.drawable.yw_image_float_logo)
@@ -84,38 +82,39 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         }
                     });
 
-
-            mFloatMenu1 = new FloatLogoMenu.Builder()
-                    .withActivity(mActivity)
-                    .backMenuColor(0x99000000)
-                    .drawCicleMenuBg(true)
-                    .addFloatItem(new FloatItem("我的", Color.WHITE, 0x00000000,
-                            BitmapFactory.decodeResource(this.getResources(), R.drawable.ywgame_floatmenu_user), String.valueOf(3)))
-                    .addFloatItem(new FloatItem("礼包", Color.WHITE, 0x00000000,
-                            BitmapFactory.decodeResource(this.getResources(), R.drawable.ywgame_floatmenu_gift), null))
-
-                    .defaultLocation(FloatLogoMenu.LEFT)
-                    .drawRedPointNum(true)
-                    .setOnMenuItemClickListener(new FloatMenuView.OnMenuClickListener() {
-                        @Override
-                        public void onItemClick(int position, String title) {
-                            Toast.makeText(MainActivity.this, "position " + position + " title:" + title + " is clicked.", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void dismiss() {
-
-                        }
-                    })
-                    .showWithLogo(R.drawable.yw_game_logo);
-
-
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     refreshDot();
                 }
             }, 5000);
+
+            //同时只能new一个
+//            mFloatMenu1 = new FloatLogoMenu.Builder()
+//                    .withActivity(mActivity)
+//                    .backMenuColor(0x99000000)
+//                    .drawCicleMenuBg(true)
+//                    .addFloatItem(new FloatItem("我的", Color.WHITE, 0x00000000,
+//                            BitmapFactory.decodeResource(this.getResources(), R.drawable.ywgame_floatmenu_user), String.valueOf(3)))
+//                    .addFloatItem(new FloatItem("礼包", Color.WHITE, 0x00000000,
+//                            BitmapFactory.decodeResource(this.getResources(), R.drawable.ywgame_floatmenu_gift), null))
+//
+//                    .defaultLocation(FloatLogoMenu.LEFT)
+//                    .drawRedPointNum(true)
+//                    .setOnMenuItemClickListener(new FloatMenuView.OnMenuClickListener() {
+//                        @Override
+//                        public void onItemClick(int position, String title) {
+//                            Toast.makeText(MainActivity.this, "position " + position + " title:" + title + " is clicked.", Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                        @Override
+//                        public void dismiss() {
+//
+//                        }
+//                    })
+//                    .showWithLogo(R.drawable.yw_game_logo);
+
+
         }
     }
 
@@ -138,8 +137,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         destroyFloat();
+        super.onDestroy();
+
     }
 
 
@@ -158,11 +158,4 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.hideStatuBarNaviBar:
-                break;
-        }
-    }
 }
