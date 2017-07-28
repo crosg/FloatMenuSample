@@ -1,9 +1,9 @@
 # FloatMenuSample
 
-[ ![Download](https://api.bintray.com/packages/fanofdemo/maven/FloatMenu/images/download.svg) ](https://bintray.com/fanofdemo/maven/FloatMenu/_latestVersion)[<img src="pickture/chinareadlogo.png" width="64" />](http://www.yuewen.com/)
+[ ![Download](https://api.bintray.com/packages/fanofdemo/maven/FloatMenu/images/download.svg) ](https://bintray.com/fanofdemo/maven/FloatMenu/_latestVersion)[<img src="picture/chinareadlogo.png" width="64" />](http://www.yuewen.com/)
 
 
-[<img src="pickture/chinareadlogo.png" width="64" />游戏产品持续更新](http://xs.qidian.com/Home/Pc/Index/index)
+[<img src="picture/chinareadlogo.png" width="64" />游戏产品持续更新](http://xs.qidian.com/Home/Pc/Index/index)
 
 欢迎关注 [https://github.com/crosg ](https://github.com/crosg)	
 
