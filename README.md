@@ -13,7 +13,7 @@ transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSam
 
  
 ## GIF
-<img src="pickture/floatmenu2.gif" width="320" />
+<img src="picture/floatmenu2.gif" width="320" />
 	
 
 ##  GRADLE:
