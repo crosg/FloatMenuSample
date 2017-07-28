@@ -13,7 +13,7 @@ transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSam
 
  
 ## GIF
-<img src="pickture/floatmenu2.gif" width="640" />
+<img src="pickture/floatmenu2.gif" width="320" />
 	
 
 ##  GRADLE:
@@ -35,7 +35,7 @@ for use：
 使用示例
 see sample 
 
-[FloatMenuInServiceActivity](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/MainActivity.java)
+[MainActivity](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/MainActivity.java)
 
 
 1：
