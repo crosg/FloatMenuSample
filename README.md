@@ -14,136 +14,94 @@ transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSam
 完全移除悬浮窗权限、增加3D动画
  
 ## GIF
-<img src="pickture/201606161036.gif" width="640" />
-<img src="pickture/20160503125603.png" width="280" />
-<img src="pickture/201605031543.gif" width="280" />
-<img src="pickture/201605041543.gif" width="280" />
+<img src="pickture/floatmenu2.gif" width="640" />
 	
 
 ##  GRADLE:
 
-	compile 'com.yw.game.floatmenu:FloatMenu:@lastVersion'
+	compile 'com.yw.game.floatmenu:FloatMenu:2.0.0'
 
 
-Download [aar](https://dl.bintray.com/fanofdemo/maven/com/yw/game/floatmenu/FloatMenu/0.0.5/FloatMenu-1.1.0.aar)	
-
-Download [jar](https://bintray.com/fanofdemo/maven/download_file?file_path=com%2Fyw%2Fgame%2Ffloatmenu%2FFloatMenu%2F1.1.0%2FFloatMenu-1.1.0-sources.jar)
-
-
-android float menu in app or launcher
+android float menu in app 
 
 ## 权限 compatibility & permissions 
 
-兼容android2.3到android7.1（7.1已测）
- api 9 ++
-
-
-
-API level <19 need permissions:
-
-	 <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
-API level >=19&&<=23 不需要权限
-
-API level >23 需要运行时权限
-canDrawOverlays
-
-`WindowManager.LayoutParams.Type`设置如下:
-
-	  //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限才能正常显示悬浮窗,需要引导用户开启悬浮窗权限
-	  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-	      if (Build.VERSION.SDK_INT > 23) {
-	          mWmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
-	      } else {
-	         mWmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
-	      }
-	  } else {
-	     	mWmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
-	  }
-
-运行时权限引导参考（`Runtime Permission`）：[FloatMenuInServiceActivity](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuInServiceActivity.java)
+ 无权限需求，支持 api 11 ++
 
 
 for use：
 
-	@Override
-    public void onCreate() {
-        super.onCreate();
-        ArrayList<MenuItem> mMenuItems = new ArrayList<>();
-        for (int i = 0; i < menuIcons.length; i++) {
-            mMenuItems.add(new MenuItem(menuIcons[i], Const.MENU_ITEMS[i], android.R.color.black, this));
-        }
-        mFloatMenu = new FloatMenu.Builder(this).menuItems(mMenuItems).build();
-        mFloatMenu.show();
-
-    }
-
-
- 	public void showFloat() {
-        if (mFloatMenu != null)
-            mFloatMenu.show();
-    }
-
-    public void hideFloat() {
-        if (mFloatMenu != null) {
-            mFloatMenu.hide();
-        }
-    }
-
-    public void destroyFloat() {
-        hideFloat();
-        if (mFloatMenu != null) {
-            mFloatMenu.destroy();
-        }
-        mFloatMenu = null;
-    }
-
-	 private void showRed() {
-        if (!hasNewMsg) {
-            mFloatMenu.changeLogo(R.drawable.yw_image_float_logo, R.drawable.yw_menu_msg, 3);
-        } else {
-            mFloatMenu.changeLogo(R.drawable.yw_image_float_logo_red, R.drawable.yw_menu_msg_red, 3);
-        }
-    }
+	
 
 使用示例
 see sample 
 
-[FloatMenuService](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo%2Fsrc%2Fmain%2Fjava%2Fcom%2Fyw%2Fgame%2Ffloatmenu%2Fdemo%2FFloatMenuService.java)
-
-[FloatMenuInServiceActivity](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuInServiceActivity.java)
+[FloatMenuInServiceActivity](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/MainActivity.java)
 
 
+1：
 
-修改菜单的样式，只需要更改[res/layout/layout_yw_menu_item.xml](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/res/layout/layout_yw_menu_item.xml) 对应的文字大小，图片大小，背景颜色等等
+     mFloatMenu1 = new FloatLogoMenu.Builder()
+               	  .withActivity(mActivity)
+                  .backMenuColor(0x99000000)
+                  .drawCicleMenuBg(true)
+                  .addFloatItem(new FloatItem("我的", Color.WHITE, 0x00000000,
+                            BitmapFactory.decodeResource(this.getResources(), R.drawable.ywgame_floatmenu_user), String.valueOf(3)))
+                  .addFloatItem(new FloatItem("礼包", Color.WHITE, 0x00000000,
+                            BitmapFactory.decodeResource(this.getResources(), R.drawable.ywgame_floatmenu_gift), null))
 
-### 设计思路
+                  .defaultLocation(FloatLogoMenu.LEFT)
+                  .drawRedPointNum(true)
+                  .setOnMenuItemClickListener(new FloatMenuView.OnMenuClickListener() {
+                        @Override
+                        public void onItemClick(int position, String title) {
+                            Toast.makeText(MainActivity.this, "position " + position + " title:" + title + " is clicked.", Toast.LENGTH_SHORT).show();
+                        }
 
-* 设计图：
+                        @Override
+                        public void dismiss() {
 
-<img src="pickture/floatmen.png" width="640" />
+                        }
+                    })
+                 .showWithLogo(R.drawable.yw_game_logo);
 
-* 实现悬浮球占位到虚拟按键：
 
-   		mWmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+2：
+
+    mFloatMenu = new FloatLogoMenu.Builder()
+            		.withActivity(mActivity)
+                    .logo(R.drawable.yw_image_float_logo)
+                    .backMenuColor(0xffe4e3e1)
+                    .drawCicleMenuBg(true)
+                    .setFloatItems(itemList)
+                    .defaultLocation(FloatLogoMenu.RIGHT)
+                    .drawRedPointNum(false)
+                    .showWithListener(new FloatMenuView.OnMenuClickListener() {
+        @Override
+        public void onItemClick(int position, String title) {
+            Toast.makeText(MainActivity.this, "position " + position + " title:" + title + " is clicked.", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void dismiss() {
+
+        }
+    });
+
+
+
 
 ## 更新日志
 UPDATE LOG:
 	
-* 0.0.1 init lib
-* 0.0.2 修复bug
-* 0.0.3 增加动态切换动画的接口
-* 0.0.4 解决加载动画时出现的bug
-* 0.0.5 修改开源协议
-* 0.0.6 增加首次启动悬浮球透明度和变大动画
-*	0.0.7	解决动画加载旋转不居中的问题
-*	0.0.8	通过设置margin自动缩小悬浮球logo的大小
-*	0.0.9 修复bug
-*	1.0.0 	[解决当悬浮球在右边时菜单位置错乱](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/java/com/yw/game/floatmenu/FloatMenu.java)
-*	1.1.0   [增加悬浮球所在service的代码样例](https://github.com/fanOfDemo/FloatMenuSample/blob/master/FloatMenuDemo/src/main/java/com/yw/game/floatmenu/demo/FloatMenuManager.java)
-*	1.1.1 [修复悬浮球不对虚拟按键占位问题](https://github.com/crosg/FloatMenuSample/blob/master/pickture/201606161036.gif)
-*	todo 1.1.2 [issues/22](https://github.com/crosg/FloatMenuSample/issues/22) ,[完善代码注释(部分)](https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/java/com/yw/game/floatmenu/FloatMenu.java)，view构造全部使用xml,便于代码的易维护可扩展性，悬浮view使用xml导入，悬浮菜单使用xml导入，支持菜单item的功能扩展，颜色大小，分割线等都可以在xml布局中调整
+* 1.+ 桌面或应用内悬浮窗 （removed）
 
+		compile 'com.yw.game.floatmenu:FloatMenu:1.0.0'
+
+
+* 2.0.0 重构版，应用内悬浮窗
+
+		compile 'com.yw.game.floatmenu:FloatMenu:2.0.0'
 
 
 
