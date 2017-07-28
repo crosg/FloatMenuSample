@@ -11,7 +11,7 @@
         <!--  android:configChanges="keyboardHidden|orientation|screenSize"
             防止横竖屏切换时重新执行oncreate-->
         <activity
-            android:name=".FloatMenuInServiceActivity"
+            android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
