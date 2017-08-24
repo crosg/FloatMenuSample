@@ -296,12 +296,10 @@ public class FloatLogoMenu {
      */
     private void initFloatWindow() {
         if(mActivity instanceof Activity){
-            Log.e("","传入的上下文是activity");
             Activity activity = (Activity) mActivity;
             wManager = activity.getWindowManager();
             mNeedPermision = false;
         }else {
-            Log.e("","传入的上下文不是activity");
             mNeedPermision = true;
             wManager = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
         }
@@ -314,7 +312,6 @@ public class FloatLogoMenu {
         wmParams = new WindowManager.LayoutParams();
 
         if(mNeedPermision) {
-            Log.e("","传入的上下文不是activity");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 if (Build.VERSION.SDK_INT > 23) {
                     //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限
@@ -877,7 +874,7 @@ public class FloatLogoMenu {
      */
     private int getSetting(String key, int defaultValue) {
         try {
-            SharedPreferences sharedata = mActivity.getSharedPreferences("qdloginsdk", 0);
+            SharedPreferences sharedata = mActivity.getSharedPreferences("floatLogo", 0);
             return sharedata.getInt(key, defaultValue);
         } catch (Exception e) {
             e.printStackTrace();
@@ -893,7 +890,7 @@ public class FloatLogoMenu {
      */
     public void saveSetting(String key, int value) {
         try {
-            SharedPreferences.Editor sharedata = mActivity.getSharedPreferences("qdloginsdk", 0).edit();
+            SharedPreferences.Editor sharedata = mActivity.getSharedPreferences("floatLogo", 0).edit();
             sharedata.putInt(key, value);
             sharedata.apply();
         } catch (Exception e) {
