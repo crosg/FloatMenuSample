@@ -6,8 +6,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
 
-    //unity3D游戏引擎需要开启该选项
-    <meta-data android:name="unityplayer.ForwardNativeEventsToDalvik" android:value="true" />
+
 
     <application
         android:allowBackup="true"

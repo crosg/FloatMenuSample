@@ -40,18 +40,18 @@ see sample
 
 1：
 
-     mFloatMenu1 = new FloatLogoMenu.Builder()
-               	  .withActivity(mActivity)
-                  .backMenuColor(0x99000000)
-                  .drawCicleMenuBg(true)
-                  .addFloatItem(new FloatItem("我的", Color.WHITE, 0x00000000,
-                            BitmapFactory.decodeResource(this.getResources(), R.drawable.ywgame_floatmenu_user), String.valueOf(3)))
-                  .addFloatItem(new FloatItem("礼包", Color.WHITE, 0x00000000,
-                            BitmapFactory.decodeResource(this.getResources(), R.drawable.ywgame_floatmenu_gift), null))
-
-                  .defaultLocation(FloatLogoMenu.LEFT)
-                  .drawRedPointNum(true)
-                  .setOnMenuItemClickListener(new FloatMenuView.OnMenuClickListener() {
+    mFloatMenu = new FloatLogoMenu.Builder()
+                    .withActivity(mActivity)
+                  //  .withContext(mActivity.getApplication())//这个在7.0（包括7.0）以上以及大部分7.0以下的国产手机上需要用户授权，需要搭配<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+                    .logo(BitmapFactory.decodeResource(getResources(),R.drawable.yw_game_logo))
+                    .drawCicleMenuBg(true)
+                    .backMenuColor(0xffe4e3e1)
+                    .setBgDrawable(this.getResources().getDrawable(R.drawable.yw_game_float_menu_bg))
+                    //这个背景色需要和logo的背景色一致
+                    .setFloatItems(itemList)
+                    .defaultLocation(FloatLogoMenu.RIGHT)
+                    .drawRedPointNum(false)
+                    .showWithListener(new FloatMenuView.OnMenuClickListener() {
                         @Override
                         public void onItemClick(int position, String title) {
                             Toast.makeText(MainActivity.this, "position " + position + " title:" + title + " is clicked.", Toast.LENGTH_SHORT).show();
@@ -61,8 +61,7 @@ see sample
                         public void dismiss() {
 
                         }
-                    })
-                 .showWithLogo(R.drawable.yw_game_logo);
+                    });
 
 
 2：
@@ -101,6 +100,12 @@ UPDATE LOG:
 * 2.0.0 重构版，应用内悬浮窗
 
 		compile 'com.yw.game.floatmenu:FloatMenu:2.0.0'
+
+		 //unity3D游戏引擎需要开启该选项
+            <meta-data android:name="unityplayer.ForwardNativeEventsToDalvik" android:value="true" />
+
+
+* 2.0.1 可选择支持出现在桌面（需权限），应用内无权限需要
 
 
 
