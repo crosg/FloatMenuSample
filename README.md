@@ -106,6 +106,7 @@ UPDATE LOG:
 
 
 * 2.0.1 可选择支持出现在桌面（需权限），应用内无权限需要。
+
         移除windows.addContentView接口
         出现在桌面的话需要：
         使用全局上下文  .withContext(mService.getApplication())
