@@ -18,7 +18,7 @@ transfer from [yiming/FloatMenuSample](https://github.com/fanOfDemo/FloatMenuSam
 
 ##  GRADLE:
 
-	compile 'com.yw.game.floatmenu:FloatMenu:2.0.0'
+	compile 'com.yw.game.floatmenu:FloatMenu:2.0.1'
 
 
 android float menu in app 
