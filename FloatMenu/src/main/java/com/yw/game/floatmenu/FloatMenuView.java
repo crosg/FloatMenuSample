@@ -14,8 +14,6 @@ package com.yw.game.floatmenu;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -23,14 +21,11 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 
 
 import java.util.ArrayList;
@@ -47,9 +42,7 @@ public class FloatMenuView extends View {
     private int mStatus = STATUS_RIGHT;//默认右边
 
     private Paint mPaint;//画笔
-    private View mParentView;//当前菜单坐标所依赖的view
     private int mBackgroundColor = 0x00FFFFFF;//默认背景颜色 完全透明的白色
-    private int mSeparateLineColor = Color.TRANSPARENT;//相邻 菜单项 的分割线颜色
 
     private int mMenuBackgroundColor = -1;//菜单的背景颜色
 
@@ -66,7 +59,7 @@ public class FloatMenuView extends View {
     private int mFontSizePointNum = sp2px(10);//红点消息数字的文字大小
 
     private int mFontSizeTitle = sp2px(12);//菜单项的title的文字大小
-    private int mFirstItemTop;//菜单项的最小y值，上面起始那条线
+    private float mFirstItemTop;//菜单项的最小y值，上面起始那条线
     private boolean mDrawNum = false;//是否绘制数字，false则只绘制红点
     private boolean cicleBg = false;//菜单项背景是否绘制成圆形，false则绘制矩阵
 
@@ -93,7 +86,7 @@ public class FloatMenuView extends View {
     }
 
     //用于标记所依赖的view的screen的坐标，实际view的坐标是window坐标，所以这里后面会减去状态栏的高度
-    private int[] location = new int[2];
+
 
     //设置菜单的背景颜色
     public void setMenuBackgroundColor(int mMenuBackgroundColor) {
@@ -105,10 +98,6 @@ public class FloatMenuView extends View {
         this.mBackgroundColor = BackgroundColor;
     }
 
-    //设置每个菜单项的分割线颜色，不设置则不绘制分割线
-    public void setSeparateLineColor(int mSeparateLineColor) {
-        this.mSeparateLineColor = mSeparateLineColor;
-    }
 
     //下面开始的注释我写不动了，看不懂的话请自行领悟吧
     public FloatMenuView(Context context) {
@@ -123,72 +112,46 @@ public class FloatMenuView extends View {
         super(context, attrs, defStyleAttr);
     }
 
-    public FloatMenuView(Context baseContext, Activity activity, View parentView, int status) {
+    public FloatMenuView(Context baseContext,  int status) {
         super(baseContext);
-        mParentView = parentView;
         mStatus = status;
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
         mBgRect = new RectF(0, 0, screenWidth, screenHeight);
-        addView(activity.getWindow());
-        initView(activity);
+        initView();
     }
 
-    private void addView(Window window) {
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        params.alpha = 0.0f;
-        params.dimAmount = 0.0f;
-        params.buttonBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF;
-        window.addContentView(this, params);
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        setMeasuredDimension(mItemWidth * mItemList.size(), mItemHeight);
     }
 
-    private void initView(Activity activity) {
+    private void initView( ) {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setTextSize(sp2px(12));
 
         mAlphaAnim = ObjectAnimator.ofFloat(this, "alpha", 1.0f, 0f);
-        mAlphaAnim.setDuration(200);
+        mAlphaAnim.setDuration(50);
         mAlphaAnim.addListener(new MyAnimListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                removeView();
                 if (mOnMenuClickListener != null) {
+                    removeView();
                     mOnMenuClickListener.dismiss();
                 }
             }
         });
 
-        int statusBarHeight = 0;
-        WindowManager.LayoutParams attrs = activity.getWindow().getAttributes();
-        if ((attrs.flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) == WindowManager.LayoutParams.FLAG_FULLSCREEN) {
-            statusBarHeight = 0;
-        } else {
-            statusBarHeight = Utils.getStatusBarHeight(activity);
-        }
-        ActionBar actionbar = activity.getActionBar();
-        if (actionbar != null) {
-            String title = String.valueOf(actionbar.getTitle());
-            if (!TextUtils.isEmpty(title)) {
-                statusBarHeight = actionbar.getHeight();
-            }
-        }
-
-        int parentViewWidth = mParentView.getMeasuredHeight();
-        mParentView.getLocationOnScreen(location);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            mFirstItemTop = location[1] - parentViewWidth / 2;
-        } else {
-            mFirstItemTop = location[1] - statusBarHeight;
-        }
-
+        mFirstItemTop = 0;
         if (mStatus == STATUS_LEFT) {
-            mItemLeft = location[0] + parentViewWidth;
+            mItemLeft = 0;
         } else {
-            mItemLeft = location[0] - mItemWidth;
+            mItemLeft = 0;
         }
+
     }
 
     @Override
@@ -197,13 +160,11 @@ public class FloatMenuView extends View {
         switch (mStatus) {
             case STATUS_LEFT:
                 drawBackground(canvas);
-                drawMenuBackground(canvas);
                 drawFloatLeftItem(canvas);
                 break;
             case STATUS_RIGHT:
                 drawBackground(canvas);
-                drawMenuBackground(canvas);
-                drawFloatRightItem(canvas);
+                drawFloatLeftItem(canvas);
 
                 break;
         }
@@ -212,77 +173,14 @@ public class FloatMenuView extends View {
     private void drawBackground(Canvas canvas) {
         mPaint.setColor(mBackgroundColor);
         canvas.drawRect(mBgRect, mPaint);
-    }
 
-
-    private void drawMenuBackground(Canvas canvas) {
-        if (mMenuBackgroundColor == -1) return;
-        float parentW = mParentView.getMeasuredHeight();
-        float conorPadding = parentW / 4;
-        RectF menuBgRect;
-        if (mStatus == STATUS_LEFT) {
-            float left = mItemLeft - parentW;
-            float top = mFirstItemTop;
-            float right = location[0] + parentW + parentW * mItemList.size() + conorPadding / 2;
-            float bottom = mFirstItemTop + parentW;
-            menuBgRect = new RectF(left, top, right, bottom);
-        } else {
-            float left = location[0] - mItemWidth * mItemList.size() - conorPadding / 2;
-            float top = mFirstItemTop;
-            float right = location[0] + parentW;
-            float bottom = mFirstItemTop + parentW;
-            menuBgRect = new RectF(left, top, right, bottom);
-        }
-        mPaint.setColor(mMenuBackgroundColor);
-        mPaint.setStrokeCap(Paint.Cap.ROUND);
-        canvas.drawRoundRect(menuBgRect, conorPadding * 2, conorPadding * 2, mPaint);
-
-    }
-
-    private void drawFloatRightItem(Canvas canvas) {
-        mItemRectList.clear();
-        int size = mItemList.size();
-        for (int i = 0; i < size; i++) {
-            canvas.save();
-
-            mPaint.setColor(mItemList.get(i).bgColor);
-            float left = mItemLeft - mItemWidth * i;
-            if (cicleBg) {
-                float cx = (mItemLeft - i * mItemWidth) + mItemWidth / 2;//x中心点
-                float cy = mFirstItemTop + mItemHeight / 2;//y中心点
-                float radius = mItemWidth / 2;//半径
-                canvas.drawCircle(cx, cy, radius, mPaint);
-            } else {
-                if (mMenuBackgroundColor != -1) {
-                    if (i != mItemList.size() - 1) {
-                        mPaint.setColor(mSeparateLineColor);
-                        float startX = left;
-                        float startY = mFirstItemTop;
-                        float stopX = startX;
-                        float stopY = mFirstItemTop + mItemHeight;
-                        canvas.drawLine(startX, startY, stopX, stopY, mPaint);
-                    }
-                }
-                if (mMenuBackgroundColor != -1) {
-                    mPaint.setColor(Color.TRANSPARENT);
-                } else {
-                    mPaint.setColor(mItemList.get(i).bgColor);
-                }
-                canvas.drawRect(left, mFirstItemTop, left + mItemWidth, mFirstItemTop + mItemHeight, mPaint);
-            }
-
-            mItemRectList.add(new RectF(left, mFirstItemTop, left + mItemWidth, mFirstItemTop + mItemHeight));
-            mPaint.setColor(mItemList.get(i).bgColor);
-            drawIconTitleDot(canvas, i);
-        }
-        canvas.restore();
     }
 
     private void drawFloatLeftItem(Canvas canvas) {
         mItemRectList.clear();
         for (int i = 0; i < mItemList.size(); i++) {
             canvas.save();
-            mPaint.setColor(mItemList.get(i).bgColor);
+            mPaint.setColor(mMenuBackgroundColor);
             if (cicleBg) {
                 float cx = (mItemLeft + i * mItemWidth) + mItemWidth / 2;//x中心点
                 float cy = mFirstItemTop + mItemHeight / 2;//y中心点
@@ -291,19 +189,10 @@ public class FloatMenuView extends View {
             } else {
                 mPaint.setColor(mItemList.get(i).bgColor);
                 canvas.drawRect(mItemLeft + i * mItemWidth, mFirstItemTop, mItemLeft + mItemWidth + i * mItemWidth, mFirstItemTop + mItemHeight, mPaint);
-                if (mMenuBackgroundColor != -1) {
-                    if (i > 0 && i < mItemList.size()) {
-                        float startX = mItemLeft + i * mItemWidth;
-                        float startY = mFirstItemTop;
-                        float stopX = startX;
-                        float stopY = mFirstItemTop + mItemHeight;
-                        mPaint.setColor(mSeparateLineColor);
-                        canvas.drawLine(startX, startY, stopX, stopY, mPaint);
-                    }
-                }
             }
 
             mItemRectList.add(new RectF(mItemLeft + i * mItemWidth, mFirstItemTop, mItemLeft + mItemWidth + i * mItemWidth, mFirstItemTop + mItemHeight));
+            mPaint.setColor(mItemList.get(i).bgColor);
             drawIconTitleDot(canvas, i);
         }
         canvas.restore();
@@ -312,80 +201,45 @@ public class FloatMenuView extends View {
 
     private void drawIconTitleDot(Canvas canvas, int position) {
         FloatItem floatItem = mItemList.get(position);
+
         if (floatItem.icon != null) {
-            if (mStatus == STATUS_LEFT) {
-                float centryX = mItemLeft + mItemWidth / 2 + (mItemWidth) * position;//计算每一个item的中心点x的坐标值
-                float centryY = mFirstItemTop + mItemHeight / 2;//计算每一个item的中心点的y坐标值
+            float centryX = mItemLeft + mItemWidth / 2 + (mItemWidth) * position;//计算每一个item的中心点x的坐标值
+            float centryY = mFirstItemTop + mItemHeight / 2;//计算每一个item的中心点的y坐标值
 
-                float left = centryX - mItemWidth / 4;//计算icon的左坐标值 中心点往左移宽度的四分之一
-                float right = centryX + mItemWidth / 4;
+            float left = centryX - mItemWidth / 4;//计算icon的左坐标值 中心点往左移宽度的四分之一
+            float right = centryX + mItemWidth / 4;
 
-                float iconH = mItemHeight * 0.5f;//计算出icon的宽度 = icon的高度
+            float iconH = mItemHeight * 0.5f;//计算出icon的宽度 = icon的高度
 
-                float textH = getTextHeight(floatItem.getTitle(), mPaint);
-                float paddH = (mItemHeight - iconH - textH - mRadius) / 2;//总高度减去文字的高度，减去icon高度，再除以2就是上下的间距剩余
+            float textH = getTextHeight(floatItem.getTitle(), mPaint);
+            float paddH = (mItemHeight - iconH - textH - mRadius) / 2;//总高度减去文字的高度，减去icon高度，再除以2就是上下的间距剩余
 
-                float top = centryY - mItemHeight / 2 + paddH;//计算icon的上坐标值
-                float bottom = top + iconH;//剩下的高度空间用于画文字
+            float top = centryY - mItemHeight / 2 + paddH;//计算icon的上坐标值
+            float bottom = top + iconH;//剩下的高度空间用于画文字
 
-                //画icon
-                mPaint.setColor(floatItem.titleColor);
-                canvas.drawBitmap(floatItem.icon, null, new RectF(left, top, right, bottom), mPaint);
-                if (!TextUtils.isEmpty(floatItem.dotNum) && !floatItem.dotNum.equals("0")) {
-                    float dotLeft = centryX + mItemWidth / 5;
-                    float cx = dotLeft + mCorner;//x中心点
-                    float cy = top + mCorner;//y中心点
+            //画icon
+            mPaint.setColor(floatItem.titleColor);
+            canvas.drawBitmap(floatItem.icon, null, new RectF(left, top, right, bottom), mPaint);
+            if (!TextUtils.isEmpty(floatItem.dotNum) && !floatItem.dotNum.equals("0")) {
+                float dotLeft = centryX + mItemWidth / 5;
+                float cx = dotLeft + mCorner;//x中心点
+                float cy = top + mCorner;//y中心点
 
-                    int radiu = mDrawNum ? mRadius : mRedPointRadiuWithNoNum;
-                    //画红点
-                    mPaint.setColor(Color.RED);
-                    canvas.drawCircle(cx, cy, radiu, mPaint);
-                    if (mDrawNum) {
-                        mPaint.setColor(Color.WHITE);
-                        mPaint.setTextSize(mFontSizePointNum);
-                        //画红点消息数
-                        canvas.drawText(floatItem.dotNum, cx - getTextWidth(floatItem.getDotNum(), mPaint) / 2, cy + getTextHeight(floatItem.getDotNum(), mPaint) / 2, mPaint);
-                    }
+                int radiu = mDrawNum ? mRadius : mRedPointRadiuWithNoNum;
+                //画红点
+                mPaint.setColor(Color.RED);
+                canvas.drawCircle(cx, cy, radiu, mPaint);
+                if (mDrawNum) {
+                    mPaint.setColor(Color.WHITE);
+                    mPaint.setTextSize(mFontSizePointNum);
+                    //画红点消息数
+                    canvas.drawText(floatItem.dotNum, cx - getTextWidth(floatItem.getDotNum(), mPaint) / 2, cy + getTextHeight(floatItem.getDotNum(), mPaint) / 2, mPaint);
                 }
-                mPaint.setColor(floatItem.titleColor);
-                mPaint.setTextSize(mFontSizeTitle);
-                //画menu title
-                canvas.drawText(floatItem.title, centryX - getTextWidth(floatItem.getTitle(), mPaint) / 2, centryY + iconH / 2 + getTextHeight(floatItem.getTitle(), mPaint) / 2, mPaint);
-            } else {
-                float centryX = mItemLeft + mItemWidth / 2 - (mItemWidth) * position;//计算每一个item的中心点x的坐标值
-                float centryY = mFirstItemTop + mItemHeight / 2;//计算每一个item的中心点的y坐标值
-
-                float left = centryX - mItemWidth / 4;//计算icon的左坐标值 中心点往左移宽度的四分之一
-                float right = centryX + mItemWidth / 4;
-
-                float iconW = mItemWidth * 0.5f;//计算出icon的宽度 = icon的高度
-
-                float textH = getTextHeight(floatItem.getTitle(), mPaint);
-                float paddH = (mItemHeight - iconW - textH - mRadius) / 2;//总高度减去文字的高度，减去icon高度，再除以2就是上下的间距剩余
-
-                float top = centryY - mItemHeight / 2 + paddH;//计算icon的上坐标值
-                float bottom = top + iconW;//剩下的高度空间用于画文字
-
-                mPaint.setColor(floatItem.titleColor);
-                canvas.drawBitmap(floatItem.icon, null, new RectF(left, top, right, bottom), mPaint);
-                if (!TextUtils.isEmpty(floatItem.dotNum) && !floatItem.dotNum.equals("0")) {
-                    float dotLeft = centryX + mItemWidth / 5;
-                    float cx = dotLeft + mCorner;//x中心点
-                    float cy = top + mCorner;//y中心点
-                    int radius = mDrawNum ? mRadius : mRedPointRadiuWithNoNum;
-                    mPaint.setColor(Color.RED);
-                    canvas.drawCircle(cx, cy, radius, mPaint);
-                    if (mDrawNum) {
-                        mPaint.setColor(Color.WHITE);
-                        mPaint.setTextSize(mFontSizePointNum);
-                        canvas.drawText(floatItem.dotNum, cx - getTextWidth(floatItem.getDotNum(), mPaint) / 2, cy + getTextHeight(floatItem.getDotNum(), mPaint) / 2, mPaint);
-                    }
-                }
-                mPaint.setColor(floatItem.titleColor);
-                mPaint.setTextSize(mFontSizeTitle);
-                canvas.drawText(floatItem.title, centryX - getTextWidth(floatItem.getTitle(), mPaint) / 2, centryY + iconW / 2 + getTextHeight(floatItem.getTitle(), mPaint) / 2, mPaint);
-
             }
+            mPaint.setColor(floatItem.titleColor);
+            mPaint.setTextSize(mFontSizeTitle);
+            //画menu title
+            canvas.drawText(floatItem.title, centryX - getTextWidth(floatItem.getTitle(), mPaint) / 2, centryY + iconH / 2 + getTextHeight(floatItem.getTitle(), mPaint) / 2, mPaint);
         }
     }
 
@@ -464,7 +318,7 @@ public class FloatMenuView extends View {
                 }
                 dismiss();
         }
-        return super.onTouchEvent(event);
+        return false;
     }
 
     private boolean isPointInRect(PointF pointF, RectF targetRect) {
@@ -474,12 +328,9 @@ public class FloatMenuView extends View {
 
     public static class Builder {
 
-        private Activity mActivity;
-        private View mParentView;
-
+        private Context mActivity;
         private List<FloatItem> mFloatItems = new ArrayList<>();
         private int mBgColor = Color.TRANSPARENT;
-        private int mSeparateLineColor = Color.TRANSPARENT;
         private int mStatus = STATUS_LEFT;
         private boolean cicleBg = false;
         private int mMenuBackgroundColor = -1;
@@ -514,9 +365,8 @@ public class FloatMenuView extends View {
         }
 
 
-        public Builder(Activity activity, View parentView) {
+        public Builder(Context activity ) {
             mActivity = activity;
-            mParentView = parentView;
         }
 
         public Builder addItem(FloatItem floatItem) {
@@ -534,20 +384,14 @@ public class FloatMenuView extends View {
             return this;
         }
 
-        public Builder setSeparateLineColor(int color) {
-            mSeparateLineColor = color;
-            return this;
-        }
-
         public FloatMenuView create() {
-            FloatMenuView floatMenuView = new FloatMenuView(mActivity.getBaseContext(), mActivity, mParentView, mStatus);
+            FloatMenuView floatMenuView = new FloatMenuView(mActivity, mStatus);
             floatMenuView.setItemList(mFloatItems);
             floatMenuView.setBackgroundColor(mBgColor);
             floatMenuView.setCicleBg(cicleBg);
             floatMenuView.startAnim();
             floatMenuView.drawNum(mDrawNum);
             floatMenuView.setMenuBackgroundColor(mMenuBackgroundColor);
-            floatMenuView.setSeparateLineColor(mSeparateLineColor);
             return floatMenuView;
         }
 

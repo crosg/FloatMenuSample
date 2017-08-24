@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.yw.game.floatmenu.demo"
           xmlns:android="http://schemas.android.com/apk/res/android">
+
+    //  .withContext(mActivity.getApplication())需要此权限
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+
+    //unity3D游戏引擎需要开启该选项
+    <meta-data android:name="unityplayer.ForwardNativeEventsToDalvik" android:value="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,6 +19,8 @@
             防止横竖屏切换时重新执行oncreate-->
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="sensor"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

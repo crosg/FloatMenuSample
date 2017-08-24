@@ -30,7 +30,7 @@ import com.yw.game.floatmenu.FloatMenuView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     FloatLogoMenu mFloatMenu;
     FloatLogoMenu mFloatMenu1;
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         mActivity = this;
         for (int i = 0; i < menuIcons.length; i++) {
-            itemList.add(new FloatItem(MENU_ITEMS[i], Color.BLACK, 0x00000000, BitmapFactory.decodeResource(this.getResources(), menuIcons[i]), String.valueOf(i + 1)));
+            itemList.add(new FloatItem(MENU_ITEMS[i], 0x99000000, 0x99000000, BitmapFactory.decodeResource(this.getResources(), menuIcons[i]), String.valueOf(i + 1)));
         }
     }
 
@@ -64,9 +64,12 @@ public class MainActivity extends AppCompatActivity {
         if (mFloatMenu == null) {
             mFloatMenu = new FloatLogoMenu.Builder()
                     .withActivity(mActivity)
-                    .logo(R.drawable.yw_image_float_logo)
-                    .backMenuColor(0xffe4e3e1)
+//                    .withContext(mActivity.getApplication())//这个在7.0（包括7.0）以上以及大部分7.0以下的国产手机上需要用户授权，需要搭配<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+                    .logo(BitmapFactory.decodeResource(getResources(),R.drawable.yw_game_logo))
                     .drawCicleMenuBg(true)
+                    .backMenuColor(0xffe4e3e1)
+                    .setBgDrawable(this.getResources().getDrawable(R.drawable.yw_game_float_menu_bg))
+                    //这个背景色需要和logo的背景色一致
                     .setFloatItems(itemList)
                     .defaultLocation(FloatLogoMenu.RIGHT)
                     .drawRedPointNum(false)
@@ -90,29 +93,7 @@ public class MainActivity extends AppCompatActivity {
             }, 5000);
 
             //同时只能new一个
-//            mFloatMenu1 = new FloatLogoMenu.Builder()
-//                    .withActivity(mActivity)
-//                    .backMenuColor(0x99000000)
-//                    .drawCicleMenuBg(true)
-//                    .addFloatItem(new FloatItem("我的", Color.WHITE, 0x00000000,
-//                            BitmapFactory.decodeResource(this.getResources(), R.drawable.ywgame_floatmenu_user), String.valueOf(3)))
-//                    .addFloatItem(new FloatItem("礼包", Color.WHITE, 0x00000000,
-//                            BitmapFactory.decodeResource(this.getResources(), R.drawable.ywgame_floatmenu_gift), null))
-//
-//                    .defaultLocation(FloatLogoMenu.LEFT)
-//                    .drawRedPointNum(true)
-//                    .setOnMenuItemClickListener(new FloatMenuView.OnMenuClickListener() {
-//                        @Override
-//                        public void onItemClick(int position, String title) {
-//                            Toast.makeText(MainActivity.this, "position " + position + " title:" + title + " is clicked.", Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                        @Override
-//                        public void dismiss() {
-//
-//                        }
-//                    })
-//                    .showWithLogo(R.drawable.yw_game_logo);
+
 
 
         }

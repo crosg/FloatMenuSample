@@ -16,14 +16,12 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -45,12 +43,16 @@ public class DotImageView extends View {
     public static final int HIDE_LEFT = 1;//左边隐藏
     public static final int HIDE_RIGHT = 2;//右边隐藏
     private Paint mPaint;//用于画anything
+
+    private Paint mPaintBg;//用于画anything
     private String dotNum = null;//红点数字
     private float mAlphValue;//透明度动画值
     private float mRolateValue = 1f;//旋转动画值
     private boolean inited = false;//标记透明动画是否执行过，防止因onreseme 切换导致重复执行
+
+
     private Bitmap mBitmap;//logo
-    private final int mLogoBackgroundRadius = dip2px(24);//logo的灰色背景圆的半径
+    private final int mLogoBackgroundRadius = dip2px(25);//logo的灰色背景圆的半径
     private final int mLogoWhiteRadius = dip2px(20);//logo的白色背景的圆的半径
     private final int mRedPointRadiusWithNum = dip2px(6);//红点圆半径
     private final int mRedPointRadius = dip2px(3);//红点圆半径
@@ -96,16 +98,22 @@ public class DotImageView extends View {
     public void setStatus(int status) {
         this.mStatus = status;
         isDraging = false;
-        if (this.mStatus != 0) {
+        if (this.mStatus != NORMAL) {
             setDrawNum(mDrawNum);
-        } else {
-            invalidate();
+            this.mDrawDarkBg = true;
         }
+        invalidate();
+
     }
 
-    public void setImageResource(@DrawableRes int id) {
-        this.mBitmap = BitmapFactory.decodeResource(this.getResources(), id);
-        invalidate();
+    public void setBitmap(Bitmap bitmap) {
+        mBitmap = bitmap;
+    }
+
+    public DotImageView(Context context, Bitmap bitmap) {
+        super(context);
+        this.mBitmap = bitmap;
+        init();
     }
 
 
@@ -130,6 +138,11 @@ public class DotImageView extends View {
         mPaint.setTextSize(sp2px(10));
         mPaint.setStyle(Paint.Style.FILL);
 
+        mPaintBg = new Paint();
+        mPaintBg.setAntiAlias(true);
+        mPaintBg.setStyle(Paint.Style.FILL);
+        mPaintBg.setColor(mBgColor);//60% 黑色背景 （透明度 40%）
+
         mCamera = new Camera();
         mMatrix = new Matrix();
     }
@@ -151,13 +164,11 @@ public class DotImageView extends View {
         float centryY = getHeight() / 2;
         canvas.save();//保存一份快照，方便后面恢复
         mCamera.save();
-
         if (mStatus == NORMAL) {
             if (mLastStatus != NORMAL) {
                 canvas.restore();//恢复画布的原始快照
                 mCamera.restore();
             }
-
 
             if (isDraging) {
                 //如果当前是拖动状态则放大并旋转
@@ -187,17 +198,13 @@ public class DotImageView extends View {
             canvas.translate(getWidth() * hideOffset, 0);
             canvas.rotate(45, getWidth() / 2, getHeight() / 2);
         }
-
-
+        canvas.save();
         if (!isDraging) {
-            mPaint.setColor(Color.TRANSPARENT);
-            canvas.drawRect(0, 0, getRight(), getBottom(), mPaint);
             if (mDrawDarkBg) {
-                mPaint.setColor(mBgColor);//60% 黑色背景 （透明度 40%）
-                canvas.drawCircle(centryX, centryY, mLogoBackgroundRadius, mPaint);
-
+                mPaintBg.setColor(mBgColor);
+                canvas.drawCircle(centryX, centryY, mLogoBackgroundRadius, mPaintBg);
                 // 60% 白色 （透明度 40%）
-                mPaint.setColor(0x99FFFFFF);
+                mPaint.setColor(0x99ffffff);
             } else {
                 //100% 白色背景 （透明度 0%）
                 mPaint.setColor(0xFFFFFFFF);
@@ -207,15 +214,17 @@ public class DotImageView extends View {
             }
             canvas.drawCircle(centryX, centryY, mLogoWhiteRadius, mPaint);
         }
+
+        canvas.restore();
         //100% 白色背景 （透明度 0%）
         mPaint.setColor(0xFFFFFFFF);
         int left = (int) (centryX - mBitmap.getWidth() / 2);
         int top = (int) (centryY - mBitmap.getHeight() / 2);
         canvas.drawBitmap(mBitmap, left, top, mPaint);
 
-        if (!TextUtils.isEmpty(dotNum)) {
 
-            int readPointRadus =  (mDrawNum ? mRedPointRadiusWithNum : mRedPointRadius);
+        if (!TextUtils.isEmpty(dotNum)) {
+            int readPointRadus = (mDrawNum ? mRedPointRadiusWithNum : mRedPointRadius);
             mPaint.setColor(Color.RED);
             if (mStatus == HIDE_LEFT) {
                 canvas.drawCircle(centryX + mRedPointOffset, centryY - mRedPointOffset, readPointRadus, mPaint);
@@ -316,7 +325,7 @@ public class DotImageView extends View {
         if (offset > 0 && offset != this.scaleOffset) {
             this.scaleOffset = offset;
         }
-        if (isDraging && mStatus == 0) {
+        if (isDraging && mStatus == NORMAL) {
             if (mDragingValueAnimator != null) {
                 if (mDragingValueAnimator.isRunning()) return;
             }

@@ -46,16 +46,6 @@ public class FloatItem {
         this.icon = bitmap;
     }
 
-    @Override
-    public String toString() {
-        return "FlipItem{" +
-                "title='" + title + '\'' +
-                ", titleColor=" + titleColor +
-                ", bgColor=" + bgColor +
-                ", icon=" + icon +
-                '}';
-    }
-
     public String getTitle() {
         return title;
     }
@@ -107,5 +97,16 @@ public class FloatItem {
     @Override
     public int hashCode() {
         return title.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "FloatItem{" +
+                "title='" + title + '\'' +
+                ", titleColor=" + titleColor +
+                ", bgColor=" + bgColor +
+                ", icon=" + icon +
+                ", dotNum='" + dotNum + '\'' +
+                '}';
     }
 }
