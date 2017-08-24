@@ -101,11 +101,15 @@ UPDATE LOG:
 
 		compile 'com.yw.game.floatmenu:FloatMenu:2.0.0'
 
-		 //unity3D游戏引擎需要开启该选项
+		 //2.0.0版使用windows.addContentView接口，在unity3D游戏引擎需要开启该选项
             <meta-data android:name="unityplayer.ForwardNativeEventsToDalvik" android:value="true" />
 
 
-* 2.0.1 可选择支持出现在桌面（需权限），应用内无权限需要
+* 2.0.1 可选择支持出现在桌面（需权限），应用内无权限需要。
+        移除windows.addContentView接口
+        出现在桌面的话需要：
+        使用全局上下文  .withContext(mService.getApplication())
+        并配合权限 <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
 
 
