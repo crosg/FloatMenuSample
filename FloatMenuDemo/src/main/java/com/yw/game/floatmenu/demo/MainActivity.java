@@ -21,6 +21,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -100,62 +101,6 @@ public class MainActivity extends Activity {
             //同时只能new一个
         }
 
-        floatManager = new FloatManager(this, new FloatManager.GetViewCallback() {
-            @Override
-            public View getLeftView(View.OnTouchListener touchListener) {
-                return null;
-            }
-
-            @Override
-            public View getRightView(View.OnTouchListener touchListener) {
-                return null;
-            }
-
-            @Override
-            public View getLogoView() {
-                return null;
-            }
-
-            @Override
-            public void resetLogoViewSize(int hintLocation, View logoView) {
-
-            }
-
-            @Override
-            public void dragingLogoViewOffset(View logoView, boolean isDraging, boolean isResetPosition, float offset) {
-
-            }
-
-            @Override
-            public void shrinkLeftLogoView(View logoView) {
-
-            }
-
-            @Override
-            public void shrinkRightLogoView(View logoView) {
-
-            }
-
-            @Override
-            public void leftViewOpened(View leftView) {
-
-            }
-
-            @Override
-            public void rightViewOpened(View rightView) {
-
-            }
-
-            @Override
-            public void leftOrRightViewClosed(View logoView) {
-
-            }
-
-            @Override
-            public void onDestoryed() {
-
-            }
-        });
 
         if (floatManager != null) return;
         floatManager = new FloatManager(this, new FloatManager.GetViewCallback() {
@@ -217,6 +162,7 @@ public class MainActivity extends Activity {
             @Override
             public View getLogoView() {
 
+
                 LinearLayout linearLayout = new LinearLayout(mActivity);
                 linearLayout.setOrientation(LinearLayout.HORIZONTAL);
                 linearLayout.setGravity(Gravity.CENTER);
@@ -252,6 +198,10 @@ public class MainActivity extends Activity {
                     smallView.setTranslationX(0);
                     smallView.setScaleX(1);
                     smallView.setScaleY(1);
+                }
+
+                if (isResetPosition) {
+                    smallView.setRotation(offset*360);
                 }
             }
 
