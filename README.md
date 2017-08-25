@@ -88,7 +88,6 @@ see sample
 
 
 3： 因上述代码自定义功能较低，提供下面的方式供自行开发
-
      floatManager = new FloatManager(this, new FloatManager.GetViewCallback() {
             @Override
             public View getLeftView(View.OnTouchListener touchListener) {
