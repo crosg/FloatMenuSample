@@ -352,12 +352,8 @@ public class FloatLogoMenu {
      * 初始化悬浮球
      */
     private void initFloat() {
-
-
         genarateLeftLineLayout();
         genarateRightLineLayout();
-
-
         mFloatLogo = new DotImageView(mActivity, mLogoRes);
         mFloatLogo.setLayoutParams(new WindowManager.LayoutParams(dp2Px(50, mActivity), dp2Px(50, mActivity)));
         mFloatLogo.setDrawNum(mDrawRedPointNum);
@@ -740,6 +736,8 @@ public class FloatLogoMenu {
     }
 
 
+
+
     /**
      * 更新悬浮窗在屏幕中的位置。
      */
@@ -903,6 +901,17 @@ public class FloatLogoMenu {
                 TypedValue.COMPLEX_UNIT_DIP,
                 dp,
                 mContext.getResources().getDisplayMetrics());
+    }
+
+
+
+    public interface OnMenuClickListener {
+        void onMenuExpended(boolean isExpened);
+    }
+
+
+    public void setValueAnimator(){
+
     }
 
     public static final class Builder {
