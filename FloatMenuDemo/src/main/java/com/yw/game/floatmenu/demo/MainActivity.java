@@ -13,14 +13,17 @@
 
 package com.yw.game.floatmenu.demo;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -181,14 +184,14 @@ public class MainActivity extends Activity {
 
             @Override
             public void resetLogoViewSize(int hintLocation, View logoView) {
-
+                logoView.clearAnimation();
                 logoView.setTranslationX(0);
                 logoView.setScaleX(1);
                 logoView.setScaleY(1);
             }
 
             @Override
-            public void dragingLogoViewOffset(View smallView, boolean isDraging, boolean isResetPosition, float offset) {
+            public void dragingLogoViewOffset(final View smallView, boolean isDraging, boolean isResetPosition, float offset) {
                 if (isDraging && offset > 0) {
                     smallView.setBackgroundDrawable(null);
                     smallView.setScaleX(1 + offset);
@@ -200,8 +203,23 @@ public class MainActivity extends Activity {
                     smallView.setScaleY(1);
                 }
 
+
                 if (isResetPosition) {
-                    smallView.setRotation(offset*360);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        smallView.setRotation(offset * 360);
+                    }
+                } else {
+                    ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 360 * 4);
+                    valueAnimator.setInterpolator(new LinearInterpolator());
+                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            int v = (int) animation.getAnimatedValue();
+                            smallView.setRotation(v);
+                        }
+                    });
+                    valueAnimator.setDuration(800);
+                    valueAnimator.start();
                 }
             }
 
