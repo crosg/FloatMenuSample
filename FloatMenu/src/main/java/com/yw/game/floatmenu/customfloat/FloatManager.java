@@ -220,7 +220,7 @@ public  class FloatManager {
         rightView = mGetViewCallback.getRightView(touchListener);
 
         if (smallView == null) {
-            throw new IllegalArgumentException("Must impl GetViewCallback and make getLogoView() return  a logoView!");
+            throw new IllegalArgumentException("Must impl GetViewCallback and make getLogoView() return  a logoView !");
         }
 
         smallView.setOnTouchListener(touchListener);//恢复touch事件

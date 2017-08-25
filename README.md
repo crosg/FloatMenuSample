@@ -87,8 +87,12 @@ see sample
     });
 
 
-3： 因上述代码自定义功能较低，提供下面的方式供自行开发
-     floatManager = new FloatManager(this, new FloatManager.GetViewCallback() {
+3： 因上述代码自定义功能较低，提供下面的方式供自行开发，这里可以直接将 FloatManager (https://github.com/crosg/FloatMenuSample/blob/master/FloatMenu/src/main/java/com/yw/game/floatmenu/customfloat/FloatManager.java) 文件拷贝出来直接使用
+
+
+
+
+         floatManager = new FloatManager(this, new FloatManager.GetViewCallback() {
             @Override
             public View getLeftView(View.OnTouchListener touchListener) {
             //这里可以从xml导入一个用于出现在左边的菜单，,如果要模拟上面的效果，需要add一个logo，并设置touchListener
