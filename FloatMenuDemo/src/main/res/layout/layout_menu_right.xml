@@ -41,6 +41,7 @@
         android:id="@+id/logo"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:scaleType="centerInside"
         android:background="@drawable/yw_game_float_menu_bg"
         android:src="@drawable/yw_game_logo"/>
 
