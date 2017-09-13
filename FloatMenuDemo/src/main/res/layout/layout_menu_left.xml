@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="50dp"
+              android:background="@drawable/yw_game_menu_black_bg"
+              android:gravity="center"
+              android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/yw_game_float_menu_bg"
+        android:scaleType="centerInside"
+        android:src="@drawable/yw_game_logo"/>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:drawableTop="@drawable/ywgame_floatmenu_user"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="我的"
+            android:textColor="@color/colorPrimary"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:drawableTop="@drawable/ywgame_floatmenu_gift"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="礼包"
+            android:textColor="@color/colorPrimary"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+
+</LinearLayout>

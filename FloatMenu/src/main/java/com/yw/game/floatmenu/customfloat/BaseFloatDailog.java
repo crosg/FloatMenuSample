@@ -24,6 +24,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -35,7 +36,7 @@ import android.view.animation.LinearInterpolator;
  * Created by wengyiming on 2017/8/25.
  */
 
-public  class FloatManager {
+public abstract class BaseFloatDailog {
 
     /**
      * 悬浮球 坐落 左 右 标记
@@ -166,46 +167,91 @@ public  class FloatManager {
     ValueAnimator valueAnimator = null;
     private boolean isExpaned = false;
 
-    private View smallView;
+    private View logoView;
     private View rightView;
     private View leftView;
 
     private GetViewCallback mGetViewCallback;
 
-    public interface GetViewCallback {
-        View getLeftView(View.OnTouchListener touchListener);
 
-        View getRightView(View.OnTouchListener touchListener);
-
-        View getLogoView();
+    public static class FloatDialogImp extends BaseFloatDailog {
 
 
+        public FloatDialogImp(Context context, GetViewCallback getViewCallback) {
+            super(context, getViewCallback);
+        }
 
-        void resetLogoViewSize(int hintLocation, View logoView);//logo恢复原始大小
-        void dragingLogoViewOffset(View logoView, boolean isDraging, boolean isResetPosition, float offset);//logo正被拖动，或真在恢复原位
+        public FloatDialogImp(Context context) {
+            super(context);
+        }
 
-        void shrinkLeftLogoView(View logoView);//logo左边收缩
+        @Override
+        protected View getLeftView(LayoutInflater inflater, View.OnTouchListener touchListener) {
+            return null;
+        }
 
-        void shrinkRightLogoView(View logoView);//logo右边收缩
+        @Override
+        protected View getRightView(LayoutInflater inflater, View.OnTouchListener touchListener) {
+            return null;
+        }
 
-        void leftViewOpened(View leftView);//左菜单打开
+        @Override
+        protected View getLogoView(LayoutInflater inflater) {
+            return null;
+        }
 
-        void rightViewOpened(View rightView);//右菜单打开
+        @Override
+        protected void resetLogoViewSize(int hintLocation, View logoView) {
 
-        void leftOrRightViewClosed(View logoView);
+        }
 
-        void onDestoryed();
+        @Override
+        protected void dragingLogoViewOffset(View logoView, boolean isDraging, boolean isResetPosition, float offset) {
+
+        }
+
+        @Override
+        protected void shrinkLeftLogoView(View logoView) {
+
+        }
+
+        @Override
+        protected void shrinkRightLogoView(View logoView) {
+
+        }
+
+        @Override
+        protected void leftViewOpened(View leftView) {
+
+        }
+
+        @Override
+        protected void rightViewOpened(View rightView) {
+
+        }
+
+        @Override
+        protected void leftOrRightViewClosed(View logoView) {
+
+        }
+
+        @Override
+        protected void onDestoryed() {
+
+        }
+    }
+
+    protected BaseFloatDailog(Context context, GetViewCallback getViewCallback) {
+        this(context);
+        this.mGetViewCallback = getViewCallback;
+        if (mGetViewCallback == null) {
+            throw new IllegalArgumentException("GetViewCallback cound not be null!");
+        }
 
     }
 
-
-    public FloatManager(Context context, GetViewCallback getViewCallback) {
+    protected BaseFloatDailog(Context context) {
         this.mActivity = context;
-        this.mGetViewCallback = getViewCallback;
-
-        if (mGetViewCallback == null) {
-            throw new IllegalArgumentException("Must impl GetViewCallback !");
-        }
         initFloatWindow();
         initTimer();
         initFloatView();
@@ -213,17 +259,17 @@ public  class FloatManager {
     }
 
 
-
     private void initFloatView() {
-        smallView = mGetViewCallback.getLogoView();
-        leftView = mGetViewCallback.getLeftView(touchListener);
-        rightView = mGetViewCallback.getRightView(touchListener);
+        LayoutInflater inflater = LayoutInflater.from(mActivity);
+        logoView = mGetViewCallback == null ? getLogoView(inflater) : mGetViewCallback.getLogoView(inflater);
+        leftView = mGetViewCallback == null ? getLeftView(inflater,touchListener) : mGetViewCallback.getLeftView(inflater,touchListener);
+        rightView = mGetViewCallback == null ? getRightView(inflater,touchListener) : mGetViewCallback.getRightView(inflater,touchListener);
 
-        if (smallView == null) {
-            throw new IllegalArgumentException("Must impl GetViewCallback and make getLogoView() return  a logoView !");
+        if (logoView == null) {
+            throw new IllegalArgumentException("Must impl GetViewCallback or impl " + this.getClass().getSimpleName() + "and make getLogoView() not return null !");
         }
 
-        smallView.setOnTouchListener(touchListener);//恢复touch事件
+        logoView.setOnTouchListener(touchListener);//恢复touch事件
 
     }
 
@@ -247,21 +293,22 @@ public  class FloatManager {
                 }
                 if (!isDraging) {
                     if (mHintLocation == LEFT) {
-//                        mFloatLogo.setStatus(DotImageView.HIDE_LEFT);
-//                        mFloatLogo.setDrawDarkBg(true);
-                        mGetViewCallback.shrinkLeftLogoView(smallView);
+                        if (mGetViewCallback == null) {
+                            shrinkLeftLogoView(logoView);
+                        } else {
+                            mGetViewCallback.shrinkLeftLogoView(logoView);
+                        }
                     } else {
-                        mGetViewCallback.shrinkRightLogoView(smallView);
-//                        mFloatLogo.setStatus(DotImageView.HIDE_RIGHT);
-//                        mFloatLogo.setDrawDarkBg(true);
+                        if (mGetViewCallback == null) {
+                            shrinkRightLogoView(logoView);
+                        } else {
+                            mGetViewCallback.shrinkRightLogoView(logoView);
+                        }
                     }
-//                    mFloatLogo.setOnTouchListener(mDefaultOnTouchListerner);//把onClick事件分发下去，防止onclick无效
                 }
             }
         };
     }
-
-
 
 
     /**
@@ -316,18 +363,11 @@ public  class FloatManager {
         isDraging = false;
         mHideTimer.cancel();
 
-        mGetViewCallback.resetLogoViewSize(mHintLocation,smallView);
-
-//        if (smallView.getStatus() != DotImageView.NORMAL) {
-//            smallView.setStatus(DotImageView.NORMAL);
-//        }
-//        if (!smallView.mDrawDarkBg) {
-//            smallView.setDrawDarkBg(true);
-//        }
-//        if (smallView.getStatus() != DotImageView.NORMAL) {
-//            smallView.setStatus(DotImageView.NORMAL);
-//        }
-
+        if (mGetViewCallback == null) {
+            resetLogoViewSize(mHintLocation, logoView);
+        } else {
+            mGetViewCallback.resetLogoViewSize(mHintLocation, logoView);
+        }
 
         mXInView = event.getX();
         mYinview = event.getY();
@@ -348,18 +388,27 @@ public  class FloatManager {
 
 
         //连续移动的距离超过3则更新一次视图位置
-        if (Math.abs(mXInScreen - mXDownInScreen) > smallView.getWidth() / 4 || Math.abs(mYInScreen - mYDownInScreen) > smallView.getWidth() / 4) {
+        if (Math.abs(mXInScreen - mXDownInScreen) > logoView.getWidth() / 4 || Math.abs(mYInScreen - mYDownInScreen) > logoView.getWidth() / 4) {
             wmParams.x = (int) (mXInScreen - mXInView);
-            wmParams.y = (int) (mYInScreen - mYinview) - smallView.getHeight() / 2;
+            wmParams.y = (int) (mYInScreen - mYinview) - logoView.getHeight() / 2;
             updateViewPosition(); // 手指移动的时候更新小悬浮窗的位置
             double a = mScreenWidth / 2;
             float offset = (float) ((a - (Math.abs(wmParams.x - a))) / a);
-//            smallView.setDraging(isDraging, offset, false);
-            mGetViewCallback.dragingLogoViewOffset(smallView,isDraging,false,offset);
+            if (mGetViewCallback == null) {
+                dragingLogoViewOffset(logoView, isDraging, false, offset);
+            } else {
+                mGetViewCallback.dragingLogoViewOffset(logoView, isDraging, false, offset);
+            }
+
         } else {
             isDraging = false;
-//            smallView.setDraging(false, 0, true);
-            mGetViewCallback.dragingLogoViewOffset(smallView,false,true,0);
+//            logoView.setDraging(false, 0, true);
+            if (mGetViewCallback == null) {
+                dragingLogoViewOffset(logoView, false, true, 0);
+            } else {
+                mGetViewCallback.dragingLogoViewOffset(logoView, false, true, 0);
+            }
+
         }
     }
 
@@ -400,8 +449,11 @@ public  class FloatManager {
                 }
                 updateViewPosition();
                 isDraging = false;
-                mGetViewCallback.dragingLogoViewOffset(smallView,false,true,0);
-//                smallView.setDraging(false, 0, true);
+                if (mGetViewCallback == null) {
+                    dragingLogoViewOffset(logoView, false, true, 0);
+                } else {
+                    mGetViewCallback.dragingLogoViewOffset(logoView, false, true, 0);
+                }
                 mHideTimer.start();
             }
 
@@ -415,8 +467,11 @@ public  class FloatManager {
 
                 updateViewPosition();
                 isDraging = false;
-                mGetViewCallback.dragingLogoViewOffset(smallView,false,true,0);
-//                smallView.setDraging(false, 0, true);
+                if (mGetViewCallback == null) {
+                    dragingLogoViewOffset(logoView, false, true, 0);
+                } else {
+                    mGetViewCallback.dragingLogoViewOffset(logoView, false, true, 0);
+                }
                 mHideTimer.start();
 
             }
@@ -431,7 +486,7 @@ public  class FloatManager {
         }
 
 //        //这里需要判断如果如果手指所在位置和logo所在位置在一个宽度内则不移动,
-        if (Math.abs(mXInScreen - mXDownInScreen) > smallView.getWidth() / 5 || Math.abs(mYInScreen - mYDownInScreen) > smallView.getHeight() / 5) {
+        if (Math.abs(mXInScreen - mXDownInScreen) > logoView.getWidth() / 5 || Math.abs(mYInScreen - mYDownInScreen) > logoView.getHeight() / 5) {
             isDraging = false;
         } else {
             openMenu();
@@ -451,7 +506,6 @@ public  class FloatManager {
     };
 
 
-
     /**
      * 用于检查并更新悬浮球的位置
      */
@@ -465,8 +519,13 @@ public  class FloatManager {
             updateViewPosition();
             double a = mScreenWidth / 2;
             float offset = (float) ((a - (Math.abs(wmParams.x - a))) / a);
-//            smallView.setDraging(isDraging, offset, true);
-            mGetViewCallback.dragingLogoViewOffset(smallView,isDraging,true,offset);
+//            logoView.setDraging(isDraging, offset, true);
+            if (mGetViewCallback == null) {
+                dragingLogoViewOffset(logoView, false, true, 0);
+            } else {
+                mGetViewCallback.dragingLogoViewOffset(logoView, isDraging, true, offset);
+            }
+
             return;
         }
 
@@ -489,8 +548,8 @@ public  class FloatManager {
 
     public void show() {
         try {
-            if (wManager != null && wmParams != null && smallView != null) {
-                wManager.addView(smallView, wmParams);
+            if (wManager != null && wmParams != null && logoView != null) {
+                wManager.addView(logoView, wmParams);
             }
             if (mHideTimer != null) {
                 mHideTimer.start();
@@ -510,15 +569,25 @@ public  class FloatManager {
         if (isDraging) return;
 
         if (!isExpaned) {
-//            smallView.setDrawDarkBg(false);
+//            logoView.setDrawDarkBg(false);
             try {
-                wManager.removeViewImmediate(smallView);
+                wManager.removeViewImmediate(logoView);
                 if (mHintLocation == RIGHT) {
                     wManager.addView(rightView, wmParams);
-                    mGetViewCallback.rightViewOpened(rightView);
+                    if (mGetViewCallback == null) {
+                        rightViewOpened(rightView);
+                    } else {
+                        mGetViewCallback.rightViewOpened(rightView);
+                    }
                 } else {
                     wManager.addView(leftView, wmParams);
-                    mGetViewCallback.leftViewOpened(leftView);
+                    if (mGetViewCallback == null) {
+                        leftViewOpened(leftView);
+                    } else {
+                        mGetViewCallback.leftViewOpened(leftView);
+                    }
+
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -527,11 +596,16 @@ public  class FloatManager {
             isExpaned = true;
             mHideTimer.cancel();
         } else {
-//            smallView.setDrawDarkBg(true);
+//            logoView.setDrawDarkBg(true);
             try {
                 wManager.removeViewImmediate(mHintLocation == LEFT ? leftView : rightView);
-                wManager.addView(smallView, wmParams);
-                mGetViewCallback.leftOrRightViewClosed(smallView);
+                wManager.addView(logoView, wmParams);
+                if (mGetViewCallback == null) {
+                    leftOrRightViewClosed(logoView);
+                } else {
+                    mGetViewCallback.leftOrRightViewClosed(logoView);
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -550,11 +624,11 @@ public  class FloatManager {
         isDraging = true;
         try {
             if (!isExpaned) {
-                if (wmParams.y - smallView.getHeight() / 2 <= 0) {
+                if (wmParams.y - logoView.getHeight() / 2 <= 0) {
                     wmParams.y = 25;
                     isDraging = true;
                 }
-                wManager.updateViewLayout(smallView, wmParams);
+                wManager.updateViewLayout(logoView, wmParams);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -568,20 +642,72 @@ public  class FloatManager {
         //记录上次的位置logo的停放位置，以备下次恢复
         saveSetting(LOCATION_X, mHintLocation);
         saveSetting(LOCATION_Y, wmParams.y);
-        smallView.clearAnimation();
+        logoView.clearAnimation();
         try {
             mHideTimer.cancel();
             if (isExpaned) {
                 wManager.removeViewImmediate(mHintLocation == LEFT ? leftView : rightView);
             } else {
-                wManager.removeViewImmediate(smallView);
+                wManager.removeViewImmediate(logoView);
             }
             isExpaned = false;
             isDraging = false;
-            mGetViewCallback.onDestoryed();
+            if (mGetViewCallback == null) {
+                onDestoryed();
+            } else {
+                mGetViewCallback.onDestoryed();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    protected abstract View getLeftView(LayoutInflater inflater, View.OnTouchListener touchListener);
+
+    protected abstract View getRightView(LayoutInflater inflater, View.OnTouchListener touchListener);
+
+    protected abstract View getLogoView(LayoutInflater inflater);
+
+    protected abstract void resetLogoViewSize(int hintLocation, View logoView);//logo恢复原始大小
+
+    protected abstract void dragingLogoViewOffset(View logoView, boolean isDraging, boolean isResetPosition, float offset);
+
+    protected abstract void shrinkLeftLogoView(View logoView);//logo左边收缩
+
+    protected abstract void shrinkRightLogoView(View logoView);//logo右边收缩
+
+    protected abstract void leftViewOpened(View leftView);//左菜单打开
+
+    protected abstract void rightViewOpened(View rightView);//右菜单打开
+
+    protected abstract void leftOrRightViewClosed(View logoView);
+
+    protected abstract void onDestoryed();
+
+    public interface GetViewCallback {
+        View getLeftView(LayoutInflater inflater, View.OnTouchListener touchListener);
+
+        View getRightView(LayoutInflater inflater, View.OnTouchListener touchListener);
+
+        View getLogoView(LayoutInflater inflater);
+
+
+        void resetLogoViewSize(int hintLocation, View logoView);//logo恢复原始大小
+
+        void dragingLogoViewOffset(View logoView, boolean isDraging, boolean isResetPosition, float offset);//logo正被拖动，或真在恢复原位
+
+        void shrinkLeftLogoView(View logoView);//logo左边收缩
+
+        void shrinkRightLogoView(View logoView);//logo右边收缩
+
+        void leftViewOpened(View leftView);//左菜单打开
+
+        void rightViewOpened(View rightView);//右菜单打开
+
+        void leftOrRightViewClosed(View logoView);
+
+        void onDestoryed();
+
     }
 
     /**

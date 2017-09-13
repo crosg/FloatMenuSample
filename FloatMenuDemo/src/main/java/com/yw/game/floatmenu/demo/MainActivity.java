@@ -22,9 +22,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,7 +33,7 @@ import android.widget.Toast;
 import com.yw.game.floatmenu.FloatItem;
 import com.yw.game.floatmenu.FloatLogoMenu;
 import com.yw.game.floatmenu.FloatMenuView;
-import com.yw.game.floatmenu.customfloat.FloatManager;
+import com.yw.game.floatmenu.customfloat.BaseFloatDailog;
 
 import java.util.ArrayList;
 
@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
 
     private int[] menuIcons = new int[]{R.drawable.yw_menu_account, R.drawable.yw_menu_fb, R.drawable.yw_menu_msg};
 
-    FloatManager floatManager;
+    BaseFloatDailog mBaseFloatDailog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,10 +105,17 @@ public class MainActivity extends Activity {
         }
 
 
-        if (floatManager != null) return;
-        floatManager = new FloatManager(this, new FloatManager.GetViewCallback() {
+        if (mBaseFloatDailog != null) return;
+
+        mBaseFloatDailog = new MyFloatDialog(this);
+        mBaseFloatDailog.show();
+
+    }
+
+    private void showWithCallback() {
+        mBaseFloatDailog = new BaseFloatDailog.FloatDialogImp(this, new BaseFloatDailog.GetViewCallback() {
             @Override
-            public View getLeftView(View.OnTouchListener touchListener) {
+            public View getLeftView(LayoutInflater inflater, View.OnTouchListener touchListener) {
                 LinearLayout linearLayout = new LinearLayout(mActivity);
                 linearLayout.setOrientation(LinearLayout.HORIZONTAL);
                 linearLayout.setGravity(Gravity.CENTER);
@@ -136,7 +143,7 @@ public class MainActivity extends Activity {
             }
 
             @Override
-            public View getRightView(View.OnTouchListener touchListener) {
+            public View getRightView(LayoutInflater inflater, View.OnTouchListener touchListener) {
                 LinearLayout linearLayout = new LinearLayout(mActivity);
                 linearLayout.setOrientation(LinearLayout.HORIZONTAL);
                 linearLayout.setGravity(Gravity.CENTER);
@@ -163,7 +170,7 @@ public class MainActivity extends Activity {
             }
 
             @Override
-            public View getLogoView() {
+            public View getLogoView(LayoutInflater inflater) {
 
 
                 LinearLayout linearLayout = new LinearLayout(mActivity);
@@ -253,7 +260,7 @@ public class MainActivity extends Activity {
 
             }
         });
-        floatManager.show();
+        mBaseFloatDailog.show();
     }
 
 
@@ -283,7 +290,7 @@ public class MainActivity extends Activity {
         destroyFloat();
         super.onDestroy();
 
-        if (floatManager != null) floatManager.destoryFloat();
+        if (mBaseFloatDailog != null) mBaseFloatDailog.destoryFloat();
 
     }
 
