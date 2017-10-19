@@ -255,7 +255,6 @@ public class FloatLogoMenu {
 
     private Drawable mBackground;
 
-    private boolean mNeedPermision = true;
 
     private FloatLogoMenu(Builder builder) {
         mBackMenuColor = builder.mBackMenuColor;
@@ -295,23 +294,12 @@ public class FloatLogoMenu {
      * 初始化悬浮球 window
      */
     private void initFloatWindow() {
-        if(mActivity instanceof Activity){
+        if (mActivity instanceof Activity) {
             Activity activity = (Activity) mActivity;
             wManager = activity.getWindowManager();
-            mNeedPermision = false;
-        }else {
-            mNeedPermision = true;
+            wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;//类似dialog，寄托在activity的windows上,activity关闭时需要关闭当前float
+        } else {
             wManager = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
-        }
-        mScreenWidth = wManager.getDefaultDisplay().getWidth();
-        int screenHeigth = wManager.getDefaultDisplay().getHeight();
-
-        //判断状态栏是否显示 如果不显示则statusBarHeight为0
-        mStatusBarHeight = dp2Px(25, mActivity);
-
-        wmParams = new WindowManager.LayoutParams();
-
-        if(mNeedPermision) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 if (Build.VERSION.SDK_INT > 23) {
                     //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限
@@ -323,6 +311,13 @@ public class FloatLogoMenu {
                 wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
             }
         }
+        mScreenWidth = wManager.getDefaultDisplay().getWidth();
+        int screenHeigth = wManager.getDefaultDisplay().getHeight();
+
+        //判断状态栏是否显示 如果不显示则statusBarHeight为0
+        mStatusBarHeight = dp2Px(25, mActivity);
+
+        wmParams = new WindowManager.LayoutParams();
 
 
         wmParams.format = PixelFormat.RGBA_8888;
@@ -736,8 +731,6 @@ public class FloatLogoMenu {
     }
 
 
-
-
     /**
      * 更新悬浮窗在屏幕中的位置。
      */
@@ -904,13 +897,12 @@ public class FloatLogoMenu {
     }
 
 
-
     public interface OnMenuClickListener {
         void onMenuExpended(boolean isExpened);
     }
 
 
-    public void setValueAnimator(){
+    public void setValueAnimator() {
 
     }
 
@@ -969,7 +961,7 @@ public class FloatLogoMenu {
             return this;
         }
 
-        public Builder withContext(Context val){
+        public Builder withContext(Context val) {
             mActivity = val;
             return this;
         }

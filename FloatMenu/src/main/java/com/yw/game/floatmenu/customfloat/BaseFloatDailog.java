@@ -319,6 +319,7 @@ public abstract class BaseFloatDailog {
         if (mActivity instanceof Activity) {
             Activity activity = (Activity) mActivity;
             wManager = activity.getWindowManager();
+            wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
         } else {
             wManager = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
             //判断状态栏是否显示 如果不显示则statusBarHeight为0
