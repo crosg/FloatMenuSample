@@ -297,7 +297,8 @@ public class FloatLogoMenu {
         if (mActivity instanceof Activity) {
             Activity activity = (Activity) mActivity;
             wManager = activity.getWindowManager();
-            wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;//类似dialog，寄托在activity的windows上,activity关闭时需要关闭当前float
+            //类似dialog，寄托在activity的windows上,activity关闭时需要关闭当前float
+            wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
         } else {
             wManager = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
