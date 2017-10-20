@@ -290,7 +290,7 @@ public class MainActivity extends Activity {
         destroyFloat();
         super.onDestroy();
 
-        if (mBaseFloatDailog != null) mBaseFloatDailog.destoryFloat();
+        if (mBaseFloatDailog != null) mBaseFloatDailog.dismiss();
 
     }
 

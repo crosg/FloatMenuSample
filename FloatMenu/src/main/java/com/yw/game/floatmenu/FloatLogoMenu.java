@@ -294,6 +294,7 @@ public class FloatLogoMenu {
      * 初始化悬浮球 window
      */
     private void initFloatWindow() {
+        wmParams = new WindowManager.LayoutParams();
         if (mActivity instanceof Activity) {
             Activity activity = (Activity) mActivity;
             wManager = activity.getWindowManager();
@@ -317,9 +318,6 @@ public class FloatLogoMenu {
 
         //判断状态栏是否显示 如果不显示则statusBarHeight为0
         mStatusBarHeight = dp2Px(25, mActivity);
-
-        wmParams = new WindowManager.LayoutParams();
-
 
         wmParams.format = PixelFormat.RGBA_8888;
         wmParams.gravity = Gravity.LEFT | Gravity.TOP;

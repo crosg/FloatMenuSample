@@ -1,5 +1,6 @@
 package com.yw.game.floatmenu.demo;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.view.LayoutInflater;
@@ -15,15 +16,16 @@ import com.yw.game.floatmenu.customfloat.BaseFloatDailog;
 
 public class MyFloatDialog extends BaseFloatDailog {
 
-    private Context mContext;
 
     public MyFloatDialog(Context context) {
         super(context);
-        mContext = context;
     }
 
     @Override
     protected View getLeftView(LayoutInflater inflater, View.OnTouchListener touchListener) {
+        if (getContext() != null) {
+            Toast.makeText(getContext(), "haha", Toast.LENGTH_SHORT).show();
+        }
         View view = inflater.inflate(R.layout.layout_menu_left, null);
         ImageView leftLogo = (ImageView) view.findViewById(R.id.logo);
         leftLogo.setOnTouchListener(touchListener);
@@ -86,21 +88,25 @@ public class MyFloatDialog extends BaseFloatDailog {
 
     @Override
     public void leftViewOpened(View leftView) {
-        Toast.makeText(mContext, "左边的菜单被打开了", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "左边的菜单被打开了", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void rightViewOpened(View rightView) {
-        Toast.makeText(mContext, "右边的菜单被打开了", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "右边的菜单被打开了", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void leftOrRightViewClosed(View smallView) {
-        Toast.makeText(mContext, "菜单被关闭了", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "菜单被关闭了", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onDestoryed() {
-        mContext = null;
+        if(isApplictionDialog()){
+            if(getContext() instanceof Activity){
+                dismiss();
+            }
+        }
     }
 }

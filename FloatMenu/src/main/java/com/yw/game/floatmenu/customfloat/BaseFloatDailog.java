@@ -109,6 +109,7 @@ public abstract class BaseFloatDailog {
      */
     private WindowManager.LayoutParams wmParams;
 
+
     /**
      * 用于显示在 mActivity 上的 mActivity
      */
@@ -142,6 +143,12 @@ public abstract class BaseFloatDailog {
      */
     private int mResetLocationValue;
 
+    public boolean isApplictionDialog() {
+        return isApplictionDialog;
+    }
+
+    private boolean isApplictionDialog = false;
+
     /**
      * 这个事件用于处理移动、自定义点击或者其它事情，return true可以保证onclick事件失效
      */
@@ -173,6 +180,11 @@ public abstract class BaseFloatDailog {
 
     private GetViewCallback mGetViewCallback;
 
+
+
+    public Context getContext() {
+        return mActivity;
+    }
 
     public static class FloatDialogImp extends BaseFloatDailog {
 
@@ -262,8 +274,8 @@ public abstract class BaseFloatDailog {
     private void initFloatView() {
         LayoutInflater inflater = LayoutInflater.from(mActivity);
         logoView = mGetViewCallback == null ? getLogoView(inflater) : mGetViewCallback.getLogoView(inflater);
-        leftView = mGetViewCallback == null ? getLeftView(inflater,touchListener) : mGetViewCallback.getLeftView(inflater,touchListener);
-        rightView = mGetViewCallback == null ? getRightView(inflater,touchListener) : mGetViewCallback.getRightView(inflater,touchListener);
+        leftView = mGetViewCallback == null ? getLeftView(inflater, touchListener) : mGetViewCallback.getLeftView(inflater, touchListener);
+        rightView = mGetViewCallback == null ? getRightView(inflater, touchListener) : mGetViewCallback.getRightView(inflater, touchListener);
 
         if (logoView == null) {
             throw new IllegalArgumentException("Must impl GetViewCallback or impl " + this.getClass().getSimpleName() + "and make getLogoView() not return null !");
@@ -311,6 +323,9 @@ public abstract class BaseFloatDailog {
     }
 
 
+
+
+
     /**
      * 初始化悬浮球 window
      */
@@ -321,6 +336,7 @@ public abstract class BaseFloatDailog {
             wManager = activity.getWindowManager();
             //类似dialog，寄托在activity的windows上,activity关闭时需要关闭当前float
             wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
+            isApplictionDialog = true;
         } else {
             wManager = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
             //判断状态栏是否显示 如果不显示则statusBarHeight为0
@@ -334,6 +350,7 @@ public abstract class BaseFloatDailog {
             } else {
                 wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
             }
+            isApplictionDialog = false;
         }
         mScreenWidth = wManager.getDefaultDisplay().getWidth();
         int screenHeigth = wManager.getDefaultDisplay().getHeight();
@@ -640,7 +657,7 @@ public abstract class BaseFloatDailog {
     /**
      * 移除所有悬浮窗 释放资源
      */
-    public void destoryFloat() {
+    public void dismiss() {
         //记录上次的位置logo的停放位置，以备下次恢复
         saveSetting(LOCATION_X, mHintLocation);
         saveSetting(LOCATION_Y, wmParams.y);
