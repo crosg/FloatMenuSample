@@ -398,6 +398,11 @@ public abstract class BaseFloatDailog {
 
     }
 
+
+
+
+
+
     /**
      * 悬浮窗touch事件的 move 事件
      */
