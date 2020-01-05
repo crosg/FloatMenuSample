@@ -108,7 +108,7 @@ public class MainActivity extends Activity {
         if (mBaseFloatDailog != null) return;
 
         mBaseFloatDailog = new MyFloatDialog(this);
-        mBaseFloatDailog.show();
+         //mBaseFloatDailog.show();
 
     }
 
