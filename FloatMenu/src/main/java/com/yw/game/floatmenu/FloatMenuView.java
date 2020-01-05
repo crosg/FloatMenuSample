@@ -61,7 +61,7 @@ public class FloatMenuView extends View {
     private int mFontSizeTitle = sp2px(12);//菜单项的title的文字大小
     private float mFirstItemTop;//菜单项的最小y值，上面起始那条线
     private boolean mDrawNum = false;//是否绘制数字，false则只绘制红点
-    private boolean cicleBg = false;//菜单项背景是否绘制成圆形，false则绘制矩阵
+    private boolean circleBg = false;//菜单项背景是否绘制成圆形，false则绘制矩阵
 
     private List<FloatItem> mItemList = new ArrayList<>();//菜单项的内容
     private List<RectF> mItemRectList = new ArrayList<>();//菜单项所占用位置的记录，用于判断点击事件
@@ -81,8 +81,8 @@ public class FloatMenuView extends View {
     }
 
     //设置是否绘制圆形菜单，否则矩阵
-    public void setCicleBg(boolean cicleBg) {
-        this.cicleBg = cicleBg;
+    public void setCircleBg(boolean circleBg) {
+        this.circleBg = circleBg;
     }
 
     //用于标记所依赖的view的screen的坐标，实际view的坐标是window坐标，所以这里后面会减去状态栏的高度
@@ -165,7 +165,6 @@ public class FloatMenuView extends View {
             case STATUS_RIGHT:
                 drawBackground(canvas);
                 drawFloatLeftItem(canvas);
-
                 break;
         }
     }
@@ -181,7 +180,7 @@ public class FloatMenuView extends View {
         for (int i = 0; i < mItemList.size(); i++) {
             canvas.save();
             mPaint.setColor(mMenuBackgroundColor);
-            if (cicleBg) {
+            if (circleBg) {
                 float cx = (mItemLeft + i * mItemWidth) + mItemWidth / 2;//x中心点
                 float cy = mFirstItemTop + mItemHeight / 2;//y中心点
                 float radius = mItemWidth / 2;//半径
@@ -203,32 +202,32 @@ public class FloatMenuView extends View {
         FloatItem floatItem = mItemList.get(position);
 
         if (floatItem.icon != null) {
-            float centryX = mItemLeft + mItemWidth / 2 + (mItemWidth) * position;//计算每一个item的中心点x的坐标值
-            float centryY = mFirstItemTop + mItemHeight / 2;//计算每一个item的中心点的y坐标值
+            float centerX = mItemLeft + mItemWidth / 2 + (mItemWidth) * position;//计算每一个item的中心点x的坐标值
+            float centerY = mFirstItemTop + mItemHeight / 2;//计算每一个item的中心点的y坐标值
 
-            float left = centryX - mItemWidth / 4;//计算icon的左坐标值 中心点往左移宽度的四分之一
-            float right = centryX + mItemWidth / 4;
+            float left = centerX - mItemWidth / 4;//计算icon的左坐标值 中心点往左移宽度的四分之一
+            float right = centerX + mItemWidth / 4;
 
             float iconH = mItemHeight * 0.5f;//计算出icon的宽度 = icon的高度
 
             float textH = getTextHeight(floatItem.getTitle(), mPaint);
-            float paddH = (mItemHeight - iconH - textH - mRadius) / 2;//总高度减去文字的高度，减去icon高度，再除以2就是上下的间距剩余
+            float paddingH = (mItemHeight - iconH - textH - mRadius) / 2;//总高度减去文字的高度，减去icon高度，再除以2就是上下的间距剩余
 
-            float top = centryY - mItemHeight / 2 + paddH;//计算icon的上坐标值
+            float top = centerY - mItemHeight / 2 + paddingH;//计算icon的上坐标值
             float bottom = top + iconH;//剩下的高度空间用于画文字
 
             //画icon
             mPaint.setColor(floatItem.titleColor);
             canvas.drawBitmap(floatItem.icon, null, new RectF(left, top, right, bottom), mPaint);
             if (!TextUtils.isEmpty(floatItem.dotNum) && !floatItem.dotNum.equals("0")) {
-                float dotLeft = centryX + mItemWidth / 5;
+                float dotLeft = centerX + mItemWidth / 5;
                 float cx = dotLeft + mCorner;//x中心点
                 float cy = top + mCorner;//y中心点
 
-                int radiu = mDrawNum ? mRadius : mRedPointRadiuWithNoNum;
+                int radius = mDrawNum ? mRadius : mRedPointRadiuWithNoNum;
                 //画红点
                 mPaint.setColor(Color.RED);
-                canvas.drawCircle(cx, cy, radiu, mPaint);
+                canvas.drawCircle(cx, cy, radius, mPaint);
                 if (mDrawNum) {
                     mPaint.setColor(Color.WHITE);
                     mPaint.setTextSize(mFontSizePointNum);
@@ -239,7 +238,7 @@ public class FloatMenuView extends View {
             mPaint.setColor(floatItem.titleColor);
             mPaint.setTextSize(mFontSizeTitle);
             //画menu title
-            canvas.drawText(floatItem.title, centryX - getTextWidth(floatItem.getTitle(), mPaint) / 2, centryY + iconH / 2 + getTextHeight(floatItem.getTitle(), mPaint) / 2, mPaint);
+            canvas.drawText(floatItem.title, centerX - getTextWidth(floatItem.getTitle(), mPaint) / 2, centerY + iconH / 2 + getTextHeight(floatItem.getTitle(), mPaint) / 2, mPaint);
         }
     }
 
@@ -388,7 +387,7 @@ public class FloatMenuView extends View {
             FloatMenuView floatMenuView = new FloatMenuView(mActivity, mStatus);
             floatMenuView.setItemList(mFloatItems);
             floatMenuView.setBackgroundColor(mBgColor);
-            floatMenuView.setCicleBg(cicleBg);
+            floatMenuView.setCircleBg(cicleBg);
             floatMenuView.startAnim();
             floatMenuView.drawNum(mDrawNum);
             floatMenuView.setMenuBackgroundColor(mMenuBackgroundColor);

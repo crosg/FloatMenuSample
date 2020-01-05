@@ -46,8 +46,8 @@ public class DotImageView extends View {
 
     private Paint mPaintBg;//用于画anything
     private String dotNum = null;//红点数字
-    private float mAlphValue;//透明度动画值
-    private float mRolateValue = 1f;//旋转动画值
+    private float mAlphaValue;//透明度动画值
+    private float mRotateValue = 1f;//旋转动画值
     private boolean inited = false;//标记透明动画是否执行过，防止因onreseme 切换导致重复执行
 
 
@@ -58,9 +58,9 @@ public class DotImageView extends View {
     private final int mRedPointRadius = dip2px(3);//红点圆半径
     private final int mRedPointOffset = dip2px(10);//红点对logo的偏移量，比如左红点就是logo中心的 x - mRedPointOffset
 
-    private boolean isDraging = false;//是否 绘制旋转放大动画，只有 非停靠边缘才绘制
+    private boolean isDrag = false;//是否 绘制旋转放大动画，只有 非停靠边缘才绘制
     private float scaleOffset;//放大偏移值
-    private ValueAnimator mDragingValueAnimator;//放大、旋转 属性动画
+    private ValueAnimator mDragValueAnimator;//放大、旋转 属性动画
     private LinearInterpolator mLinearInterpolator = new LinearInterpolator();//通用用加速器
     public boolean mDrawDarkBg = true;//是否绘制黑色背景，当菜单关闭时，才绘制灰色背景
     private static final float hideOffset = 0.4f;//往左右隐藏多少宽度的偏移值， 隐藏宽度的0.4
@@ -97,7 +97,7 @@ public class DotImageView extends View {
 
     public void setStatus(int status) {
         this.mStatus = status;
-        isDraging = false;
+        isDrag = false;
         if (this.mStatus != NORMAL) {
             setDrawNum(mDrawNum);
             this.mDrawDarkBg = true;
@@ -160,8 +160,8 @@ public class DotImageView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        float centryX = getWidth() / 2;
-        float centryY = getHeight() / 2;
+        float centerX = getWidth() / 2;
+        float centerY = getHeight() / 2;
         canvas.save();//保存一份快照，方便后面恢复
         mCamera.save();
         if (mStatus == NORMAL) {
@@ -170,7 +170,7 @@ public class DotImageView extends View {
                 mCamera.restore();
             }
 
-            if (isDraging) {
+            if (isDrag) {
                 //如果当前是拖动状态则放大并旋转
                 canvas.scale((scaleOffset + 1f), (scaleOffset + 1f), getWidth() / 2, getHeight() / 2);
                 if (mIsResetPosition) {
@@ -185,7 +185,7 @@ public class DotImageView extends View {
                     mCamera.restore();
                 } else {
                     //手指拖动且手指未离开屏幕则使用 绕图心2d旋转动画
-                    canvas.rotate(60 * mRolateValue, getWidth() / 2, getHeight() / 2);
+                    canvas.rotate(60 * mRotateValue, getWidth() / 2, getHeight() / 2);
                 }
             }
 
@@ -199,27 +199,27 @@ public class DotImageView extends View {
             canvas.rotate(45, getWidth() / 2, getHeight() / 2);
         }
         canvas.save();
-        if (!isDraging) {
+        if (!isDrag) {
             if (mDrawDarkBg) {
                 mPaintBg.setColor(mBgColor);
-                canvas.drawCircle(centryX, centryY, mLogoBackgroundRadius, mPaintBg);
+                canvas.drawCircle(centerX, centerY, mLogoBackgroundRadius, mPaintBg);
                 // 60% 白色 （透明度 40%）
                 mPaint.setColor(0x99ffffff);
             } else {
                 //100% 白色背景 （透明度 0%）
                 mPaint.setColor(0xFFFFFFFF);
             }
-            if (mAlphValue != 0) {
-                mPaint.setAlpha((int) (mAlphValue * 255));
+            if (mAlphaValue != 0) {
+                mPaint.setAlpha((int) (mAlphaValue * 255));
             }
-            canvas.drawCircle(centryX, centryY, mLogoWhiteRadius, mPaint);
+            canvas.drawCircle(centerX, centerY, mLogoWhiteRadius, mPaint);
         }
 
         canvas.restore();
         //100% 白色背景 （透明度 0%）
         mPaint.setColor(0xFFFFFFFF);
-        int left = (int) (centryX - mBitmap.getWidth() / 2);
-        int top = (int) (centryY - mBitmap.getHeight() / 2);
+        int left = (int) (centerX - mBitmap.getWidth() / 2);
+        int top = (int) (centerY - mBitmap.getHeight() / 2);
         canvas.drawBitmap(mBitmap, left, top, mPaint);
 
 
@@ -227,29 +227,29 @@ public class DotImageView extends View {
             int readPointRadus = (mDrawNum ? mRedPointRadiusWithNum : mRedPointRadius);
             mPaint.setColor(Color.RED);
             if (mStatus == HIDE_LEFT) {
-                canvas.drawCircle(centryX + mRedPointOffset, centryY - mRedPointOffset, readPointRadus, mPaint);
+                canvas.drawCircle(centerX + mRedPointOffset, centerY - mRedPointOffset, readPointRadus, mPaint);
                 if (mDrawNum) {
                     mPaint.setColor(Color.WHITE);
-                    canvas.drawText(dotNum, centryX + mRedPointOffset - getTextWidth(dotNum, mPaint) / 2, centryY - mRedPointOffset + getTextHeight(dotNum, mPaint) / 2, mPaint);
+                    canvas.drawText(dotNum, centerX + mRedPointOffset - getTextWidth(dotNum, mPaint) / 2, centerY - mRedPointOffset + getTextHeight(dotNum, mPaint) / 2, mPaint);
                 }
             } else if (mStatus == HIDE_RIGHT) {
-                canvas.drawCircle(centryX - mRedPointOffset, centryY - mRedPointOffset, readPointRadus, mPaint);
+                canvas.drawCircle(centerX - mRedPointOffset, centerY - mRedPointOffset, readPointRadus, mPaint);
                 if (mDrawNum) {
                     mPaint.setColor(Color.WHITE);
-                    canvas.drawText(dotNum, centryX - mRedPointOffset - getTextWidth(dotNum, mPaint) / 2, centryY - mRedPointOffset + getTextHeight(dotNum, mPaint) / 2, mPaint);
+                    canvas.drawText(dotNum, centerX - mRedPointOffset - getTextWidth(dotNum, mPaint) / 2, centerY - mRedPointOffset + getTextHeight(dotNum, mPaint) / 2, mPaint);
                 }
             } else {
                 if (mLastStatus == HIDE_LEFT) {
-                    canvas.drawCircle(centryX + mRedPointOffset, centryY - mRedPointOffset, readPointRadus, mPaint);
+                    canvas.drawCircle(centerX + mRedPointOffset, centerY - mRedPointOffset, readPointRadus, mPaint);
                     if (mDrawNum) {
                         mPaint.setColor(Color.WHITE);
-                        canvas.drawText(dotNum, centryX + mRedPointOffset - getTextWidth(dotNum, mPaint) / 2, centryY - mRedPointOffset + getTextHeight(dotNum, mPaint) / 2, mPaint);
+                        canvas.drawText(dotNum, centerX + mRedPointOffset - getTextWidth(dotNum, mPaint) / 2, centerY - mRedPointOffset + getTextHeight(dotNum, mPaint) / 2, mPaint);
                     }
                 } else if (mLastStatus == HIDE_RIGHT) {
-                    canvas.drawCircle(centryX - mRedPointOffset, centryY - mRedPointOffset, readPointRadus, mPaint);
+                    canvas.drawCircle(centerX - mRedPointOffset, centerY - mRedPointOffset, readPointRadus, mPaint);
                     if (mDrawNum) {
                         mPaint.setColor(Color.WHITE);
-                        canvas.drawText(dotNum, centryX - mRedPointOffset - getTextWidth(dotNum, mPaint) / 2, centryY - mRedPointOffset + getTextHeight(dotNum, mPaint) / 2, mPaint);
+                        canvas.drawText(dotNum, centerX - mRedPointOffset - getTextWidth(dotNum, mPaint) / 2, centerY - mRedPointOffset + getTextHeight(dotNum, mPaint) / 2, mPaint);
                     }
                 }
             }
@@ -286,7 +286,7 @@ public class DotImageView extends View {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                mAlphValue = (float) animation.getAnimatedValue();
+                mAlphaValue = (float) animation.getAnimatedValue();
                 invalidate();
 
             }
@@ -302,13 +302,13 @@ public class DotImageView extends View {
             public void onAnimationEnd(Animator animation) {
                 inited = true;
                 refreshDot(num);
-                mAlphValue = 0;
+                mAlphaValue = 0;
 
             }
 
             @Override
             public void onAnimationCancel(Animator animation) {
-                mAlphValue = 0;
+                mAlphaValue = 0;
             }
 
             @Override
@@ -319,26 +319,26 @@ public class DotImageView extends View {
         valueAnimator.start();
     }
 
-    public void setDraging(boolean draging, float offset, boolean isResetPosition) {
-        isDraging = draging;
+    public void setDrag(boolean drag, float offset, boolean isResetPosition) {
+        isDrag = drag;
         this.mIsResetPosition = isResetPosition;
         if (offset > 0 && offset != this.scaleOffset) {
             this.scaleOffset = offset;
         }
-        if (isDraging && mStatus == NORMAL) {
-            if (mDragingValueAnimator != null) {
-                if (mDragingValueAnimator.isRunning()) return;
+        if (isDrag && mStatus == NORMAL) {
+            if (mDragValueAnimator != null) {
+                if (mDragValueAnimator.isRunning()) return;
             }
-            mDragingValueAnimator = ValueAnimator.ofFloat(0, 6f, 12f, 0f);
-            mDragingValueAnimator.setInterpolator(mLinearInterpolator);
-            mDragingValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            mDragValueAnimator = ValueAnimator.ofFloat(0, 6f, 12f, 0f);
+            mDragValueAnimator.setInterpolator(mLinearInterpolator);
+            mDragValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    mRolateValue = (float) animation.getAnimatedValue();
+                    mRotateValue = (float) animation.getAnimatedValue();
                     invalidate();
                 }
             });
-            mDragingValueAnimator.addListener(new Animator.AnimatorListener() {
+            mDragValueAnimator.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
 
@@ -346,7 +346,7 @@ public class DotImageView extends View {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    isDraging = false;
+                    isDrag = false;
                     mIsResetPosition = false;
                 }
 
@@ -360,8 +360,8 @@ public class DotImageView extends View {
 
                 }
             });
-            mDragingValueAnimator.setDuration(1000);
-            mDragingValueAnimator.start();
+            mDragValueAnimator.setDuration(1000);
+            mDragValueAnimator.start();
         }
     }
 

@@ -33,7 +33,7 @@ import android.widget.Toast;
 import com.yw.game.floatmenu.FloatItem;
 import com.yw.game.floatmenu.FloatLogoMenu;
 import com.yw.game.floatmenu.FloatMenuView;
-import com.yw.game.floatmenu.customfloat.BaseFloatDailog;
+import com.yw.game.floatmenu.customfloat.BaseFloatDialog;
 
 import java.util.ArrayList;
 
@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
 
     private int[] menuIcons = new int[]{R.drawable.yw_menu_account, R.drawable.yw_menu_fb, R.drawable.yw_menu_msg};
 
-    BaseFloatDailog mBaseFloatDailog;
+    BaseFloatDialog mBaseFloatDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,15 +105,15 @@ public class MainActivity extends Activity {
         }
 
 
-        if (mBaseFloatDailog != null) return;
+        if (mBaseFloatDialog != null) return;
 
-        mBaseFloatDailog = new MyFloatDialog(this);
-         //mBaseFloatDailog.show();
+        mBaseFloatDialog = new MyFloatDialog(this);
+//         mBaseFloatDialog.show();
 
     }
 
     private void showWithCallback() {
-        mBaseFloatDailog = new BaseFloatDailog.FloatDialogImp(this, new BaseFloatDailog.GetViewCallback() {
+        mBaseFloatDialog = new BaseFloatDialog.FloatDialogImp(this, new BaseFloatDialog.GetViewCallback() {
             @Override
             public View getLeftView(LayoutInflater inflater, View.OnTouchListener touchListener) {
                 LinearLayout linearLayout = new LinearLayout(mActivity);
@@ -260,7 +260,7 @@ public class MainActivity extends Activity {
 
             }
         });
-        mBaseFloatDailog.show();
+        mBaseFloatDialog.show();
     }
 
 
@@ -290,7 +290,7 @@ public class MainActivity extends Activity {
         destroyFloat();
         super.onDestroy();
 
-        if (mBaseFloatDailog != null) mBaseFloatDailog.dismiss();
+        if (mBaseFloatDialog != null) mBaseFloatDialog.dismiss();
 
     }
 
@@ -303,7 +303,7 @@ public class MainActivity extends Activity {
 
     public void destroyFloat() {
         if (mFloatMenu != null) {
-            mFloatMenu.destoryFloat();
+            mFloatMenu.destroyFloat();
         }
         mFloatMenu = null;
         mActivity = null;

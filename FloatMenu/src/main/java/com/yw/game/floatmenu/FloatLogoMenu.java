@@ -22,12 +22,10 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -92,7 +90,7 @@ public class FloatLogoMenu {
     /**
      * 记录手指按下时在小悬浮窗的View上的纵坐标的值
      */
-    private float mYinview;
+    private float mYinView;
 
     /**
      * 记录屏幕的宽度
@@ -141,7 +139,7 @@ public class FloatLogoMenu {
     /**
      * 标记是否拖动中
      */
-    private boolean isDraging = false;
+    private boolean isDrag = false;
 
     /**
      * 用于恢复悬浮球的location的属性动画值
@@ -154,7 +152,7 @@ public class FloatLogoMenu {
     private Runnable updatePositionRunnable = new Runnable() {
         @Override
         public void run() {
-            isDraging = true;
+            isDrag = true;
             checkPosition();
         }
     };
@@ -165,7 +163,7 @@ public class FloatLogoMenu {
     private OnTouchListener mDefaultOnTouchListerner = new OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            isDraging = false;
+            isDrag = false;
             return false;
         }
     };
@@ -207,7 +205,7 @@ public class FloatLogoMenu {
     /**
      * 是否绘制圆形菜单项，false绘制方形
      */
-    private boolean mCicleMenuBg;
+    private boolean mCircleMenuBg;
 
 
     /**
@@ -251,7 +249,7 @@ public class FloatLogoMenu {
 
     private ValueAnimator valueAnimator;
 
-    private boolean isExpaned = false;
+    private boolean isExpanded = false;
 
     private Drawable mBackground;
 
@@ -259,7 +257,7 @@ public class FloatLogoMenu {
     private FloatLogoMenu(Builder builder) {
         mBackMenuColor = builder.mBackMenuColor;
         mDrawRedPointNum = builder.mDrawRedPointNum;
-        mCicleMenuBg = builder.mCicleMenuBg;
+        mCircleMenuBg = builder.mCircleMenuBg;
         mLogoRes = builder.mLogoRes;
         mActivity = builder.mActivity;
         mOnMenuClickListener = builder.mOnMenuClickListener;
@@ -287,7 +285,7 @@ public class FloatLogoMenu {
 
     public void setFloatItemList(List<FloatItem> floatItems) {
         this.mFloatItems = floatItems;
-        caculateDotNum();
+        calculateDotNum();
     }
 
     /**
@@ -314,7 +312,7 @@ public class FloatLogoMenu {
             }
         }
         mScreenWidth = wManager.getDefaultDisplay().getWidth();
-        int screenHeigth = wManager.getDefaultDisplay().getHeight();
+        int screenHeight = wManager.getDefaultDisplay().getHeight();
 
         //判断状态栏是否显示 如果不显示则statusBarHeight为0
         mStatusBarHeight = dp2Px(25, mActivity);
@@ -323,7 +321,7 @@ public class FloatLogoMenu {
         wmParams.gravity = Gravity.LEFT | Gravity.TOP;
         wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
         mHintLocation = getSetting(LOCATION_X, mDefaultLocation);
-        int defaultY = ((screenHeigth - mStatusBarHeight) / 2) / 3;
+        int defaultY = ((screenHeight - mStatusBarHeight) / 2) / 3;
         int y = getSetting(LOCATION_Y, defaultY);
         if (mHintLocation == LEFT) {
             wmParams.x = 0;
@@ -346,14 +344,14 @@ public class FloatLogoMenu {
      * 初始化悬浮球
      */
     private void initFloat() {
-        genarateLeftLineLayout();
-        genarateRightLineLayout();
+        generateLeftLineLayout();
+        generateRightLineLayout();
         mFloatLogo = new DotImageView(mActivity, mLogoRes);
         mFloatLogo.setLayoutParams(new WindowManager.LayoutParams(dp2Px(50, mActivity), dp2Px(50, mActivity)));
         mFloatLogo.setDrawNum(mDrawRedPointNum);
         mFloatLogo.setBgColor(mBackMenuColor);
         mFloatLogo.setDrawDarkBg(true);
-        caculateDotNum();
+        calculateDotNum();
         floatBtnEvent();
         try {
             wManager.addView(mFloatLogo, wmParams);
@@ -363,7 +361,7 @@ public class FloatLogoMenu {
 
     }
 
-    private void genarateLeftLineLayout() {
+    private void generateLeftLineLayout() {
         DotImageView floatLogo = new DotImageView(mActivity, mLogoRes);
         floatLogo.setLayoutParams(new WindowManager.LayoutParams(dp2Px(50, mActivity), dp2Px(50, mActivity)));
         floatLogo.setDrawNum(mDrawRedPointNum);
@@ -380,7 +378,7 @@ public class FloatLogoMenu {
         FloatMenuView mFloatMenuView = new FloatMenuView.Builder(mActivity)
                 .setFloatItems(mFloatItems)
                 .setBackgroundColor(Color.TRANSPARENT)
-                .setCicleBg(mCicleMenuBg)
+                .setCicleBg(mCircleMenuBg)
                 .setStatus(FloatMenuView.STATUS_LEFT)
                 .setMenuBackgroundColor(Color.TRANSPARENT)
                 .drawNum(mDrawRedPointNum)
@@ -394,20 +392,20 @@ public class FloatLogoMenu {
         floatLogo.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isExpaned) {
+                if (isExpanded) {
                     try {
                         wManager.removeViewImmediate(rootView);
                         wManager.addView(FloatLogoMenu.this.mFloatLogo, wmParams);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    isExpaned = false;
+                    isExpanded = false;
                 }
             }
         });
     }
 
-    private void genarateRightLineLayout() {
+    private void generateRightLineLayout() {
         final DotImageView floatLogo = new DotImageView(mActivity, mLogoRes);
         floatLogo.setLayoutParams(new WindowManager.LayoutParams(dp2Px(50, mActivity), dp2Px(50, mActivity)));
         floatLogo.setDrawNum(mDrawRedPointNum);
@@ -416,14 +414,14 @@ public class FloatLogoMenu {
         floatLogo.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isExpaned) {
+                if (isExpanded) {
                     try {
                         wManager.removeViewImmediate(rootViewRight);
                         wManager.addView(FloatLogoMenu.this.mFloatLogo, wmParams);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    isExpaned = false;
+                    isExpanded = false;
                 }
             }
         });
@@ -440,7 +438,7 @@ public class FloatLogoMenu {
         FloatMenuView mFloatMenuView = new FloatMenuView.Builder(mActivity)
                 .setFloatItems(mFloatItems)
                 .setBackgroundColor(Color.TRANSPARENT)
-                .setCicleBg(mCicleMenuBg)
+                .setCicleBg(mCircleMenuBg)
                 .setStatus(FloatMenuView.STATUS_RIGHT)
                 .setMenuBackgroundColor(Color.TRANSPARENT)
                 .drawNum(mDrawRedPointNum)
@@ -460,18 +458,18 @@ public class FloatLogoMenu {
         mHideTimer = new CountDownTimer(2000, 10) {        //悬浮窗超过5秒没有操作的话会自动隐藏
             @Override
             public void onTick(long millisUntilFinished) {
-                if (isExpaned) {
+                if (isExpanded) {
                     mHideTimer.cancel();
                 }
             }
 
             @Override
             public void onFinish() {
-                if (isExpaned) {
+                if (isExpanded) {
                     mHideTimer.cancel();
                     return;
                 }
-                if (!isDraging) {
+                if (!isDrag) {
                     if (mHintLocation == LEFT) {
                         mFloatLogo.setStatus(DotImageView.HIDE_LEFT);
                         mFloatLogo.setDrawDarkBg(true);
@@ -513,11 +511,11 @@ public class FloatLogoMenu {
      * 悬浮窗的点击事件和touch事件的切换
      */
     private void floatBtnEvent() {
-        //这里的onCick只有 touchListener = mDefaultOnTouchListerner 才会触发
+        //这里的onClick只有 touchListener = mDefaultOnTouchListener 才会触发
 //        mFloatLogo.setOnClickListener(new OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                if (!isDraging) {
+//                if (!isDrag) {
 //                    if (mFloatLogo.getStatus() != DotImageView.NORMAL) {
 //                        mFloatLogo.setBitmap(mLogoRes);
 //                        mFloatLogo.setStatus(DotImageView.NORMAL);
@@ -538,7 +536,7 @@ public class FloatLogoMenu {
      * 悬浮窗touch事件的 down 事件
      */
     private void floatEventDown(MotionEvent event) {
-        isDraging = false;
+        isDrag = false;
         mHideTimer.cancel();
         if (mFloatLogo.getStatus() != DotImageView.NORMAL) {
             mFloatLogo.setStatus(DotImageView.NORMAL);
@@ -550,7 +548,7 @@ public class FloatLogoMenu {
             mFloatLogo.setStatus(DotImageView.NORMAL);
         }
         mXInView = event.getX();
-        mYinview = event.getY();
+        mYinView = event.getY();
         mXDownInScreen = event.getRawX();
         mYDownInScreen = event.getRawY();
         mXInScreen = event.getRawX();
@@ -570,14 +568,14 @@ public class FloatLogoMenu {
         //连续移动的距离超过3则更新一次视图位置
         if (Math.abs(mXInScreen - mXDownInScreen) > mFloatLogo.getWidth() / 4 || Math.abs(mYInScreen - mYDownInScreen) > mFloatLogo.getWidth() / 4) {
             wmParams.x = (int) (mXInScreen - mXInView);
-            wmParams.y = (int) (mYInScreen - mYinview) - mFloatLogo.getHeight() / 2;
+            wmParams.y = (int) (mYInScreen - mYinView) - mFloatLogo.getHeight() / 2;
             updateViewPosition(); // 手指移动的时候更新小悬浮窗的位置
             double a = mScreenWidth / 2;
             float offset = (float) ((a - (Math.abs(wmParams.x - a))) / a);
-            mFloatLogo.setDraging(isDraging, offset, false);
+            mFloatLogo.setDrag(isDrag, offset, false);
         } else {
-            isDraging = false;
-            mFloatLogo.setDraging(false, 0, true);
+            isDrag = false;
+            mFloatLogo.setDrag(false, 0, true);
         }
     }
 
@@ -616,8 +614,8 @@ public class FloatLogoMenu {
                         wmParams.x = mScreenWidth;
                     }
                     updateViewPosition();
-                    isDraging = false;
-                    mFloatLogo.setDraging(false, 0, true);
+                    isDrag = false;
+                    mFloatLogo.setDrag(false, 0, true);
                     mHideTimer.start();
                 }
 
@@ -630,8 +628,8 @@ public class FloatLogoMenu {
                     }
 
                     updateViewPosition();
-                    isDraging = false;
-                    mFloatLogo.setDraging(false, 0, true);
+                    isDrag = false;
+                    mFloatLogo.setDrag(false, 0, true);
                     mHideTimer.start();
 
                 }
@@ -648,7 +646,7 @@ public class FloatLogoMenu {
 
 //        //这里需要判断如果如果手指所在位置和logo所在位置在一个宽度内则不移动,
         if (Math.abs(mXInScreen - mXDownInScreen) > mFloatLogo.getWidth() / 5 || Math.abs(mYInScreen - mYDownInScreen) > mFloatLogo.getHeight() / 5) {
-            isDraging = false;
+            isDrag = false;
         } else {
             openMenu();
         }
@@ -669,7 +667,7 @@ public class FloatLogoMenu {
             updateViewPosition();
             double a = mScreenWidth / 2;
             float offset = (float) ((a - (Math.abs(wmParams.x - a))) / a);
-            mFloatLogo.setDraging(isDraging, offset, true);
+            mFloatLogo.setDrag(isDrag, offset, true);
             return;
         }
 
@@ -685,7 +683,7 @@ public class FloatLogoMenu {
 
 
         updateViewPosition();
-        isDraging = false;
+        isDrag = false;
 
 
     }
@@ -695,9 +693,9 @@ public class FloatLogoMenu {
      * 打开菜单
      */
     private void openMenu() {
-        if (isDraging) return;
+        if (isDrag) return;
 
-        if (!isExpaned) {
+        if (!isExpanded) {
             mFloatLogo.setDrawDarkBg(false);
             try {
                 wManager.removeViewImmediate(mFloatLogo);
@@ -710,11 +708,11 @@ public class FloatLogoMenu {
                 e.printStackTrace();
             }
 
-            isExpaned = true;
+            isExpanded = true;
             mHideTimer.cancel();
         } else {
             mFloatLogo.setDrawDarkBg(true);
-            if (isExpaned) {
+            if (isExpanded) {
                 try {
                     wManager.removeViewImmediate(mHintLocation == LEFT ? rootView : rootViewRight);
                     wManager.addView(mFloatLogo, wmParams);
@@ -722,7 +720,7 @@ public class FloatLogoMenu {
                     e.printStackTrace();
                 }
 
-                isExpaned = false;
+                isExpanded = false;
             }
             mHideTimer.start();
         }
@@ -734,12 +732,12 @@ public class FloatLogoMenu {
      * 更新悬浮窗在屏幕中的位置。
      */
     private void updateViewPosition() {
-        isDraging = true;
+        isDrag = true;
         try {
-            if (!isExpaned) {
+            if (!isExpanded) {
                 if (wmParams.y - mFloatLogo.getHeight() / 2 <= 0) {
                     wmParams.y = mStatusBarHeight;
-                    isDraging = true;
+                    isDrag = true;
                 }
                 wManager.updateViewLayout(mFloatLogo, wmParams);
             }
@@ -768,27 +766,27 @@ public class FloatLogoMenu {
      * 关闭菜单
      */
     public void hide() {
-        destoryFloat();
+        destroyFloat();
     }
 
 
     /**
      * 移除所有悬浮窗 释放资源
      */
-    public void destoryFloat() {
+    public void destroyFloat() {
         //记录上次的位置logo的停放位置，以备下次恢复
         saveSetting(LOCATION_X, mHintLocation);
         saveSetting(LOCATION_Y, wmParams.y);
         mFloatLogo.clearAnimation();
         try {
             mHideTimer.cancel();
-            if (isExpaned) {
+            if (isExpanded) {
                 wManager.removeViewImmediate(mHintLocation == LEFT ? rootView : rootViewRight);
             } else {
                 wManager.removeViewImmediate(mFloatLogo);
             }
-            isExpaned = false;
-            isDraging = false;
+            isExpanded = false;
+            isDrag = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -797,7 +795,7 @@ public class FloatLogoMenu {
     /**
      * 计算总红点数
      */
-    private void caculateDotNum() {
+    private void calculateDotNum() {
         int dotNum = 0;
         for (FloatItem floatItem : mFloatItems) {
             if (!TextUtils.isEmpty(floatItem.getDotNum())) {
@@ -823,7 +821,7 @@ public class FloatLogoMenu {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (!isDraging) {
+                if (!isDrag) {
                     mHideTimer.start();
                 }
             }
@@ -908,7 +906,7 @@ public class FloatLogoMenu {
     public static final class Builder {
         private int mBackMenuColor;
         private boolean mDrawRedPointNum;
-        private boolean mCicleMenuBg;
+        private boolean mCircleMenuBg;
         private Bitmap mLogoRes;
         private int mDefaultLocation;
         private List<FloatItem> mFloatItems = new ArrayList<>();
@@ -946,7 +944,7 @@ public class FloatLogoMenu {
         }
 
         public Builder drawCicleMenuBg(boolean val) {
-            mCicleMenuBg = val;
+            mCircleMenuBg = val;
             return this;
         }
 

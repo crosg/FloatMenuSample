@@ -8,13 +8,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.yw.game.floatmenu.customfloat.BaseFloatDailog;
+import com.yw.game.floatmenu.customfloat.BaseFloatDialog;
 
 /**
  * Created by wengyiming on 2017/9/13.
  */
 
-public class MyFloatDialog extends BaseFloatDailog {
+public class MyFloatDialog extends BaseFloatDialog {
 
 
     public MyFloatDialog(Context context) {
@@ -54,7 +54,7 @@ public class MyFloatDialog extends BaseFloatDailog {
     }
 
     @Override
-    protected void dragingLogoViewOffset(View logoView, boolean isDraging, boolean isResetPosition, float offset) {
+    protected void dragLogoViewOffset(View logoView, boolean isDraging, boolean isResetPosition, float offset) {
         if (isDraging && offset > 0) {
             logoView.setBackgroundDrawable(null);
             logoView.setScaleX(1 + offset);
@@ -102,8 +102,8 @@ public class MyFloatDialog extends BaseFloatDailog {
     }
 
     @Override
-    protected void onDestoryed() {
-        if(isApplictionDialog()){
+    protected void onDestroyed() {
+        if(isApplicationDialog()){
             if(getContext() instanceof Activity){
                 dismiss();
             }

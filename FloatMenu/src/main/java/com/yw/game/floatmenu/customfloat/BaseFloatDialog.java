@@ -36,7 +36,7 @@ import android.view.animation.LinearInterpolator;
  * Created by wengyiming on 2017/8/25.
  */
 
-public abstract class BaseFloatDailog {
+public abstract class BaseFloatDialog {
 
     /**
      * 悬浮球 坐落 左 右 标记
@@ -91,7 +91,7 @@ public abstract class BaseFloatDailog {
     /**
      * 记录手指按下时在小悬浮窗的View上的纵坐标的值
      */
-    private float mYinview;
+    private float mYinView;
 
     /**
      * 记录屏幕的宽度
@@ -136,18 +136,18 @@ public abstract class BaseFloatDailog {
     /**
      * 标记是否拖动中
      */
-    private boolean isDraging = false;
+    private boolean isDrag = false;
 
     /**
      * 用于恢复悬浮球的location的属性动画值
      */
     private int mResetLocationValue;
 
-    public boolean isApplictionDialog() {
-        return isApplictionDialog;
+    public boolean isApplicationDialog() {
+        return isApplicationDialog;
     }
 
-    private boolean isApplictionDialog = false;
+    private boolean isApplicationDialog = false;
 
     /**
      * 这个事件用于处理移动、自定义点击或者其它事情，return true可以保证onclick事件失效
@@ -172,7 +172,7 @@ public abstract class BaseFloatDailog {
     };
 
     ValueAnimator valueAnimator = null;
-    private boolean isExpaned = false;
+    private boolean isExpanded = false;
 
     private View logoView;
     private View rightView;
@@ -186,7 +186,7 @@ public abstract class BaseFloatDailog {
         return mActivity;
     }
 
-    public static class FloatDialogImp extends BaseFloatDailog {
+    public static class FloatDialogImp extends BaseFloatDialog {
 
 
         public FloatDialogImp(Context context, GetViewCallback getViewCallback) {
@@ -218,7 +218,7 @@ public abstract class BaseFloatDailog {
         }
 
         @Override
-        protected void dragingLogoViewOffset(View logoView, boolean isDraging, boolean isResetPosition, float offset) {
+        protected void dragLogoViewOffset(View logoView, boolean isDraging, boolean isResetPosition, float offset) {
 
         }
 
@@ -248,12 +248,12 @@ public abstract class BaseFloatDailog {
         }
 
         @Override
-        protected void onDestoryed() {
+        protected void onDestroyed() {
 
         }
     }
 
-    protected BaseFloatDailog(Context context, GetViewCallback getViewCallback) {
+    protected BaseFloatDialog(Context context, GetViewCallback getViewCallback) {
         this(context);
         this.mGetViewCallback = getViewCallback;
         if (mGetViewCallback == null) {
@@ -262,7 +262,7 @@ public abstract class BaseFloatDailog {
 
     }
 
-    protected BaseFloatDailog(Context context) {
+    protected BaseFloatDialog(Context context) {
         this.mActivity = context;
         initFloatWindow();
         initTimer();
@@ -292,18 +292,18 @@ public abstract class BaseFloatDailog {
         mHideTimer = new CountDownTimer(2000, 10) {        //悬浮窗超过5秒没有操作的话会自动隐藏
             @Override
             public void onTick(long millisUntilFinished) {
-                if (isExpaned) {
+                if (isExpanded) {
                     mHideTimer.cancel();
                 }
             }
 
             @Override
             public void onFinish() {
-                if (isExpaned) {
+                if (isExpanded) {
                     mHideTimer.cancel();
                     return;
                 }
-                if (!isDraging) {
+                if (!isDrag) {
                     if (mHintLocation == LEFT) {
                         if (mGetViewCallback == null) {
                             shrinkLeftLogoView(logoView);
@@ -336,7 +336,7 @@ public abstract class BaseFloatDailog {
             wManager = activity.getWindowManager();
             //类似dialog，寄托在activity的windows上,activity关闭时需要关闭当前float
             wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
-            isApplictionDialog = true;
+            isApplicationDialog = true;
         } else {
             wManager = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
             //判断状态栏是否显示 如果不显示则statusBarHeight为0
@@ -350,15 +350,15 @@ public abstract class BaseFloatDailog {
             } else {
                 wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
             }
-            isApplictionDialog = false;
+            isApplicationDialog = false;
         }
         mScreenWidth = wManager.getDefaultDisplay().getWidth();
-        int screenHeigth = wManager.getDefaultDisplay().getHeight();
+        int screenHeight = wManager.getDefaultDisplay().getHeight();
         wmParams.format = PixelFormat.RGBA_8888;
         wmParams.gravity = Gravity.LEFT | Gravity.TOP;
         wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
         mHintLocation = getSetting(LOCATION_X, mDefaultLocation);
-        int defaultY = ((screenHeigth) / 2) / 3;
+        int defaultY = ((screenHeight) / 2) / 3;
         int y = getSetting(LOCATION_Y, defaultY);
         if (mHintLocation == LEFT) {
             wmParams.x = 0;
@@ -379,7 +379,7 @@ public abstract class BaseFloatDailog {
      * 悬浮窗touch事件的 down 事件
      */
     private void floatEventDown(MotionEvent event) {
-        isDraging = false;
+        isDrag = false;
         mHideTimer.cancel();
 
         if (mGetViewCallback == null) {
@@ -389,7 +389,7 @@ public abstract class BaseFloatDailog {
         }
 
         mXInView = event.getX();
-        mYinview = event.getY();
+        mYinView = event.getY();
         mXDownInScreen = event.getRawX();
         mYDownInScreen = event.getRawY();
         mXInScreen = event.getRawX();
@@ -414,21 +414,21 @@ public abstract class BaseFloatDailog {
         //连续移动的距离超过3则更新一次视图位置
         if (Math.abs(mXInScreen - mXDownInScreen) > logoView.getWidth() / 4 || Math.abs(mYInScreen - mYDownInScreen) > logoView.getWidth() / 4) {
             wmParams.x = (int) (mXInScreen - mXInView);
-            wmParams.y = (int) (mYInScreen - mYinview) - logoView.getHeight() / 2;
+            wmParams.y = (int) (mYInScreen - mYinView) - logoView.getHeight() / 2;
             updateViewPosition(); // 手指移动的时候更新小悬浮窗的位置
             double a = mScreenWidth / 2;
             float offset = (float) ((a - (Math.abs(wmParams.x - a))) / a);
             if (mGetViewCallback == null) {
-                dragingLogoViewOffset(logoView, isDraging, false, offset);
+                dragLogoViewOffset(logoView, isDrag, false, offset);
             } else {
-                mGetViewCallback.dragingLogoViewOffset(logoView, isDraging, false, offset);
+                mGetViewCallback.dragingLogoViewOffset(logoView, isDrag, false, offset);
             }
 
         } else {
-            isDraging = false;
-//            logoView.setDraging(false, 0, true);
+            isDrag = false;
+//            logoView.setDrag(false, 0, true);
             if (mGetViewCallback == null) {
-                dragingLogoViewOffset(logoView, false, true, 0);
+                dragLogoViewOffset(logoView, false, true, 0);
             } else {
                 mGetViewCallback.dragingLogoViewOffset(logoView, false, true, 0);
             }
@@ -472,9 +472,9 @@ public abstract class BaseFloatDailog {
                     wmParams.x = mScreenWidth;
                 }
                 updateViewPosition();
-                isDraging = false;
+                isDrag = false;
                 if (mGetViewCallback == null) {
-                    dragingLogoViewOffset(logoView, false, true, 0);
+                    dragLogoViewOffset(logoView, false, true, 0);
                 } else {
                     mGetViewCallback.dragingLogoViewOffset(logoView, false, true, 0);
                 }
@@ -490,9 +490,9 @@ public abstract class BaseFloatDailog {
                 }
 
                 updateViewPosition();
-                isDraging = false;
+                isDrag = false;
                 if (mGetViewCallback == null) {
-                    dragingLogoViewOffset(logoView, false, true, 0);
+                    dragLogoViewOffset(logoView, false, true, 0);
                 } else {
                     mGetViewCallback.dragingLogoViewOffset(logoView, false, true, 0);
                 }
@@ -511,7 +511,7 @@ public abstract class BaseFloatDailog {
 
 //        //这里需要判断如果如果手指所在位置和logo所在位置在一个宽度内则不移动,
         if (Math.abs(mXInScreen - mXDownInScreen) > logoView.getWidth() / 5 || Math.abs(mYInScreen - mYDownInScreen) > logoView.getHeight() / 5) {
-            isDraging = false;
+            isDrag = false;
         } else {
             openMenu();
         }
@@ -524,7 +524,7 @@ public abstract class BaseFloatDailog {
     private Runnable updatePositionRunnable = new Runnable() {
         @Override
         public void run() {
-            isDraging = true;
+            isDrag = true;
             checkPosition();
         }
     };
@@ -543,11 +543,11 @@ public abstract class BaseFloatDailog {
             updateViewPosition();
             double a = mScreenWidth / 2;
             float offset = (float) ((a - (Math.abs(wmParams.x - a))) / a);
-//            logoView.setDraging(isDraging, offset, true);
+//            logoView.setDrag(isDrag, offset, true);
             if (mGetViewCallback == null) {
-                dragingLogoViewOffset(logoView, false, true, 0);
+                dragLogoViewOffset(logoView, false, true, 0);
             } else {
-                mGetViewCallback.dragingLogoViewOffset(logoView, isDraging, true, offset);
+                mGetViewCallback.dragingLogoViewOffset(logoView, isDrag, true, offset);
             }
 
             return;
@@ -565,7 +565,7 @@ public abstract class BaseFloatDailog {
 
 
         updateViewPosition();
-        isDraging = false;
+        isDrag = false;
 
 
     }
@@ -590,9 +590,9 @@ public abstract class BaseFloatDailog {
      * 打开菜单
      */
     private void openMenu() {
-        if (isDraging) return;
+        if (isDrag) return;
 
-        if (!isExpaned) {
+        if (!isExpanded) {
 //            logoView.setDrawDarkBg(false);
             try {
                 wManager.removeViewImmediate(logoView);
@@ -617,7 +617,7 @@ public abstract class BaseFloatDailog {
                 e.printStackTrace();
             }
 
-            isExpaned = true;
+            isExpanded = true;
             mHideTimer.cancel();
         } else {
 //            logoView.setDrawDarkBg(true);
@@ -634,7 +634,7 @@ public abstract class BaseFloatDailog {
                 e.printStackTrace();
             }
 
-            isExpaned = false;
+            isExpanded = false;
             mHideTimer.start();
         }
 
@@ -645,12 +645,12 @@ public abstract class BaseFloatDailog {
      * 更新悬浮窗在屏幕中的位置。
      */
     private void updateViewPosition() {
-        isDraging = true;
+        isDrag = true;
         try {
-            if (!isExpaned) {
+            if (!isExpanded) {
                 if (wmParams.y - logoView.getHeight() / 2 <= 0) {
                     wmParams.y = 25;
-                    isDraging = true;
+                    isDrag = true;
                 }
                 wManager.updateViewLayout(logoView, wmParams);
             }
@@ -669,15 +669,15 @@ public abstract class BaseFloatDailog {
         logoView.clearAnimation();
         try {
             mHideTimer.cancel();
-            if (isExpaned) {
+            if (isExpanded) {
                 wManager.removeViewImmediate(mHintLocation == LEFT ? leftView : rightView);
             } else {
                 wManager.removeViewImmediate(logoView);
             }
-            isExpaned = false;
-            isDraging = false;
+            isExpanded = false;
+            isDrag = false;
             if (mGetViewCallback == null) {
-                onDestoryed();
+                onDestroyed();
             } else {
                 mGetViewCallback.onDestoryed();
             }
@@ -694,7 +694,7 @@ public abstract class BaseFloatDailog {
 
     protected abstract void resetLogoViewSize(int hintLocation, View logoView);//logo恢复原始大小
 
-    protected abstract void dragingLogoViewOffset(View logoView, boolean isDraging, boolean isResetPosition, float offset);
+    protected abstract void dragLogoViewOffset(View logoView, boolean isDraging, boolean isResetPosition, float offset);
 
     protected abstract void shrinkLeftLogoView(View logoView);//logo左边收缩
 
@@ -706,7 +706,7 @@ public abstract class BaseFloatDailog {
 
     protected abstract void leftOrRightViewClosed(View logoView);
 
-    protected abstract void onDestoryed();
+    protected abstract void onDestroyed();
 
     public interface GetViewCallback {
         View getLeftView(LayoutInflater inflater, View.OnTouchListener touchListener);
