@@ -300,13 +300,14 @@ public class FloatLogoMenu {
             wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
         } else {
             wManager = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if (Build.VERSION.SDK_INT > 23) {
-                    //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限
-                    wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
-                } else {
-                    wmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
-                }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限
+                wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限
+                wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                wmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
             } else {
                 wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
             }
