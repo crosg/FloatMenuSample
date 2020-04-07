@@ -2,7 +2,7 @@
 <manifest package="com.yw.game.floatmenu.demo"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
-    //  .withContext(mActivity.getApplication())需要此权限
+<!--    //  .withContext(mActivity.getApplication())需要此权限-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
 
