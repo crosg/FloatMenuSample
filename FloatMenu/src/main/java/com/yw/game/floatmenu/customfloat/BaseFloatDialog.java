@@ -181,7 +181,6 @@ public abstract class BaseFloatDialog {
     private GetViewCallback mGetViewCallback;
 
 
-
     public Context getContext() {
         return mActivity;
     }
@@ -323,9 +322,6 @@ public abstract class BaseFloatDialog {
     }
 
 
-
-
-
     /**
      * 初始化悬浮球 window
      */
@@ -340,13 +336,14 @@ public abstract class BaseFloatDialog {
         } else {
             wManager = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
             //判断状态栏是否显示 如果不显示则statusBarHeight为0
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if (Build.VERSION.SDK_INT > 23) {
-                    //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限
-                    wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
-                } else {
-                    wmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
-                }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限
+                wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限
+                wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                wmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
             } else {
                 wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
             }
@@ -397,10 +394,6 @@ public abstract class BaseFloatDialog {
 
 
     }
-
-
-
-
 
 
     /**
