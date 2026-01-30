@@ -310,7 +310,7 @@ Closes #123"
 
 如果你有任何问题：
 
-- 📧 邮件：18720625976@163.com
+- 📧 邮件：coderbrando@gmail.com
 - 📝 [GitHub Issues](https://github.com/fanOfDemo/FloatMenuSample/issues)
 - 📖 查看 [API 文档](API_GUIDE.md)
 

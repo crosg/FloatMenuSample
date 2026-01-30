@@ -31,15 +31,41 @@
 
 ## 📦 依赖
 
-在模块的 `build.gradle` 中添加：
+**方式一：直接集成（推荐）**
+
+将 `FloatMenu` 模块复制到你的项目中：
+
+```bash
+# 克隆项目
+git clone https://github.com/fanOfDemo/FloatMenuSample.git
+
+# 复制 FloatMenu 模块到你的项目
+cp -r FloatMenuSample/FloatMenu your-project/
+```
+
+在 `settings.gradle` 中添加：
+
+```gradle
+include ':FloatMenu'
+```
+
+在 `build.gradle` 中添加：
 
 ```gradle
 dependencies {
-    implementation 'com.yw.game.floatmenu:FloatMenu:2.4.0'
+    implementation project(':FloatMenu')
 }
 ```
 
-或者查看 [JCenter](https://bintray.com/) / [Maven Central](https://mvnrepository.com/) 获取最新版本。
+**方式二：本地集成**
+
+下载 [Release AAR 文件](https://github.com/fanOfDemo/FloatMenuSample/releases) 并放入 `libs` 目录：
+
+```gradle
+dependencies {
+    implementation(name: 'FloatMenu-2.4.0', ext: 'aar')
+}
+```
 
 ---
 
@@ -375,8 +401,8 @@ All rights reserved.
 
 ## 📞 联系方式
 
-- 作者：fanofdemo
-- 邮箱：18720625976@163.com
+- 作者：ColdBrando
+- 邮箱：coderbrando@gmail.com
 
 ---
 
