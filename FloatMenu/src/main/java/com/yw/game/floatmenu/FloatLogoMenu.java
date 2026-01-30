@@ -26,6 +26,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -34,74 +35,34 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
-
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by wengyiming on 2017/7/20.
+ * 悬浮菜单（支持自动贴边功能）
  */
 public class FloatLogoMenu {
+    private static final String TAG = "FloatLogoMenu";
+
     /**
-     * 记录 logo 停放的位置，以备下次恢复
+     * 记录 logo 停放的位置
      */
     private static final String LOCATION_X = "hintLocation";
     private static final String LOCATION_Y = "locationY";
 
     /**
-     * 悬浮球 坐落 左 右 标记
+     * 悬浮球 坐落位置
      */
     public static final int LEFT = 0;
     public static final int RIGHT = 1;
 
     /**
-     * 记录系统状态栏的高度
-     */
-    private int mStatusBarHeight;
-    /**
-     * 记录当前手指位置在屏幕上的横坐标值
-     */
-    private float mXInScreen;
-
-    /**
-     * 记录当前手指位置在屏幕上的纵坐标值
-     */
-    private float mYInScreen;
-
-    /**
-     * 记录手指按下时在屏幕上的横坐标的值
-     */
-    private float mXDownInScreen;
-
-    /**
-     * 记录手指按下时在屏幕上的纵坐标的值
-     */
-    private float mYDownInScreen;
-
-    /**
-     * 记录手指按下时在小悬浮窗的View上的横坐标的值
-     */
-    private float mXInView;
-
-    /**
-     * 记录手指按下时在小悬浮窗的View上的纵坐标的值
-     */
-    private float mYinView;
-
-    /**
-     * 记录屏幕的宽度
-     */
-    private int mScreenWidth;
-
-    /**
-     * 来自 activity 的 wManager
+     * 来自 activity 的 WindowManager
      */
     private WindowManager wManager;
-
 
     /**
      * 为 wManager 设置 LayoutParams
@@ -113,83 +74,20 @@ public class FloatLogoMenu {
      */
     private DotImageView mFloatLogo;
 
-
     /**
-     * 用于 定时 隐藏 logo的定时器
+     * 用于定时隐藏 logo
      */
     private CountDownTimer mHideTimer;
 
-
     /**
-     * float menu的高度
-     */
-    private Handler mHandler = new Handler(Looper.getMainLooper());
-
-
-    /**
-     * 悬浮窗左右移动到默认位置 动画的 加速器
-     */
-    private Interpolator mLinearInterpolator = new LinearInterpolator();
-
-    /**
-     * 用于记录上次菜单打开的时间，判断时间间隔
-     */
-    private static double DOUBLE_CLICK_TIME = 0L;
-
-    /**
-     * 标记是否拖动中
+     * 记录是否拖动中
      */
     private boolean isDrag = false;
 
     /**
-     * 用于恢复悬浮球的location的属性动画值
+     * 来自 activity 的 mActivity
      */
-    private int mResetLocationValue;
-
-    /**
-     * 手指离开屏幕后 用于恢复 悬浮球的 logo 的左右位置
-     */
-    private Runnable updatePositionRunnable = new Runnable() {
-        @Override
-        public void run() {
-            isDrag = true;
-            checkPosition();
-        }
-    };
-
-    /**
-     * 这个事件不做任何事情、直接return false则 onclick 事件生效
-     */
-    private OnTouchListener mDefaultOnTouchListerner = new OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            isDrag = false;
-            return false;
-        }
-    };
-
-    /**
-     * 这个事件用于处理移动、自定义点击或者其它事情，return true可以保证onclick事件失效
-     */
-    private OnTouchListener touchListener = new OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    floatEventDown(event);
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    floatEventMove(event);
-                    break;
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                    floatEventUp();
-                    break;
-            }
-            return true;
-        }
-    };
-
+    private Context mActivity;
 
     /**
      * 菜单背景颜色
@@ -199,78 +97,140 @@ public class FloatLogoMenu {
     /**
      * 是否绘制红点数字
      */
-    private boolean mDrawRedPointNum;
-
+    private boolean mDrawRedPointNum = false;
 
     /**
-     * 是否绘制圆形菜单项，false绘制方形
+     * 是否绘制圆形菜单项
      */
-    private boolean mCircleMenuBg;
-
+    private boolean mCircleMenuBg = false;
 
     /**
      * R.drawable.yw_game_logo
-     *
-     * @param floatItems
      */
     private Bitmap mLogoRes;
 
     /**
-     * 用于显示在 mActivity 上的 mActivity
-     */
-    private Context mActivity;
-
-    /**
-     * 菜单 点击、关闭 监听
+     * 用于显示在 mActivity 上的 Activity
      */
     private FloatMenuView.OnMenuClickListener mOnMenuClickListener;
 
-
     /**
-     * 停靠默认位置
+     * 菜单背景
      */
-    private int mDefaultLocation = RIGHT;
-
-
-    /**
-     * 悬浮窗 坐落 位置
-     */
-    private int mHintLocation = mDefaultLocation;
-
+    private Drawable mBackground;
 
     /**
-     * 用于记录菜单项内容
+     * 菜单项列表
      */
     private List<FloatItem> mFloatItems = new ArrayList<>();
 
+    /**
+     * 左侧布局
+     */
+    private LinearLayout rootViewLeft;
+
+    /**
+     * 右侧布局
+     */
     private LinearLayout rootViewRight;
 
-    private LinearLayout rootView;
+    /**
+     * 默认停靠位置
+     */
+    private int mDefaultLocation = RIGHT;
 
-    private ValueAnimator valueAnimator;
+    /**
+     * 悬浮窗停靠位置
+     */
+    private int mHintLocation = mDefaultLocation;
 
+    /**
+     * 屏幕宽度
+     */
+    private int mScreenWidth;
+
+    /**
+     * 状态栏高度
+     */
+    private int mStatusBarHeight;
+
+    /**
+     * 触摸点在视图中的坐标
+     */
+    private float mXInView;
+    private float mYinView;
+
+    /**
+     * 手指按下时的屏幕坐标
+     */
+    private float mXDownInScreen;
+    private float mYDownInScreen;
+
+    /**
+     * 当前的屏幕坐标
+     */
+    private float mXInScreen;
+    private float mYInScreen;
+
+    /**
+     * 菜单是否展开
+     */
     private boolean isExpanded = false;
 
-    private Drawable mBackground;
+    /**
+     * 自动贴边延时时间（毫秒），默认3秒
+     */
+    private int mAutoShrinkDelay = 3000;
 
+    /**
+     * 贴边状态
+     */
+    private boolean isShrunk = false;
 
-    private FloatLogoMenu(Builder builder) {
+    /**
+     * 贴边动画
+     */
+    private ValueAnimator shrinkAnimator;
+
+    /**
+     * 贴边任务的Handler
+     */
+    private final Handler shrinkHandler = new Handler(Looper.getMainLooper());
+
+    /**
+     * 贴边任务：3秒无操作后自动贴边
+     */
+    private final Runnable shrinkRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Log.d(TAG, "shrinkRunnable: 触发贴边任务, isExpanded=" + isExpanded + ", isDrag=" + isDrag);
+            if (!isExpanded && !isDrag) {
+                shrinkToEdge();
+            } else {
+                Log.d(TAG, "shrinkRunnable: 贴边被跳过，isExpanded=" + isExpanded + ", isDrag=" + isDrag);
+            }
+        }
+    };
+
+    public FloatLogoMenu(Builder builder) {
         mBackMenuColor = builder.mBackMenuColor;
         mDrawRedPointNum = builder.mDrawRedPointNum;
         mCircleMenuBg = builder.mCircleMenuBg;
         mLogoRes = builder.mLogoRes;
         mActivity = builder.mActivity;
         mOnMenuClickListener = builder.mOnMenuClickListener;
-        mDefaultLocation = builder.mDefaultLocation;
         mFloatItems = builder.mFloatItems;
         mBackground = builder.mDrawable;
+        mAutoShrinkDelay = builder.mAutoShrinkDelay;
+        mDefaultLocation = builder.mDefaultLocation;  // 从builder读取默认位置
+        mHintLocation = mDefaultLocation;  // 初始化当前位置
 
-//        if (mActivity == null || mActivity.isFinishing() || mActivity.getWindowManager() == null) {
-//            throw new IllegalArgumentException("Activity = null, or Activity is isFinishing ,or this Activity`s  token is bad");
-//        }
+        if (mActivity == null) {
+            throw new IllegalArgumentException("Activity is null");
+        }
 
         if (mLogoRes == null) {
-            throw new IllegalArgumentException("No logo found,you can setLogo/showWithLogo to set a FloatLogo ");
+            throw new IllegalArgumentException("No logo found, please setLogo/showWithLogo");
         }
 
         if (mFloatItems.isEmpty()) {
@@ -280,9 +240,11 @@ public class FloatLogoMenu {
         initFloatWindow();
         initTimer();
         initFloat();
-
     }
 
+    /**
+     * 设置菜单项列表
+     */
     public void setFloatItemList(List<FloatItem> floatItems) {
         this.mFloatItems = floatItems;
         calculateDotNum();
@@ -296,50 +258,51 @@ public class FloatLogoMenu {
         if (mActivity instanceof Activity) {
             Activity activity = (Activity) mActivity;
             wManager = activity.getWindowManager();
-            //类似dialog，寄托在activity的windows上,activity关闭时需要关闭当前float
             wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
         } else {
             wManager = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限
                 wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限
                 wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                wmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
             } else {
-                wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+                wmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
             }
         }
         mScreenWidth = wManager.getDefaultDisplay().getWidth();
         int screenHeight = wManager.getDefaultDisplay().getHeight();
 
-        //判断状态栏是否显示 如果不显示则statusBarHeight为0
-        mStatusBarHeight = dp2Px(25, mActivity);
-
         wmParams.format = PixelFormat.RGBA_8888;
-        wmParams.gravity = Gravity.LEFT | Gravity.TOP;
-        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
-        mHintLocation = getSetting(LOCATION_X, mDefaultLocation);
-        int defaultY = ((screenHeight - mStatusBarHeight) / 2) / 3;
-        int y = getSetting(LOCATION_Y, defaultY);
-        if (mHintLocation == LEFT) {
-            wmParams.x = 0;
-        } else {
-            wmParams.x = mScreenWidth;
-        }
-
-        if (y != 0 && y != defaultY) {
-            wmParams.y = y;
-        } else {
-            wmParams.y = defaultY;
-        }
+        // 添加 FLAG_LAYOUT_NO_LIMITS 允许view超出屏幕边界
+        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
         wmParams.alpha = 1;
         wmParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         wmParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-    }
 
+        // 简化方案：始终使用Gravity.LEFT，所有x坐标都相对于左边缘
+        @SuppressWarnings("RtlHardcoded")
+        int gravity = Gravity.LEFT | Gravity.TOP;
+        wmParams.gravity = gravity;
+
+        // 根据默认停靠位置设置初始x坐标（绝对坐标）
+        int y = ((screenHeight - mStatusBarHeight) / 2) / 3;
+        int logoWidth = dp2Px(50, mActivity);
+        if (mDefaultLocation == RIGHT) {
+            wmParams.x = mScreenWidth - logoWidth;  // 距离左边缘（屏幕宽度 - logo宽度）
+            Log.d(TAG, "initFloatWindow: mDefaultLocation=RIGHT, x=" + wmParams.x + "（距左边缘）");
+        } else {
+            wmParams.x = 0;  // 距离左边缘0px（紧贴左边缘）
+            Log.d(TAG, "initFloatWindow: mDefaultLocation=LEFT, x=" + wmParams.x + "（距左边缘）");
+        }
+        wmParams.y = y;
+
+        Log.d(TAG, "initFloatWindow: mDefaultLocation=" + mDefaultLocation + ", mScreenWidth=" + mScreenWidth + ", 初始X=" + wmParams.x + ", 初始Y=" + wmParams.y);
+
+        saveSetting(LOCATION_X, mDefaultLocation);
+        saveSetting(LOCATION_Y, wmParams.y);
+    }
 
     /**
      * 初始化悬浮球
@@ -359,136 +322,56 @@ public class FloatLogoMenu {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-    }
-
-    private void generateLeftLineLayout() {
-        DotImageView floatLogo = new DotImageView(mActivity, mLogoRes);
-        floatLogo.setLayoutParams(new WindowManager.LayoutParams(dp2Px(50, mActivity), dp2Px(50, mActivity)));
-        floatLogo.setDrawNum(mDrawRedPointNum);
-        floatLogo.setDrawDarkBg(false);
-
-        rootView = new LinearLayout(mActivity);
-        rootView.setOrientation(LinearLayout.HORIZONTAL);
-        rootView.setGravity(Gravity.CENTER);
-        rootView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp2Px(50, mActivity)));
-
-        rootView.setBackgroundDrawable(mBackground);
-
-
-        FloatMenuView mFloatMenuView = new FloatMenuView.Builder(mActivity)
-                .setFloatItems(mFloatItems)
-                .setBackgroundColor(Color.TRANSPARENT)
-                .setCicleBg(mCircleMenuBg)
-                .setStatus(FloatMenuView.STATUS_LEFT)
-                .setMenuBackgroundColor(Color.TRANSPARENT)
-                .drawNum(mDrawRedPointNum)
-                .create();
-        setMenuClickListener(mFloatMenuView);
-
-        rootView.addView(floatLogo);
-        rootView.addView(mFloatMenuView);
-
-
-        floatLogo.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isExpanded) {
-                    try {
-                        wManager.removeViewImmediate(rootView);
-                        wManager.addView(FloatLogoMenu.this.mFloatLogo, wmParams);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    isExpanded = false;
-                }
-            }
-        });
-    }
-
-    private void generateRightLineLayout() {
-        final DotImageView floatLogo = new DotImageView(mActivity, mLogoRes);
-        floatLogo.setLayoutParams(new WindowManager.LayoutParams(dp2Px(50, mActivity), dp2Px(50, mActivity)));
-        floatLogo.setDrawNum(mDrawRedPointNum);
-        floatLogo.setDrawDarkBg(false);
-
-        floatLogo.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isExpanded) {
-                    try {
-                        wManager.removeViewImmediate(rootViewRight);
-                        wManager.addView(FloatLogoMenu.this.mFloatLogo, wmParams);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    isExpanded = false;
-                }
-            }
-        });
-
-        rootViewRight = new LinearLayout(mActivity);
-        rootViewRight.setOrientation(LinearLayout.HORIZONTAL);
-        rootViewRight.setGravity(Gravity.CENTER);
-        rootViewRight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp2Px(50, mActivity)));
-
-
-        rootViewRight.setBackgroundDrawable(mBackground);
-
-
-        FloatMenuView mFloatMenuView = new FloatMenuView.Builder(mActivity)
-                .setFloatItems(mFloatItems)
-                .setBackgroundColor(Color.TRANSPARENT)
-                .setCicleBg(mCircleMenuBg)
-                .setStatus(FloatMenuView.STATUS_RIGHT)
-                .setMenuBackgroundColor(Color.TRANSPARENT)
-                .drawNum(mDrawRedPointNum)
-                .create();
-        setMenuClickListener(mFloatMenuView);
-
-        rootViewRight.addView(mFloatMenuView);
-        rootViewRight.addView(floatLogo);
-
-
+        // 初始化完成后启动贴边任务
+        startShrinkTask();
     }
 
     /**
-     * 初始化 隐藏悬浮球的定时器
+     * 初始化定时器
      */
     private void initTimer() {
-        mHideTimer = new CountDownTimer(2000, 10) {        //悬浮窗超过5秒没有操作的话会自动隐藏
+        mHideTimer = new CountDownTimer(2000, 10) {
             @Override
             public void onTick(long millisUntilFinished) {
-                if (isExpanded) {
+                if (mOnMenuClickListener == null || isExpanded) {
                     mHideTimer.cancel();
                 }
             }
 
             @Override
             public void onFinish() {
-                if (isExpanded) {
-                    mHideTimer.cancel();
-                    return;
-                }
-                if (!isDrag) {
-                    if (mHintLocation == LEFT) {
-                        mFloatLogo.setStatus(DotImageView.HIDE_LEFT);
-                        mFloatLogo.setDrawDarkBg(true);
-                    } else {
-                        mFloatLogo.setStatus(DotImageView.HIDE_RIGHT);
-                        mFloatLogo.setDrawDarkBg(true);
-                    }
-//                    mFloatLogo.setOnTouchListener(mDefaultOnTouchListerner);//把onClick事件分发下去，防止onclick无效
-                }
+                // Timer finished
             }
         };
     }
 
+    /**
+     * 这个事件用于处理移动、自定义点击或者其它事情，return true可以保证 onclick 事件失效
+     */
+    @android.annotation.SuppressLint("ClickableViewAccessibility")
+    private final OnTouchListener touchListener = new OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    floatEventDown(event);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    floatEventMove(event);
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    floatEventUp();
+                    // 对于无障碍访问的支持
+                    v.performClick();
+                    break;
+            }
+            return true;
+        }
+    };
 
     /**
-     * 用于 拦截 菜单项的 关闭事件，以方便开始 隐藏定时器
-     *
-     * @param mFloatMenuView
+     * 菜单点击、关闭监听
      */
     private void setMenuClickListener(FloatMenuView mFloatMenuView) {
         mFloatMenuView.setOnMenuClickListener(new FloatMenuView.OnMenuClickListener() {
@@ -502,35 +385,10 @@ public class FloatLogoMenu {
                 mFloatLogo.setDrawDarkBg(true);
                 mOnMenuClickListener.dismiss();
                 mHideTimer.start();
+                // 菜单关闭后启动贴边任务
+                startShrinkTask();
             }
         });
-
-    }
-
-
-    /**
-     * 悬浮窗的点击事件和touch事件的切换
-     */
-    private void floatBtnEvent() {
-        //这里的onClick只有 touchListener = mDefaultOnTouchListener 才会触发
-//        mFloatLogo.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!isDrag) {
-//                    if (mFloatLogo.getStatus() != DotImageView.NORMAL) {
-//                        mFloatLogo.setBitmap(mLogoRes);
-//                        mFloatLogo.setStatus(DotImageView.NORMAL);
-//                        if (!mFloatLogo.mDrawDarkBg) {
-//                            mFloatLogo.setDrawDarkBg(true);
-//                        }
-//                    }
-//                    mFloatLogo.setOnTouchListener(touchListener);
-//                    mHideTimer.start();
-//                }
-//            }
-//        });
-
-        mFloatLogo.setOnTouchListener(touchListener);//恢复touch事件
     }
 
     /**
@@ -539,23 +397,21 @@ public class FloatLogoMenu {
     private void floatEventDown(MotionEvent event) {
         isDrag = false;
         mHideTimer.cancel();
+
+        // 取消贴边任务并恢复位置
+        cancelShrinkTask();
+        restoreFromShrink();
+
         if (mFloatLogo.getStatus() != DotImageView.NORMAL) {
             mFloatLogo.setStatus(DotImageView.NORMAL);
         }
-        if (!mFloatLogo.mDrawDarkBg) {
-            mFloatLogo.setDrawDarkBg(true);
-        }
-        if (mFloatLogo.getStatus() != DotImageView.NORMAL) {
-            mFloatLogo.setStatus(DotImageView.NORMAL);
-        }
+
         mXInView = event.getX();
         mYinView = event.getY();
         mXDownInScreen = event.getRawX();
         mYDownInScreen = event.getRawY();
         mXInScreen = event.getRawX();
         mYInScreen = event.getRawY();
-
-
     }
 
     /**
@@ -565,18 +421,38 @@ public class FloatLogoMenu {
         mXInScreen = event.getRawX();
         mYInScreen = event.getRawY();
 
+        // 连续移动的距离超过3则更新一次视图位置
+        if (Math.abs(mXInScreen - mXDownInScreen) > mFloatLogo.getWidth() / 4
+                || Math.abs(mYInScreen - mYDownInScreen) > mFloatLogo.getHeight() / 4) {
+            isDrag = true;
+            int logoWidth = mFloatLogo.getWidth();
+            int logoHeight = mFloatLogo.getHeight();
+            int screenHeight = wManager.getDefaultDisplay().getHeight();
 
-        //连续移动的距离超过3则更新一次视图位置
-        if (Math.abs(mXInScreen - mXDownInScreen) > mFloatLogo.getWidth() / 4 || Math.abs(mYInScreen - mYDownInScreen) > mFloatLogo.getWidth() / 4) {
-            wmParams.x = (int) (mXInScreen - mXInView);
-            wmParams.y = (int) (mYInScreen - mYinView) - mFloatLogo.getHeight() / 2;
-            updateViewPosition(); // 手指移动的时候更新小悬浮窗的位置
-            double a = mScreenWidth / 2;
-            float offset = (float) ((a - (Math.abs(wmParams.x - a))) / a);
-            mFloatLogo.setDrag(isDrag, offset, false);
+            // 手指中心和logo圆心保持一致
+            wmParams.x = (int) (mXInScreen - logoWidth / 2);
+            wmParams.y = (int) (mYInScreen - logoHeight / 2);
+
+            // X坐标边界限制：不允许x为负数，也不允许x+logo宽度大于屏幕宽度
+            if (wmParams.x < 0) {
+                wmParams.x = 0;
+            } else if (wmParams.x + logoWidth > mScreenWidth) {
+                wmParams.x = mScreenWidth - logoWidth;
+            }
+
+            // Y坐标边界限制：不允许y小于状态栏高度，也不允许y+logo高度大于屏幕高度
+            if (wmParams.y < mStatusBarHeight) {
+                wmParams.y = mStatusBarHeight;
+            } else if (wmParams.y + logoHeight > screenHeight) {
+                wmParams.y = screenHeight - logoHeight;
+            }
+
+            updateViewPosition();
+
+            mFloatLogo.setDrag(isDrag, false);
         } else {
             isDrag = false;
-            mFloatLogo.setDrag(false, 0, true);
+            mFloatLogo.setDrag(false, true);
         }
     }
 
@@ -584,126 +460,89 @@ public class FloatLogoMenu {
      * 悬浮窗touch事件的 up 事件
      */
     private void floatEventUp() {
-        if (mXInScreen < mScreenWidth / 2) {   //在左边
-            mHintLocation = LEFT;
-        } else {                   //在右边
-            mHintLocation = RIGHT;
-        }
-        if (valueAnimator == null) {
-            valueAnimator = ValueAnimator.ofInt(64);
-            valueAnimator.setInterpolator(mLinearInterpolator);
-            valueAnimator.setDuration(1000);
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    mResetLocationValue = (int) animation.getAnimatedValue();
-                    mHandler.post(updatePositionRunnable);
-                }
-            });
+        Log.d(TAG, "floatEventUp: 手指抬起, isDrag=" + isDrag + ", isShrunk=" + isShrunk + ", isExpanded=" + isExpanded);
+        Log.d(TAG, "floatEventUp: 当前logo位置X=" + wmParams.x + ", mXInScreen=" + mXInScreen + ", mScreenWidth/2=" + (mScreenWidth / 2));
 
-            valueAnimator.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (Math.abs(wmParams.x) < 0) {
-                        wmParams.x = 0;
-                    } else if (Math.abs(wmParams.x) > mScreenWidth) {
-                        wmParams.x = mScreenWidth;
-                    }
-                    updateViewPosition();
-                    isDrag = false;
-                    mFloatLogo.setDrag(false, 0, true);
-                    mHideTimer.start();
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-                    if (Math.abs(wmParams.x) < 0) {
-                        wmParams.x = 0;
-                    } else if (Math.abs(wmParams.x) > mScreenWidth) {
-                        wmParams.x = mScreenWidth;
-                    }
-
-                    updateViewPosition();
-                    isDrag = false;
-                    mFloatLogo.setDrag(false, 0, true);
-                    mHideTimer.start();
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            });
-        }
-        if (!valueAnimator.isRunning()) {
-            valueAnimator.start();
-        }
-
-//        //这里需要判断如果如果手指所在位置和logo所在位置在一个宽度内则不移动,
-        if (Math.abs(mXInScreen - mXDownInScreen) > mFloatLogo.getWidth() / 5 || Math.abs(mYInScreen - mYDownInScreen) > mFloatLogo.getHeight() / 5) {
-            isDrag = false;
-        } else {
-            openMenu();
-        }
-
-    }
-
-
-    /**
-     * 用于检查并更新悬浮球的位置
-     */
-    private void checkPosition() {
-        if (wmParams.x > 0 && wmParams.x < mScreenWidth) {
-            if (mHintLocation == LEFT) {
-                wmParams.x = wmParams.x - mResetLocationValue;
-            } else {
-                wmParams.x = wmParams.x + mResetLocationValue;
-            }
-            updateViewPosition();
-            double a = mScreenWidth / 2;
-            float offset = (float) ((a - (Math.abs(wmParams.x - a))) / a);
-            mFloatLogo.setDrag(isDrag, offset, true);
-            return;
-        }
-
-
-        if (Math.abs(wmParams.x) < 0) {
-            wmParams.x = 0;
-        } else if (Math.abs(wmParams.x) > mScreenWidth) {
-            wmParams.x = mScreenWidth;
-        }
-        if (valueAnimator.isRunning()) {
-            valueAnimator.cancel();
-        }
-
-
-        updateViewPosition();
+        // 重置 isDrag 状态，允许贴边和打开菜单
         isDrag = false;
 
+        // 改进的临界点判断：基于logo中心位置而不是触摸点
+        int logoCenter = wmParams.x + mFloatLogo.getWidth() / 2;
+        if (logoCenter < mScreenWidth / 2) {
+            mHintLocation = LEFT;
+            Log.d(TAG, "floatEventUp: logo中心在左侧，mHintLocation=LEFT, logoCenter=" + logoCenter);
+        } else {
+            mHintLocation = RIGHT;
+            Log.d(TAG, "floatEventUp: logo中心在右侧，mHintLocation=RIGHT, logoCenter=" + logoCenter);
+        }
 
+        // 不再在拖动结束时更新gravity，保持Gravity.LEFT拖动
+        // 只在展开菜单时才根据mHintLocation设置正确的gravity
+
+        // 判断是否是点击事件（移动距离很小）
+        boolean isClick = Math.abs(mXInScreen - mXDownInScreen) <= 3
+                && Math.abs(mYInScreen - mYDownInScreen) <= 3;
+
+        Log.d(TAG, "floatEventUp: isClick=" + isClick + ", 移动距离X=" + Math.abs(mXInScreen - mXDownInScreen) + ", 移动距离Y=" + Math.abs(mYInScreen - mYDownInScreen));
+
+        if (isClick) {
+            // 点击事件：根据状态决定行为
+            if (isShrunk) {
+                // 贴边状态下点击：先恢复到100%可见
+                Log.d(TAG, "floatEventUp: 贴边状态点击，恢复到100%可见，不打开菜单");
+                cancelShrinkTask();
+                restoreFromShrink();
+                // restoreFromShrink完成时会自动启动贴边任务（3秒后）
+            } else {
+                // 正常状态点击：打开菜单
+                Log.d(TAG, "floatEventUp: 正常状态点击，打开菜单");
+                openMenu();
+                // 如果菜单没有展开，启动贴边任务
+                if (!isExpanded) {
+                    startShrinkTask();
+                }
+            }
+        } else {
+            // 拖拽结束：启动贴边任务
+            startShrinkTask();
+        }
     }
 
-
     /**
-     * 打开菜单
+     * 打开菜单（始终使用Gravity.LEFT + 绝对坐标）
      */
     private void openMenu() {
         if (isDrag) return;
+
+        // 取消贴边任务并恢复位置
+        cancelShrinkTask();
+        restoreFromShrink();
 
         if (!isExpanded) {
             mFloatLogo.setDrawDarkBg(false);
             try {
                 wManager.removeViewImmediate(mFloatLogo);
+
+                // 计算展开菜单的x坐标（始终使用Gravity.LEFT）
+                int logoWidth = mFloatLogo.getWidth();
+                int menuWidth = dp2Px(50, mActivity) * mFloatItems.size();
+                int totalWidth = logoWidth + menuWidth;
+
+                if (mHintLocation == RIGHT) {
+                    // 右侧展开：让整个布局的右边缘贴着屏幕右边缘
+                    wmParams.x = mScreenWidth - totalWidth;
+                    Log.d(TAG, "openMenu: 右侧展开，x=" + wmParams.x + "（距左边缘），总宽度=" + totalWidth);
+                } else {
+                    // 左侧展开：从左边缘开始
+                    wmParams.x = 0;
+                    Log.d(TAG, "openMenu: 左侧展开，x=" + wmParams.x + "（距左边缘）");
+                }
+
+                // 添加视图（始终使用Gravity.LEFT）
                 if (mHintLocation == RIGHT) {
                     wManager.addView(rootViewRight, wmParams);
                 } else {
-                    wManager.addView(rootView, wmParams);
+                    wManager.addView(rootViewLeft, wmParams);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -713,24 +552,31 @@ public class FloatLogoMenu {
             mHideTimer.cancel();
         } else {
             mFloatLogo.setDrawDarkBg(true);
-            if (isExpanded) {
-                try {
-                    wManager.removeViewImmediate(mHintLocation == LEFT ? rootView : rootViewRight);
-                    wManager.addView(mFloatLogo, wmParams);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            try {
+                wManager.removeViewImmediate(mHintLocation == LEFT ? rootViewLeft : rootViewRight);
+
+                // 关闭菜单：恢复logo到边缘位置
+                int logoWidth = mFloatLogo.getWidth();
+                if (mHintLocation == RIGHT) {
+                    wmParams.x = mScreenWidth - logoWidth;
+                    Log.d(TAG, "openMenu: 关闭右侧菜单，x=" + wmParams.x);
+                } else {
+                    wmParams.x = 0;
+                    Log.d(TAG, "openMenu: 关闭左侧菜单，x=" + wmParams.x);
                 }
 
-                isExpanded = false;
+                wManager.addView(mFloatLogo, wmParams);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+            isExpanded = false;
             mHideTimer.start();
         }
-
     }
 
-
     /**
-     * 更新悬浮窗在屏幕中的位置。
+     * 更新悬浮窗在屏幕中的位置
      */
     private void updateViewPosition() {
         isDrag = true;
@@ -747,6 +593,269 @@ public class FloatLogoMenu {
         }
     }
 
+    /**
+     * 悬浮窗的点击事件和touch事件的切换
+     */
+    @android.annotation.SuppressLint("ClickableViewAccessibility")
+    private void floatBtnEvent() {
+        mFloatLogo.setOnTouchListener(touchListener);
+    }
+
+    /**
+     * 生成左侧布局
+     */
+    private void generateLeftLineLayout() {
+        DotImageView floatLogo = new DotImageView(mActivity, mLogoRes);
+        floatLogo.setLayoutParams(new WindowManager.LayoutParams(dp2Px(50, mActivity), dp2Px(50, mActivity)));
+        floatLogo.setDrawNum(mDrawRedPointNum);
+        floatLogo.setDrawDarkBg(mCircleMenuBg);
+
+        // 为logo添加点击监听器，点击后关闭菜单
+        floatLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isExpanded) {
+                    openMenu();  // 再次调用openMenu会关闭菜单
+                }
+            }
+        });
+
+        rootViewLeft = new LinearLayout(mActivity);
+        rootViewLeft.setOrientation(LinearLayout.HORIZONTAL);
+        rootViewLeft.setGravity(Gravity.CENTER);
+        rootViewLeft.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp2Px(50, mActivity)));
+
+        rootViewLeft.setBackgroundDrawable(mBackground);
+
+        FloatMenuView mFloatMenuView = new FloatMenuView.Builder(mActivity)
+                .setFloatItems(mFloatItems)
+                .setBackgroundColor(Color.TRANSPARENT)
+                .setCicleBg(mCircleMenuBg)
+                .setStatus(FloatMenuView.STATUS_LEFT)
+                .setMenuBackgroundColor(Color.TRANSPARENT)
+                .drawNum(mDrawRedPointNum)
+                .create();
+        setMenuClickListener(mFloatMenuView);
+
+        rootViewLeft.addView(floatLogo);
+        rootViewLeft.addView(mFloatMenuView);
+    }
+
+    /**
+     * 生成右侧布局
+     */
+    private void generateRightLineLayout() {
+        DotImageView floatLogo = new DotImageView(mActivity, mLogoRes);
+        floatLogo.setLayoutParams(new WindowManager.LayoutParams(dp2Px(50, mActivity), dp2Px(50, mActivity)));
+        floatLogo.setDrawNum(mDrawRedPointNum);
+        floatLogo.setDrawDarkBg(mCircleMenuBg);
+
+        // 为logo添加点击监听器，点击后关闭菜单
+        floatLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isExpanded) {
+                    openMenu();  // 再次调用openMenu会关闭菜单
+                }
+            }
+        });
+
+        rootViewRight = new LinearLayout(mActivity);
+        rootViewRight.setOrientation(LinearLayout.HORIZONTAL);
+        rootViewRight.setGravity(Gravity.CENTER);
+        rootViewRight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp2Px(50, mActivity)));
+
+        rootViewRight.setBackgroundDrawable(mBackground);
+
+        FloatMenuView mFloatMenuView = new FloatMenuView.Builder(mActivity)
+                .setFloatItems(mFloatItems)
+                .setBackgroundColor(Color.TRANSPARENT)
+                .setCicleBg(mCircleMenuBg)
+                .setStatus(FloatMenuView.STATUS_RIGHT)
+                .setMenuBackgroundColor(Color.TRANSPARENT)
+                .drawNum(mDrawRedPointNum)
+                .create();
+        setMenuClickListener(mFloatMenuView);
+
+        // 右侧布局：菜单在左，logo在右（配合Gravity.RIGHT使用）
+        // 布局效果：[菜单1] [菜单2] [菜单3] [logo] → logo贴着右边缘
+        rootViewRight.addView(mFloatMenuView);
+        rootViewRight.addView(floatLogo);
+    }
+
+    /**
+     * 计算总红点数
+     */
+    private void calculateDotNum() {
+        int dotNum = 0;
+        for (FloatItem floatItem : mFloatItems) {
+            if (!TextUtils.isEmpty(floatItem.getDotNum())) {
+                int num = Integer.parseInt(floatItem.getDotNum());
+                dotNum = dotNum + num;
+            }
+        }
+        if (mDrawRedPointNum) {
+            mFloatLogo.setDotNum(dotNum, null);
+        }
+    }
+
+    /**
+     * 保存设置
+     */
+    private void saveSetting(String key, int value) {
+        try {
+            SharedPreferences.Editor sharedata = mActivity.getSharedPreferences("floatLogo", 0).edit();
+            sharedata.putInt(key, value);
+            sharedata.apply();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * dp 转 px
+     */
+    private int dp2Px(int dp, Context context) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    }
+
+    /**
+     * 启动贴边任务
+     */
+    private void startShrinkTask() {
+        Log.d(TAG, "startShrinkTask: 启动贴边任务，" + mAutoShrinkDelay + "ms后贴边");
+        shrinkHandler.removeCallbacks(shrinkRunnable);
+        shrinkHandler.postDelayed(shrinkRunnable, mAutoShrinkDelay);
+    }
+
+    /**
+     * 取消贴边任务
+     */
+    private void cancelShrinkTask() {
+        Log.d(TAG, "cancelShrinkTask: 取消贴边任务");
+        shrinkHandler.removeCallbacks(shrinkRunnable);
+        if (shrinkAnimator != null && shrinkAnimator.isRunning()) {
+            shrinkAnimator.cancel();
+        }
+    }
+
+    /**
+     * 贴边到屏幕边缘
+     */
+    private void shrinkToEdge() {
+        Log.d(TAG, "shrinkToEdge: 开始贴边, mFloatLogo=" + mFloatLogo + ", isExpanded=" + isExpanded + ", isDrag=" + isDrag);
+
+        if (mFloatLogo == null || isExpanded || isDrag) {
+            Log.d(TAG, "shrinkToEdge: 贴边取消，原因：mFloatLogo=" + (mFloatLogo != null) + ", isExpanded=" + isExpanded + ", isDrag=" + isDrag);
+            return;
+        }
+
+        // 强制测量并获取logo的宽度
+        mFloatLogo.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int logoWidth = mFloatLogo.getMeasuredWidth();
+        Log.d(TAG, "shrinkToEdge: getMeasuredWidth()=" + logoWidth + ", getWidth()=" + mFloatLogo.getWidth());
+
+        if (logoWidth <= 0) {
+            logoWidth = dp2Px(50, mActivity);
+            Log.d(TAG, "shrinkToEdge: 使用默认宽度 dp2Px(50)=" + logoWidth);
+        }
+
+        // 计算目标位置：让logo的一半超出屏幕，一半在屏幕内
+        final int targetX;
+        int visiblePart = logoWidth / 2;  // 50%可见
+        int hiddenPart = logoWidth - visiblePart;  // 50%隐藏
+
+        if (mHintLocation == LEFT) {
+            // 贴到左边：logo的一半超出屏幕左侧
+            targetX = -hiddenPart;
+            Log.d(TAG, "shrinkToEdge: 左贴边, logoWidth=" + logoWidth + ", 可见部分=" + visiblePart + ", 隐藏部分=" + hiddenPart + ", targetX=" + targetX);
+        } else {
+            // 贴到右边：logo的一半超出屏幕右侧
+            targetX = mScreenWidth - visiblePart;
+            Log.d(TAG, "shrinkToEdge: 右贴边, logoWidth=" + logoWidth + ", 可见部分=" + visiblePart + ", 隐藏部分=" + hiddenPart + ", targetX=" + targetX);
+        }
+
+        Log.d(TAG, "shrinkToEdge: mScreenWidth=" + mScreenWidth + ", 当前X=" + wmParams.x + ", 目标X=" + targetX + ", mHintLocation=" + mHintLocation);
+
+        // 动画：移动到边缘，logo保持完整大小，大部分在屏幕外
+        shrinkAnimator = ValueAnimator.ofInt(wmParams.x, targetX);
+        shrinkAnimator.setDuration(300);
+        shrinkAnimator.setInterpolator(new DecelerateInterpolator());
+        shrinkAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int animatedValue = (int) animation.getAnimatedValue();
+                wmParams.x = animatedValue;
+                try {
+                    wManager.updateViewLayout(mFloatLogo, wmParams);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        shrinkAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                Log.d(TAG, "shrinkToEdge: 贴边完成，最终位置X=" + wmParams.x + ", isShrunk=true");
+                isShrunk = true;
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+        });
+        shrinkAnimator.start();
+    }
+
+    /**
+     * 从贴边状态恢复（同步版本，始终使用Gravity.LEFT）
+     */
+    private void restoreFromShrink() {
+        if (!isShrunk || mFloatLogo == null) {
+            Log.d(TAG, "restoreFromShrink: 跳过恢复，isShrunk=" + isShrunk);
+            return;
+        }
+
+        int logoWidth = mFloatLogo.getWidth();
+        if (logoWidth <= 0) {
+            logoWidth = dp2Px(50, mActivity);
+        }
+
+        // 根据mHintLocation恢复到正确的绝对坐标位置
+        if (mHintLocation == RIGHT) {
+            wmParams.x = mScreenWidth - logoWidth;  // 右侧：距离左边缘（屏幕宽度 - logo宽度）
+            Log.d(TAG, "restoreFromShrink: 恢复到右侧，x=" + wmParams.x + "（距左边缘）");
+        } else {
+            wmParams.x = 0;  // 左侧：距离左边缘0px
+            Log.d(TAG, "restoreFromShrink: 恢复到左侧，x=" + wmParams.x + "（距左边缘）");
+        }
+
+        // 更新布局（始终使用Gravity.LEFT）
+        try {
+            wManager.updateViewLayout(mFloatLogo, wmParams);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 重置贴边状态
+        isShrunk = false;
+        Log.d(TAG, "restoreFromShrink: 恢复完成，isShrunk设置为false，启动贴边任务");
+
+        // 恢复完成后启动贴边任务，3秒后自动贴边
+        startShrinkTask();
+    }
+
+    /**
+     * 打开菜单
+     */
     public void show() {
         try {
             if (wManager != null && wmParams != null && mFloatLogo != null) {
@@ -770,140 +879,58 @@ public class FloatLogoMenu {
         destroyFloat();
     }
 
-
     /**
-     * 移除所有悬浮窗 释放资源
+     * 移除所有悬浮窗
      */
     public void destroyFloat() {
-        //记录上次的位置logo的停放位置，以备下次恢复
         saveSetting(LOCATION_X, mHintLocation);
         saveSetting(LOCATION_Y, wmParams.y);
         mFloatLogo.clearAnimation();
         try {
             mHideTimer.cancel();
+            // 取消贴边任务并清理Handler
+            cancelShrinkTask();
+            shrinkHandler.removeCallbacksAndMessages(null);
+
             if (isExpanded) {
-                wManager.removeViewImmediate(mHintLocation == LEFT ? rootView : rootViewRight);
+                wManager.removeViewImmediate(mHintLocation == LEFT ? rootViewLeft : rootViewRight);
             } else {
                 wManager.removeViewImmediate(mFloatLogo);
             }
             isExpanded = false;
             isDrag = false;
+            isShrunk = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * 计算总红点数
+     * 动态设置logo是否显示红点数字
+     * @param drawNum true-显示红点数字，false-不显示
      */
-    private void calculateDotNum() {
-        int dotNum = 0;
-        for (FloatItem floatItem : mFloatItems) {
-            if (!TextUtils.isEmpty(floatItem.getDotNum())) {
-                int num = Integer.parseInt(floatItem.getDotNum());
-                dotNum = dotNum + num;
-            }
+    public void setLogoDrawNum(boolean drawNum) {
+        mDrawRedPointNum = drawNum;
+        if (mFloatLogo != null) {
+            mFloatLogo.setDrawNum(drawNum);
         }
-        mFloatLogo.setDrawNum(mDrawRedPointNum);
-        setDotNum(dotNum);
+        // 注意：菜单中的红点需要通过 setFloatItemList() 方法更新
     }
 
     /**
-     * 绘制悬浮球的红点
-     *
-     * @param dotNum d
+     * 动态设置logo是否绘制圆形背景
+     * @param drawBg true-绘制圆形背景，false-不绘制
      */
-    private void setDotNum(int dotNum) {
-        mFloatLogo.setDotNum(dotNum, new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (!isDrag) {
-                    mHideTimer.start();
-                }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-    }
-
-    /**
-     * 用于暴露给外部判断是否包含某个菜单项
-     *
-     * @param menuLabel string
-     * @return boolean
-     */
-    public boolean hasMenu(String menuLabel) {
-        for (FloatItem menuItem : mFloatItems) {
-            if (TextUtils.equals(menuItem.getTitle(), menuLabel)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 用于保存悬浮球的位置记录
-     *
-     * @param key          String
-     * @param defaultValue int
-     * @return int
-     */
-    private int getSetting(String key, int defaultValue) {
-        try {
-            SharedPreferences sharedata = mActivity.getSharedPreferences("floatLogo", 0);
-            return sharedata.getInt(key, defaultValue);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return defaultValue;
-    }
-
-    /**
-     * 用于保存悬浮球的位置记录
-     *
-     * @param key   String
-     * @param value int
-     */
-    public void saveSetting(String key, int value) {
-        try {
-            SharedPreferences.Editor sharedata = mActivity.getSharedPreferences("floatLogo", 0).edit();
-            sharedata.putInt(key, value);
-            sharedata.apply();
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void setLogoDrawBg(boolean drawBg) {
+        mCircleMenuBg = drawBg;
+        if (mFloatLogo != null) {
+            mFloatLogo.setDrawDarkBg(drawBg);
         }
     }
 
-    public static int dp2Px(float dp, Context mContext) {
-        return (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp,
-                mContext.getResources().getDisplayMetrics());
-    }
-
-
-    public interface OnMenuClickListener {
-        void onMenuExpended(boolean isExpened);
-    }
-
-
-    public void setValueAnimator() {
-
-    }
-
+    /**
+     * 构建器
+     */
     public static final class Builder {
         private int mBackMenuColor;
         private boolean mDrawRedPointNum;
@@ -914,14 +941,14 @@ public class FloatLogoMenu {
         private Context mActivity;
         private FloatMenuView.OnMenuClickListener mOnMenuClickListener;
         private Drawable mDrawable;
+        private int mAutoShrinkDelay = 3000;  // 默认3秒
 
+        public Builder() {
+        }
 
         public Builder setBgDrawable(Drawable drawable) {
             mDrawable = drawable;
             return this;
-        }
-
-        public Builder() {
         }
 
         public Builder setFloatItems(List<FloatItem> mFloatItems) {
@@ -974,6 +1001,18 @@ public class FloatLogoMenu {
             return this;
         }
 
+        public Builder autoShrinkDelay(int milliseconds) {
+            this.mAutoShrinkDelay = milliseconds;
+            return this;
+        }
+
+        /**
+         * 获取Context（供内部API使用）
+         */
+        Context getContext() {
+            return mActivity;
+        }
+
         public FloatLogoMenu showWithListener(FloatMenuView.OnMenuClickListener val) {
             mOnMenuClickListener = val;
             return new FloatLogoMenu(this);
@@ -988,6 +1027,4 @@ public class FloatLogoMenu {
             return new FloatLogoMenu(this);
         }
     }
-
-
 }

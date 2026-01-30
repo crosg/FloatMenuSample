@@ -1,31 +1,40 @@
-/*
- * Copyright (c) 2016, Shanghai YUEWEN Information Technology Co., Ltd.
- * All rights reserved.
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
- *
- *  Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
- *  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
- *  Neither the name of Shanghai YUEWEN Information Technology Co., Ltd. nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY SHANGHAI YUEWEN INFORMATION TECHNOLOGY CO., LTD. AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
 package com.yw.game.floatmenu;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
 /**
- * Created by wengyiming on 2017/7/21.
+ * 菜单项数据模型
+ * <p>
+ * 表示悬浮菜单中的单个菜单项，包含标题、图标、颜色等信息
+ * </p>
  */
-
 public class FloatItem {
+
     public String title;
     public int titleColor = Color.BLACK;
     public int bgColor = Color.WHITE;
     public Bitmap icon;
-    public String dotNum = null;
+    public String dotNum;
 
+    /**
+     * 构造函数 - 仅标题
+     *
+     * @param title 菜单项标题
+     */
+    public FloatItem(String title) {
+        this.title = title;
+    }
+
+    /**
+     * 构造函数 - 标题 + 颜色 + 图标 + 红点数字
+     *
+     * @param title         菜单项标题
+     * @param titleColor   标题颜色
+     * @param bgColor      背景颜色
+     * @param icon         图标Bitmap
+     * @param dotNum       红点数字（null表示不显示）
+     */
     public FloatItem(String title, int titleColor, int bgColor, Bitmap icon, String dotNum) {
         this.title = title;
         this.titleColor = titleColor;
@@ -34,69 +43,121 @@ public class FloatItem {
         this.dotNum = dotNum;
     }
 
-    public String getDotNum() {
-        return dotNum;
-    }
-
-
-    public FloatItem(String title, int titleColor, int bgColor, Bitmap bitmap) {
+    /**
+     * 构造函数 - 标题 + 颜色 + 图标
+     *
+     * @param title         菜单项标题
+     * @param titleColor   标题颜色
+     * @param bgColor      背景颜色
+     * @param icon         图标Bitmap
+     */
+    public FloatItem(String title, int titleColor, int bgColor, Bitmap icon) {
         this.title = title;
         this.titleColor = titleColor;
         this.bgColor = bgColor;
-        this.icon = bitmap;
+        this.icon = icon;
     }
 
+    // ==================== Getters ====================
+
+    /**
+     * 获取菜单项标题
+     *
+     * @return 标题文本
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * 设置菜单项标题
+     *
+     * @param title 标题文本
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * 获取标题颜色
+     *
+     * @return 标题颜色
+     */
     public int getTitleColor() {
         return titleColor;
     }
 
+    /**
+     * 设置标题颜色
+     *
+     * @param titleColor 标题颜色
+     */
     public void setTitleColor(int titleColor) {
         this.titleColor = titleColor;
     }
 
+    /**
+     * 获取背景颜色
+     *
+     * @return 背景颜色
+     */
     public int getBgColor() {
         return bgColor;
     }
 
+    /**
+     * 设置背景颜色
+     *
+     * @param bgColor 背景颜色
+     */
     public void setBgColor(int bgColor) {
         this.bgColor = bgColor;
     }
 
+    /**
+     * 获取图标
+     *
+     * @return 图标Bitmap（可能为null）
+     */
     public Bitmap getIcon() {
         return icon;
     }
 
+    /**
+     * 设置图标
+     *
+     * @param icon 图标Bitmap
+     */
     public void setIcon(Bitmap icon) {
         this.icon = icon;
     }
 
+    /**
+     * 获取红点数字
+     *
+     * @return 红点数字（null表示不显示）
+     */
+    public String getDotNum() {
+        return dotNum;
+    }
+
+    // ==================== Equals & HashCode ====================
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        if (obj == this) return true;
-
-        if (obj instanceof FloatItem) {
-            FloatItem floatItem = (FloatItem) obj;
-            return floatItem.title.equals(this.title);
-        } else {
-            return false;
-        }
+        FloatItem other = (FloatItem) obj;
+        return title != null && title.equals(other.title);
     }
 
     @Override
     public int hashCode() {
-        return title.hashCode();
+        return title != null ? title.hashCode() : 0;
     }
 
     @Override

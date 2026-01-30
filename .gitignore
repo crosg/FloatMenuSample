@@ -12,3 +12,23 @@
 /build
 /captures
 .externalNativeBuild
+
+# 构建产物
+*.apk
+*.aab
+*.aar
+
+# Lint
+lint-results*.html
+lint-results*.xml
+
+# 测试
+test-results
+test-output
+
+# 临时文件
+*.log
+*.tmp
+*.swp
+*.swo
+*~
