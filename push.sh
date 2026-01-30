@@ -30,8 +30,8 @@ if [ $? -eq 0 ]; then
     echo ""
     echo "现在可以推送 tag 了："
     echo ""
-    echo "git tag v2.4.0"
-    echo "git push https://ColdBrando:$TOKEN@github.com/ColdBrando/FloatMenuSample.git v2.4.0"
+    echo "git tag v2.4.3"
+    echo "git push https://ColdBrando:$TOKEN@github.com/ColdBrando/FloatMenuSample.git v2.4.3"
 else
     echo ""
     echo "❌ 推送失败，请检查："

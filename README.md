@@ -53,7 +53,7 @@ dependencyResolutionManagement {
 
 ```gradle
 dependencies {
-    implementation 'com.github.fanofdemo:FloatMenu:2.4.0'
+    implementation 'com.github.fanofdemo:FloatMenu:2.4.3'
 }
 ```
 
