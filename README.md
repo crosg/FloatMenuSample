@@ -6,7 +6,7 @@
 
 [![API](https://img.shields.io/badge/API-11%2B-brightgreen.svg)](https://android-arsenal.com/api?level=11)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/fanOfDemo/FloatMenuSample)](https://github.com/fanOfDemo/FloatMenuSample/releases)
+[![Release](https://img.shields.io/github/v/release/ColdBrando/FloatMenuSample)](https://github.com/ColdBrando/FloatMenuSample/releases)
 
 ![FloatMenu Demo](picture/floatmenu2.gif)
 
@@ -39,7 +39,7 @@
 dependencyResolutionManagement {
     repositories {
         maven {
-            url = "https://maven.pkg.github.com/fanOfDemo/FloatMenuSample"
+            url = "https://maven.pkg.github.com/ColdBrando/FloatMenuSample"
             credentials {
                 username = "你的GitHub用户名"
                 password = "你的GitHub Token"  // 或使用 GITHUB_TOKEN 环境变量
@@ -67,7 +67,7 @@ dependencies {
 
 ```gradle
 dependencies {
-    implementation 'com.github.fanOfDemo:FloatMenuSample:v2.4.0'
+    implementation 'com.github.ColdBrando:FloatMenuSample:v2.4.0'
 }
 ```
 
@@ -87,7 +87,7 @@ repositories {
 
 ```bash
 # 克隆项目
-git clone https://github.com/fanOfDemo/FloatMenuSample.git
+git clone https://github.com/ColdBrando/FloatMenuSample.git
 
 # 复制 FloatMenu 模块到你的项目
 cp -r FloatMenuSample/FloatMenu your-project/
