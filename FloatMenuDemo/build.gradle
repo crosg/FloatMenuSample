@@ -30,7 +30,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     // 使用 JitPack 远程依赖
-    implementation 'com.github.ColdBrando:FloatMenuSample:v2.4.0'
+    implementation 'com.github.ColdBrando:FloatMenuSample:v2.4.1'
     // 本地源码依赖（已禁用）
     // implementation project(':FloatMenu')
 }
