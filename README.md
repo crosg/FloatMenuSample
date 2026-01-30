@@ -31,9 +31,59 @@
 
 ## 📦 依赖
 
-**方式一：直接集成（推荐）**
+### 方式一：GitHub Packages（推荐）
 
-将 `FloatMenu` 模块复制到你的项目中：
+在项目的 `settings.gradle` 中添加仓库：
+
+```gradle
+dependencyResolutionManagement {
+    repositories {
+        maven {
+            url = "https://maven.pkg.github.com/fanOfDemo/FloatMenuSample"
+            credentials {
+                username = "你的GitHub用户名"
+                password = "你的GitHub Token"  // 或使用 GITHUB_TOKEN 环境变量
+            }
+        }
+    }
+}
+```
+
+在 `build.gradle` 中添加依赖：
+
+```gradle
+dependencies {
+    implementation 'com.github.fanofdemo:FloatMenu:2.4.0'
+}
+```
+
+**注意：** GitHub Token 需要有 `read:packages` 权限。
+
+---
+
+### 方式二：JitPack（最简单）
+
+无需配置仓库，直接添加依赖：
+
+```gradle
+dependencies {
+    implementation 'com.github.fanOfDemo:FloatMenuSample:v2.4.0'
+}
+```
+
+在 `settings.gradle` 中添加：
+
+```gradle
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+```
+
+---
+
+### 方式三：直接集成模块
+
+将 `FloatMenu` 模块复制到你的项目：
 
 ```bash
 # 克隆项目
@@ -54,16 +104,6 @@ include ':FloatMenu'
 ```gradle
 dependencies {
     implementation project(':FloatMenu')
-}
-```
-
-**方式二：本地集成**
-
-下载 [Release AAR 文件](https://github.com/fanOfDemo/FloatMenuSample/releases) 并放入 `libs` 目录：
-
-```gradle
-dependencies {
-    implementation(name: 'FloatMenu-2.4.0', ext: 'aar')
 }
 ```
 
