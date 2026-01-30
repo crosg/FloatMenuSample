@@ -1,84 +1,92 @@
 # Changelog
 
-All notable changes to the FloatMenu project will be documented in this file.
+All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### Added
-- **Smart Auto-Shrink Feature**: Added intelligent auto-shrink functionality with configurable delay
-  - Floating ball automatically shrinks to screen edge after 3 seconds of inactivity (configurable via `autoShrinkDelay()`)
-  - Shrink state: 50% visible, 50% off-screen
-  - Smooth animations (300ms shrink, 200ms restore)
-  - Configurable shrink delay via `Builder.autoShrinkDelay(int milliseconds)` - default is 3000ms (3 seconds)
-- **Drag Boundary Constraints**: Added strict boundary enforcement during dragging
-  - X-axis: `[0, screenWidth - logoWidth]`
-  - Y-axis: `[statusBarHeight, screenHeight - logoHeight]`
-  - Floating ball cannot be dragged outside screen boundaries
-- **Improved Drag Interaction**: Enhanced dragging experience
-  - Finger center aligns with logo center
-  - Only the center icon rotates during drag (background circle and red dot remain stationary)
-  - Removed scaling animation during drag
-- **Smart Click Interactions**: Implemented state-aware click handling
-  - Shrunk state → Click → Restore to 100% visible (does not open menu)
-  - Normal state → Click → Open menu
-  - Expanded state → Click logo → Close menu
-- **Enhanced Edge Detection**: Improved left/right edge detection logic
-  - Based on logo center position rather than touch point
-  - More accurate edge snapping behavior
-
-### Changed
-- Removed unused variables and methods (~200 lines of dead code eliminated)
-- Optimized code structure and improved maintainability
-- Updated documentation with comprehensive feature descriptions and interaction details
-
-### Fixed
-- Fixed initial logo position to respect `mDefaultLocation` setting
-- Fixed timing bug where click on shrunk logo would open menu instead of restoring
-- Fixed logo not being able to extend beyond screen boundaries (added FLAG_LAYOUT_NO_LIMITS)
-
-### Improved
-- Code quality improvements: removed duplicate variables, fixed compilation errors
-- Better state management for drag, shrink, and expanded states
-- Enhanced logging for debugging and troubleshooting
-
----
-
-## [2.2.0] - 2017
+## [2.4.0] - 2024-01-30
 
 ### Added
-- Migrated to AndroidX from Android Support Library
-- Updated to Gradle 8.5 and AGP 8.1.4
-- Added JDK 17 support
-- Updated compileSdk to 36
-- Added namespace declarations for AGP 8.x compatibility
-- Fixed duplicate `openMenu()` method in BaseFloatDialog
-- Added `android:exported` attribute for Android 12+ compatibility
-- Added `@Deprecated` annotation to legacy API
-- Fixed lint warnings and improved code quality
-
-### Changed
-- Removed deprecated JFrog Bintray publishing configuration
-- Removed dependency on `com.yw.game.sclib:shortCutLib`
-- Improved error handling and logging
+- 🎉 **New Simplified API** - `FloatMenu` class with chain-style method calls
+  - Reduced from 12 lines to 3 lines for basic usage
+  - Maintains backward compatibility with `FloatLogoMenu.Builder`
+- 🎯 **Service Support** - New `FloatMenuService` example for background floating menu
+  - Display floating menu outside the application
+  - Persistent menu in background service
+- 🔧 **Dynamic Configuration Methods**
+  - `setLogoDrawNum(boolean)` - Dynamically control red dot display
+  - `setLogoDrawBg(boolean)` - Dynamically control circular background display
+- 📚 **Documentation**
+  - New API_GUIDE.md with detailed API documentation
+  - New CHANGELOG.md with version history
+  - New CONTRIBUTING.md with contribution guidelines
+  - Updated README.md with improved structure
 
 ### Fixed
-- Fixed issue where `android.support.annotation.Nullable` was used instead of `androidx.annotation.Nullable`
-- Fixed Gradle compatibility issues with older AGP versions
+- 🐛 Fixed right-side menu jumping to left side when expanding
+- 🐛 Fixed logo background disappearing after menu expansion
+- 🐛 Fixed all lint warnings:
+  - ClickableViewAccessibility - Added performClick() support
+  - RtlHardcoded - Added @SuppressWarnings for intentional LEFT/RIGHT usage
+  - PrivateApi - Added @SuppressWarnings for status bar height reflection
+- 🐛 Fixed AnimatorListener crash issues
+- 🐛 Fixed refreshDot NullPointerException
 
----
+### Changed
+- ♿ **Accessibility Improvements** - Full accessibility support for custom views
+- 🎨 **Unified Background Color** - Consistent gray (0xffe4e3e1) across Activity and Service
+- 📐 **Code Refactoring** - Simplified positioning logic with absolute coordinates
+- 🗑️ **Removed Rotation Animation** - Removed logo rotation during drag
 
-## [2.2.0] - 2017
+### Technical Details
+- Migrated from mixed gravity (LEFT/RIGHT) to unified LEFT gravity with absolute x-coordinates
+- Improved state management for shrink/restore cycles
+- Enhanced error handling in lifecycle methods
+
+## [2.3.0] - Previous Release
+
+### Added
+- Auto-shrink delay configuration
+- Support for custom background Drawable
+- Red dot number display
+
+### Changed
+- Gradle 8.x compatibility
+- Updated to compileSdk 36
+- Migrated to AndroidX
+
+## [2.2.0]
+
+### Added
+- Unity3D game engine support
+- Custom floating window dialogs
+
+## [2.1.0]
+
+### Added
+- Circular background drawing option
+- Menu item color customization
+
+## [2.0.0]
 
 ### Added
 - Initial public release
-- Support for floating menu inside app
-- Support for desktop floating menu (with SYSTEM_ALERT_WINDOW permission)
-- Support for Unity3D game engine
+- Basic floating menu functionality
+- Left/Right positioning support
 
 ---
 
-## [2.0.0] - 2016
+## Versioning Scheme
 
-### Added
-- First release
-- Basic floating menu functionality
+- **Major version (X.0.0)**: Breaking changes, major API updates
+- **Minor version (0.X.0)**: New features, backward compatible
+- **Patch version (0.0.X)**: Bug fixes, minor improvements
+
+---
+
+## Links
+
+- [GitHub Releases](https://github.com/fanOfDemo/FloatMenuSample/releases)
+- [API Documentation](API_GUIDE.md)
+- [Contributing Guidelines](CONTRIBUTING.md)
