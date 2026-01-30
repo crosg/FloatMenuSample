@@ -19,6 +19,7 @@
                 android:background="@android:color/white"
                 android:clipChildren="false"
                 android:clipToPadding="false"
+                android:padding="16dp"
                 tools:context=".MainActivity">
 
     <TextView
@@ -26,6 +27,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="start floatmenu in activity"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        android:text="FloatMenu Demo"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp"/>
+
+    <Button
+        android:id="@+id/btnStartService"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text"
+        android:layout_marginTop="20dp"
+        android:text="启动悬浮菜单服务"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/btnStopService"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnStartService"
+        android:layout_marginTop="16dp"
+        android:text="停止悬浮菜单服务"
+        android:textAllCaps="false"
+        android:enabled="false"/>
+
+    <TextView
+        android:id="@+id/tvHint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnStopService"
+        android:layout_marginTop="32dp"
+        android:text="提示：\n1. Activity悬浮菜单在onResume时自动显示\n2. Service悬浮菜单需要手动启动\n3. Service方式可以在应用外显示"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"/>
 </RelativeLayout>

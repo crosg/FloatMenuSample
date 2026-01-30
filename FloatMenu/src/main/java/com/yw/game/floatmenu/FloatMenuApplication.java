@@ -10,51 +10,26 @@
  * THIS SOFTWARE IS PROVIDED BY SHANGHAI YUEWEN INFORMATION TECHNOLOGY CO., LTD. AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-
 package com.yw.game.floatmenu;
 
+import android.app.Application;
 
-import android.content.Context;
-import android.util.TypedValue;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.ScaleAnimation;
-import android.widget.FrameLayout;
+/**
+ * 应用程序入口
+ * 解决Issue #46 - Application级别初始化，支持跨Activity共享
+ *
+ * 使用方法：
+ * 1. 在AndroidManifest.xml中配置：
+ *    <application android:name=".FloatMenuApplication" ...>
+ * 2. FloatManager.init()会自动调用，无需手动调用
+ * 3. 之后可以在任意Activity中使用FloatManager.getInstance()
+ */
+public class FloatMenuApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-import java.lang.reflect.Field;
-
-public class Utils {
-
-    private static int statusBarHeight;
-
-    /**
-     * 用于获取状态栏的高度。
-     *
-     * @return 返回状态栏高度的像素值。
-     */
-    @SuppressWarnings("PrivateApi")
-    public static int getStatusBarHeight(Context context) {
-        if (statusBarHeight == 0) {
-            try {
-                Class<?> c = Class.forName("com.android.internal.R$dimen");
-                Object o = c.newInstance();
-                Field field = c.getField("status_bar_height");
-                int x = (Integer) field.get(o);
-                statusBarHeight = context.getResources().getDimensionPixelSize(x);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return statusBarHeight;
+        // 初始化FloatManager全局实例
+        FloatManager.init(this);
     }
-
-
-
-
-
 }

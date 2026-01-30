@@ -306,16 +306,27 @@ public class FloatMenuView extends View {
 
 
     @Override
+    public boolean performClick() {
+        super.performClick();
+        return true;
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 for (int i = 0; i < mItemRectList.size(); i++) {
                     if (mOnMenuClickListener != null && isPointInRect(new PointF(event.getX(), event.getY()), mItemRectList.get(i))) {
+                        performClick();
                         mOnMenuClickListener.onItemClick(i, mItemList.get(i).title);
                         return true;
                     }
                 }
                 dismiss();
+                return true;
+            case MotionEvent.ACTION_UP:
+                performClick();
+                return true;
         }
         return false;
     }

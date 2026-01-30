@@ -7,10 +7,12 @@
  *  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
  *  Neither the name of Shanghai YUEWEN Information Technology Co., Ltd. nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY SHANGHAI YUEWEN INFORMATION TECHNOLOGY CO., LTD. AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY SHANGHAI YUEWEN INFORMATION TECHNOLOGY CO., LTD. AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DAMAGES.
  *
  */
 package com.yw.game.floatmenu.customfloat;
+
+import com.yw.game.floatmenu.FloatManager;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -152,6 +154,7 @@ public abstract class BaseFloatDialog {
     /**
      * 这个事件用于处理移动、自定义点击或者其它事情，return true可以保证onclick事件失效
      */
+    @android.annotation.SuppressLint("ClickableViewAccessibility")
     private View.OnTouchListener touchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -165,6 +168,8 @@ public abstract class BaseFloatDialog {
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     floatEventUp();
+                    // 对于无障碍访问的支持
+                    v.performClick();
                     break;
             }
             return true;
@@ -352,7 +357,9 @@ public abstract class BaseFloatDialog {
         mScreenWidth = wManager.getDefaultDisplay().getWidth();
         int screenHeight = wManager.getDefaultDisplay().getHeight();
         wmParams.format = PixelFormat.RGBA_8888;
-        wmParams.gravity = Gravity.LEFT | Gravity.TOP;
+        @SuppressWarnings("RtlHardcoded")
+        int gravity = Gravity.LEFT | Gravity.TOP;
+        wmParams.gravity = gravity;
         wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
         mHintLocation = getSetting(LOCATION_X, mDefaultLocation);
         int defaultY = ((screenHeight) / 2) / 3;
@@ -565,6 +572,21 @@ public abstract class BaseFloatDialog {
 
     public void show() {
         try {
+            // 注册当前悬浮窗实例到FloatManager
+            FloatManager.setCurrentFloatDialog(this);
+
+            // 尝试从FloatManager加载保存的位置
+            try {
+                Float[] savedPosition = FloatManager.getInstance().loadFloatPosition();
+                if (savedPosition != null) {
+                    wmParams.x = (int) (float) savedPosition[0];
+                    wmParams.y = (int) (float) savedPosition[1];
+                }
+                mHintLocation = FloatManager.getInstance().loadFloatHint();
+            } catch (Exception e) {
+                // FloatManager未初始化或不影响功能，忽略
+            }
+
             if (wManager != null && wmParams != null && logoView != null) {
                 wManager.addView(logoView, wmParams);
             }
@@ -578,61 +600,6 @@ public abstract class BaseFloatDialog {
             e.printStackTrace();
         }
     }
-
-    /**
-     * 打开菜单
-     */
-    private void openMenu() {
-        if (isDrag) return;
-
-        if (!isExpanded) {
-//            logoView.setDrawDarkBg(false);
-            try {
-                wManager.removeViewImmediate(logoView);
-                if (mHintLocation == RIGHT) {
-                    wManager.addView(rightView, wmParams);
-                    if (mGetViewCallback == null) {
-                        rightViewOpened(rightView);
-                    } else {
-                        mGetViewCallback.rightViewOpened(rightView);
-                    }
-                } else {
-                    wManager.addView(leftView, wmParams);
-                    if (mGetViewCallback == null) {
-                        leftViewOpened(leftView);
-                    } else {
-                        mGetViewCallback.leftViewOpened(leftView);
-                    }
-
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            isExpanded = true;
-            mHideTimer.cancel();
-        } else {
-//            logoView.setDrawDarkBg(true);
-            try {
-                wManager.removeViewImmediate(mHintLocation == LEFT ? leftView : rightView);
-                wManager.addView(logoView, wmParams);
-                if (mGetViewCallback == null) {
-                    leftOrRightViewClosed(logoView);
-                } else {
-                    mGetViewCallback.leftOrRightViewClosed(logoView);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            isExpanded = false;
-            mHideTimer.start();
-        }
-
-    }
-
 
     /**
      * 更新悬浮窗在屏幕中的位置。
@@ -652,6 +619,77 @@ public abstract class BaseFloatDialog {
         }
     }
 
+    // ==================== 公共API方法 ====================
+
+    /**
+     * 公共API - 显示悬浮窗
+     * 简化API调用，直接通过BaseFloatDialog.show(context)
+     * @deprecated 推荐使用具体的FloatDialog子类，此方法保留为公共API入口
+     */
+    @Deprecated
+    public static void show(Context context) {
+        FloatManager.showFloat(context);
+    }
+
+    /**
+     * 公共API - 关闭悬浮窗
+     * 简化API调用，直接通过BaseFloatDialog.dismiss(context)
+     */
+    public static void dismiss(Context context) {
+        FloatManager.dismissFloat(context);
+    }
+
+    /**
+     * 公共API - 打开菜单
+     * 简化API调用，直接通过BaseFloatDialog.openMenu(context)
+     */
+    public static void openMenu(Context context) {
+        FloatManager.openMenu(context);
+    }
+
+    /**
+     * 实例方法 - 打开菜单
+     * 外部可通过BaseFloatDialog实例直接调用
+     */
+    public void openMenu() {
+        if (mGetViewCallback == null) {
+            return;
+        }
+
+        if (isDrag) return;
+
+        if (!isExpanded) {
+            try {
+                wManager.removeViewImmediate(logoView);
+                if (mHintLocation == RIGHT) {
+                    wManager.addView(rightView, wmParams);
+                    mGetViewCallback.rightViewOpened(rightView);
+                } else {
+                    wManager.addView(leftView, wmParams);
+                    mGetViewCallback.leftViewOpened(leftView);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            isExpanded = true;
+            mHideTimer.cancel();
+        } else {
+            try {
+                wManager.removeViewImmediate(mHintLocation == LEFT ? leftView : rightView);
+                wManager.addView(logoView, wmParams);
+                mGetViewCallback.leftOrRightViewClosed(logoView);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            isExpanded = false;
+            mHideTimer.start();
+        }
+    }
+
+    // ==================== 原有方法 ====================
+
     /**
      * 移除所有悬浮窗 释放资源
      */
@@ -659,6 +697,15 @@ public abstract class BaseFloatDialog {
         //记录上次的位置logo的停放位置，以备下次恢复
         saveSetting(LOCATION_X, mHintLocation);
         saveSetting(LOCATION_Y, wmParams.y);
+
+        // 同时保存到FloatManager（全局管理）
+        try {
+            FloatManager.getInstance().saveFloatPosition(wmParams.x, wmParams.y);
+            FloatManager.getInstance().saveFloatHint(mHintLocation);
+        } catch (Exception e) {
+            // FloatManager未初始化时不报错
+        }
+
         logoView.clearAnimation();
         try {
             mHideTimer.cancel();
